@@ -23,18 +23,6 @@ tags:
 backlog:
   # Items identified but not yet prioritized for work
 
-  - id: B-2
-    title: "Convert frontend-editor-diff.md to SvelteKit patterns"
-    description: |
-      Rewrite the rich-text editor and diff viewer spec. Replace Lexical
-      React with a Svelte-compatible editor (TipTap, ProseMirror, or
-      svelte-lexical if mature). Adapt diff viewer approach.
-    priority: low
-    tags: [spec, frontend]
-    created: 2026-02-15
-    links:
-      - specs/frontend-editor-diff.md
-
   - id: B-3
     title: "Set up Docker and Docker Compose"
     description: |
@@ -310,6 +298,21 @@ done:
     created: 2026-02-15
     links:
       - specs/frontend-i18n-analytics.md
+
+  - id: D-20
+    completed: 2026-02-15
+    started: 2026-02-15
+    title: "Convert frontend-editor-diff.md to SvelteKit patterns"
+    description: |
+      Rewrite the rich-text editor and diff viewer spec. Replace Lexical
+      React with a Svelte-compatible editor (TipTap, ProseMirror, or
+      svelte-lexical if mature). Adapt diff viewer approach.
+    priority: low
+    tags: [spec, frontend]
+    created: 2026-02-15
+    links:
+      - specs/frontend-editor-diff.md
+
 
 
 
