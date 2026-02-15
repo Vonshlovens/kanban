@@ -64,17 +64,6 @@ todo:
 
   # ── Tech Stack Specs ───────────────────────────────────────────
 
-  - id: T-15
-    title: "Convert comments.md to SvelteKit implementation patterns"
-    description: |
-      Rewrite comments spec with SvelteKit patterns. Comment CRUD via
-      form actions, rich text support, chronological display.
-    priority: medium
-    tags: [spec, frontend, backend]
-    created: 2026-02-15
-    links:
-      - specs/comments.md
-
   - id: T-16
     title: "Convert activity-log.md to SvelteKit implementation patterns"
     description: |
@@ -306,6 +295,19 @@ done:
     created: 2026-02-15
     links:
       - specs/user-assignment.md
+
+  - id: D-16
+    completed: 2026-02-15
+    title: "Convert comments.md to SvelteKit implementation patterns"
+    description: |
+      Rewrite comments spec with SvelteKit patterns. Comment CRUD via
+      form actions, rich text support, chronological display.
+    priority: medium
+    tags: [spec, frontend, backend]
+    created: 2026-02-15
+    links:
+      - specs/comments.md
+
 
 
 
