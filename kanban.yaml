@@ -64,18 +64,6 @@ todo:
 
   # ── Tech Stack Specs ───────────────────────────────────────────
 
-  - id: T-16
-    title: "Convert activity-log.md to SvelteKit implementation patterns"
-    description: |
-      Rewrite activity log spec with SvelteKit patterns. Audit trail
-      via database triggers or application-level logging, display as
-      timeline component.
-    priority: low
-    tags: [spec, frontend, backend]
-    created: 2026-02-15
-    links:
-      - specs/activity-log.md
-
 in_progress:
 
 review:
@@ -308,6 +296,20 @@ done:
     created: 2026-02-15
     links:
       - specs/search-and-filter.md
+
+  - id: D-18
+    completed: 2026-02-15
+    title: "Convert activity-log.md to SvelteKit implementation patterns"
+    description: |
+      Rewrite activity log spec with SvelteKit patterns. Audit trail
+      via database triggers or application-level logging, display as
+      timeline component.
+    priority: low
+    tags: [spec, frontend, backend]
+    created: 2026-02-15
+    links:
+      - specs/activity-log.md
+
 
 
 
