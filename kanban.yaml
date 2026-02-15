@@ -64,18 +64,6 @@ todo:
 
   # ── Tech Stack Specs ───────────────────────────────────────────
 
-  - id: T-11
-    title: "Convert cards.md to SvelteKit implementation patterns"
-    description: |
-      Rewrite cards spec with SvelteKit patterns. Card CRUD via form
-      actions, detail overlay as a route parameter or modal, rich text
-      description editing.
-    priority: high
-    tags: [spec, frontend, backend]
-    created: 2026-02-15
-    links:
-      - specs/cards.md
-
   - id: T-12
     title: "Convert due-dates.md to SvelteKit implementation patterns"
     description: |
@@ -301,6 +289,20 @@ done:
     created: 2026-02-15
     links:
       - specs/columns.md
+
+  - id: D-11
+    completed: 2026-02-15
+    title: "Convert cards.md to SvelteKit implementation patterns"
+    description: |
+      Rewrite cards spec with SvelteKit patterns. Card CRUD via form
+      actions, detail overlay as a route parameter or modal, rich text
+      description editing.
+    priority: high
+    tags: [spec, frontend, backend]
+    created: 2026-02-15
+    links:
+      - specs/cards.md
+
 
 
 
