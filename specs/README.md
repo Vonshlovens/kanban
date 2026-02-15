@@ -27,7 +27,7 @@ Specifications for the Kanban application. Each spec focuses on a different slic
 These specs currently describe React patterns and need conversion to SvelteKit equivalents. See `kanban.yaml` for tracking tasks.
 
 - `specs/frontend-overview.md` — Tech stack overview, entry points, layout strategy
-- `specs/frontend-routing.md` — Routing (React Router → SvelteKit file routing)
+- `specs/frontend-routing.md` — SvelteKit file-based routing, layouts, load functions
 - `specs/frontend-pages.md` — Pages (React → SvelteKit routes)
 - `specs/frontend-styling.md` — Styling (needs Tailwind 4 update)
 - `specs/frontend-components.md` — Components (React → Svelte 5 + shadcn-svelte)

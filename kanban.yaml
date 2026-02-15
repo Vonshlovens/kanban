@@ -64,18 +64,6 @@ todo:
 
   # ── Tech Stack Specs ───────────────────────────────────────────
 
-  - id: T-2
-    title: "Convert frontend-routing.md — React Router to SvelteKit routing"
-    description: |
-      Rewrite the routing spec from React Router v6 routes to SvelteKit
-      file-based routing. Map each route to a +page.svelte / +layout.svelte
-      structure. Remove legacy vs new UI route split — single routing tree.
-    priority: high
-    tags: [spec, frontend]
-    created: 2026-02-15
-    links:
-      - specs/frontend-routing.md
-
   - id: T-3
     title: "Convert frontend-pages.md — React pages to SvelteKit routes"
     description: |
@@ -293,6 +281,20 @@ done:
     links:
       - specs/frontend-styling.md
       - specs/tech-frontend-ui.md
+
+  - id: D-3
+    completed: 2026-02-15
+    title: "Convert frontend-routing.md — React Router to SvelteKit routing"
+    description: |
+      Rewrite the routing spec from React Router v6 routes to SvelteKit
+      file-based routing. Map each route to a +page.svelte / +layout.svelte
+      structure. Remove legacy vs new UI route split — single routing tree.
+    priority: high
+    tags: [spec, frontend]
+    created: 2026-02-15
+    links:
+      - specs/frontend-routing.md
+
 
 
 
