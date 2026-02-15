@@ -64,18 +64,6 @@ todo:
 
   # ── Tech Stack Specs ───────────────────────────────────────────
 
-  - id: T-3
-    title: "Convert frontend-pages.md — React pages to SvelteKit routes"
-    description: |
-      Rewrite pages spec. Replace React page components with SvelteKit
-      route modules (+page.svelte, +page.server.ts, +layout.svelte).
-      Map each page to its SvelteKit equivalent with load functions.
-    priority: high
-    tags: [spec, frontend]
-    created: 2026-02-15
-    links:
-      - specs/frontend-pages.md
-
   - id: T-6
     title: "Convert frontend-state-data.md — Zustand/React Query to Svelte stores"
     description: |
@@ -297,6 +285,20 @@ done:
     links:
       - specs/frontend-dialogs.md
       - specs/tech-frontend-ui.md
+
+  - id: D-7
+    completed: 2026-02-15
+    title: "Convert frontend-pages.md — React pages to SvelteKit routes"
+    description: |
+      Rewrite pages spec. Replace React page components with SvelteKit
+      route modules (+page.svelte, +page.server.ts, +layout.svelte).
+      Map each page to its SvelteKit equivalent with load functions.
+    priority: high
+    tags: [spec, frontend]
+    created: 2026-02-15
+    links:
+      - specs/frontend-pages.md
+
 
 
 
