@@ -76,18 +76,6 @@ todo:
     links:
       - specs/activity-log.md
 
-  - id: T-18
-    title: "Convert search-and-filter.md to SvelteKit implementation patterns"
-    description: |
-      Rewrite search/filter spec with SvelteKit patterns. URL-based
-      filter state via searchParams, server-side filtering in load
-      functions, reactive filter UI with Svelte 5 runes.
-    priority: medium
-    tags: [spec, frontend, backend]
-    created: 2026-02-15
-    links:
-      - specs/search-and-filter.md
-
 in_progress:
 
 review:
@@ -307,6 +295,20 @@ done:
     created: 2026-02-15
     links:
       - specs/comments.md
+
+  - id: D-17
+    completed: 2026-02-15
+    title: "Convert search-and-filter.md to SvelteKit implementation patterns"
+    description: |
+      Rewrite search/filter spec with SvelteKit patterns. URL-based
+      filter state via searchParams, server-side filtering in load
+      functions, reactive filter UI with Svelte 5 runes.
+    priority: medium
+    tags: [spec, frontend, backend]
+    created: 2026-02-15
+    links:
+      - specs/search-and-filter.md
+
 
 
 
