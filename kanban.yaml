@@ -116,20 +116,6 @@ todo:
       - specs/frontend-dialogs.md
       - specs/tech-frontend-ui.md
 
-  - id: T-8
-    title: "Convert frontend-build-tooling.md — Vite React to Vite + Deno + SvelteKit"
-    description: |
-      Rewrite build tooling spec. Replace Vite React config with
-      SvelteKit + Deno adapter setup. Update linting (eslint-plugin-svelte),
-      formatting (Prettier with svelte plugin), and TypeScript config
-      for SvelteKit conventions.
-    priority: medium
-    tags: [spec, dx]
-    created: 2026-02-15
-    links:
-      - specs/frontend-build-tooling.md
-      - specs/tech-stack-overview.md
-
   - id: T-9
     title: "Convert board-management.md to SvelteKit implementation patterns"
     description: |
@@ -294,6 +280,22 @@ done:
     created: 2026-02-15
     links:
       - specs/frontend-routing.md
+
+  - id: D-4
+    completed: 2026-02-15
+    title: "Convert frontend-build-tooling.md — Vite React to Vite + Deno + SvelteKit"
+    description: |
+      Rewrite build tooling spec. Replace Vite React config with
+      SvelteKit + Deno adapter setup. Update linting (eslint-plugin-svelte),
+      formatting (Prettier with svelte plugin), and TypeScript config
+      for SvelteKit conventions.
+    priority: medium
+    tags: [spec, dx]
+    created: 2026-02-15
+    links:
+      - specs/frontend-build-tooling.md
+      - specs/tech-stack-overview.md
+
 
 
 
