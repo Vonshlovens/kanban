@@ -64,17 +64,6 @@ todo:
 
   # ── Tech Stack Specs ───────────────────────────────────────────
 
-  - id: T-14
-    title: "Convert user-assignment.md to SvelteKit implementation patterns"
-    description: |
-      Rewrite user assignment spec with SvelteKit patterns. User picker
-      component, avatar display, self-assignment shortcut.
-    priority: medium
-    tags: [spec, frontend]
-    created: 2026-02-15
-    links:
-      - specs/user-assignment.md
-
   - id: T-15
     title: "Convert comments.md to SvelteKit implementation patterns"
     description: |
@@ -305,6 +294,19 @@ done:
     created: 2026-02-15
     links:
       - specs/labels.md
+
+  - id: D-15
+    completed: 2026-02-15
+    title: "Convert user-assignment.md to SvelteKit implementation patterns"
+    description: |
+      Rewrite user assignment spec with SvelteKit patterns. User picker
+      component, avatar display, self-assignment shortcut.
+    priority: medium
+    tags: [spec, frontend]
+    created: 2026-02-15
+    links:
+      - specs/user-assignment.md
+
 
 
 
