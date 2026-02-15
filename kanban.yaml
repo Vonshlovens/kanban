@@ -64,17 +64,6 @@ todo:
 
   # ── Tech Stack Specs ───────────────────────────────────────────
 
-  - id: T-10
-    title: "Convert columns.md to SvelteKit implementation patterns"
-    description: |
-      Rewrite columns spec with SvelteKit patterns. CRUD via form actions,
-      reorder via API endpoint, WIP limits as reactive derived state.
-    priority: high
-    tags: [spec, frontend, backend]
-    created: 2026-02-15
-    links:
-      - specs/columns.md
-
   - id: T-11
     title: "Convert cards.md to SvelteKit implementation patterns"
     description: |
@@ -300,6 +289,19 @@ done:
     created: 2026-02-15
     links:
       - specs/board-management.md
+
+  - id: D-10
+    completed: 2026-02-15
+    title: "Convert columns.md to SvelteKit implementation patterns"
+    description: |
+      Rewrite columns spec with SvelteKit patterns. CRUD via form actions,
+      reorder via API endpoint, WIP limits as reactive derived state.
+    priority: high
+    tags: [spec, frontend, backend]
+    created: 2026-02-15
+    links:
+      - specs/columns.md
+
 
 
 
