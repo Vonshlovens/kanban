@@ -64,18 +64,6 @@ todo:
 
   # ── Tech Stack Specs ───────────────────────────────────────────
 
-  - id: T-9
-    title: "Convert board-management.md to SvelteKit implementation patterns"
-    description: |
-      Rewrite board management spec with SvelteKit patterns: server-side
-      load functions, form actions for CRUD, Drizzle queries, and Svelte 5
-      component patterns. Keep feature requirements, update code patterns.
-    priority: high
-    tags: [spec, frontend, backend]
-    created: 2026-02-15
-    links:
-      - specs/board-management.md
-
   - id: T-10
     title: "Convert columns.md to SvelteKit implementation patterns"
     description: |
@@ -299,6 +287,20 @@ done:
     created: 2026-02-15
     links:
       - specs/frontend-state-data.md
+
+  - id: D-9
+    completed: 2026-02-15
+    title: "Convert board-management.md to SvelteKit implementation patterns"
+    description: |
+      Rewrite board management spec with SvelteKit patterns: server-side
+      load functions, form actions for CRUD, Drizzle queries, and Svelte 5
+      component patterns. Keep feature requirements, update code patterns.
+    priority: high
+    tags: [spec, frontend, backend]
+    created: 2026-02-15
+    links:
+      - specs/board-management.md
+
 
 
 
