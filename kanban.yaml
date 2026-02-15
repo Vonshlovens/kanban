@@ -88,20 +88,6 @@ todo:
     links:
       - specs/frontend-pages.md
 
-  - id: T-4
-    title: "Convert frontend-styling.md — Tailwind to Tailwind CSS 4"
-    description: |
-      Rewrite styling spec. Remove dual design system (legacy/new).
-      Update to Tailwind CSS 4 with Vite plugin, tailwind-merge,
-      tailwind-variants, tw-animate-css. Define single design token
-      system with dark mode via mode-watcher.
-    priority: high
-    tags: [spec, frontend]
-    created: 2026-02-15
-    links:
-      - specs/frontend-styling.md
-      - specs/tech-frontend-ui.md
-
   - id: T-5
     title: "Convert frontend-components.md — React to Svelte 5 + shadcn-svelte"
     description: |
@@ -292,6 +278,22 @@ done:
     links:
       - specs/frontend-overview.md
       - specs/tech-stack-overview.md
+
+  - id: D-2
+    completed: 2026-02-15
+    title: "Convert frontend-styling.md — Tailwind to Tailwind CSS 4"
+    description: |
+      Rewrite styling spec. Remove dual design system (legacy/new).
+      Update to Tailwind CSS 4 with Vite plugin, tailwind-merge,
+      tailwind-variants, tw-animate-css. Define single design token
+      system with dark mode via mode-watcher.
+    priority: high
+    tags: [spec, frontend]
+    created: 2026-02-15
+    links:
+      - specs/frontend-styling.md
+      - specs/tech-frontend-ui.md
+
 
 
 archive:
