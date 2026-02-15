@@ -89,19 +89,6 @@ todo:
     links:
       - specs/frontend-state-data.md
 
-  - id: T-7
-    title: "Convert frontend-dialogs.md — NiceModal to bits-ui dialogs"
-    description: |
-      Rewrite dialogs spec. Replace NiceModal framework with bits-ui
-      dialog/alert-dialog/sheet primitives wrapped by shadcn-svelte.
-      Define patterns for modal management in Svelte 5.
-    priority: medium
-    tags: [spec, frontend]
-    created: 2026-02-15
-    links:
-      - specs/frontend-dialogs.md
-      - specs/tech-frontend-ui.md
-
   - id: T-9
     title: "Convert board-management.md to SvelteKit implementation patterns"
     description: |
@@ -296,6 +283,21 @@ done:
     links:
       - specs/frontend-components.md
       - specs/tech-frontend-ui.md
+
+  - id: D-6
+    completed: 2026-02-15
+    title: "Convert frontend-dialogs.md — NiceModal to bits-ui dialogs"
+    description: |
+      Rewrite dialogs spec. Replace NiceModal framework with bits-ui
+      dialog/alert-dialog/sheet primitives wrapped by shadcn-svelte.
+      Define patterns for modal management in Svelte 5.
+    priority: medium
+    tags: [spec, frontend]
+    created: 2026-02-15
+    links:
+      - specs/frontend-dialogs.md
+      - specs/tech-frontend-ui.md
+
 
 
 
