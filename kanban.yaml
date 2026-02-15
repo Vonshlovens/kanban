@@ -120,18 +120,6 @@ todo:
     links:
       - specs/activity-log.md
 
-  - id: T-17
-    title: "Convert drag-and-drop.md to SvelteKit implementation patterns"
-    description: |
-      Rewrite drag-and-drop spec with Svelte 5 patterns. Evaluate
-      svelte-dnd-action or native drag API with Svelte actions.
-      Visual feedback, keyboard alternative, accessibility.
-    priority: high
-    tags: [spec, frontend]
-    created: 2026-02-15
-    links:
-      - specs/drag-and-drop.md
-
   - id: T-18
     title: "Convert search-and-filter.md to SvelteKit implementation patterns"
     description: |
@@ -302,6 +290,20 @@ done:
     created: 2026-02-15
     links:
       - specs/cards.md
+
+  - id: D-12
+    completed: 2026-02-15
+    title: "Convert drag-and-drop.md to SvelteKit implementation patterns"
+    description: |
+      Rewrite drag-and-drop spec with Svelte 5 patterns. Evaluate
+      svelte-dnd-action or native drag API with Svelte actions.
+      Visual feedback, keyboard alternative, accessibility.
+    priority: high
+    tags: [spec, frontend]
+    created: 2026-02-15
+    links:
+      - specs/drag-and-drop.md
+
 
 
 
