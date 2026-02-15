@@ -64,17 +64,6 @@ todo:
 
   # ── Tech Stack Specs ───────────────────────────────────────────
 
-  - id: T-13
-    title: "Convert labels.md to SvelteKit implementation patterns"
-    description: |
-      Rewrite labels spec with SvelteKit patterns. Label CRUD via form
-      actions, multi-label assignment, filtering with OR logic.
-    priority: medium
-    tags: [spec, frontend, backend]
-    created: 2026-02-15
-    links:
-      - specs/labels.md
-
   - id: T-14
     title: "Convert user-assignment.md to SvelteKit implementation patterns"
     description: |
@@ -304,6 +293,19 @@ done:
     created: 2026-02-15
     links:
       - specs/due-dates.md
+
+  - id: D-14
+    completed: 2026-02-15
+    title: "Convert labels.md to SvelteKit implementation patterns"
+    description: |
+      Rewrite labels spec with SvelteKit patterns. Label CRUD via form
+      actions, multi-label assignment, filtering with OR logic.
+    priority: medium
+    tags: [spec, frontend, backend]
+    created: 2026-02-15
+    links:
+      - specs/labels.md
+
 
 
 
