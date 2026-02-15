@@ -23,18 +23,6 @@ tags:
 backlog:
   # Items identified but not yet prioritized for work
 
-  - id: B-1
-    title: "Convert frontend-i18n-analytics.md to SvelteKit patterns"
-    description: |
-      Rewrite the i18n and analytics spec from i18next + PostHog React
-      patterns to SvelteKit equivalents. Evaluate paraglide-js or
-      similar Svelte-native i18n. Keep analytics approach generic.
-    priority: low
-    tags: [spec, frontend]
-    created: 2026-02-15
-    links:
-      - specs/frontend-i18n-analytics.md
-
   - id: B-2
     title: "Convert frontend-editor-diff.md to SvelteKit patterns"
     description: |
@@ -309,6 +297,20 @@ done:
     created: 2026-02-15
     links:
       - specs/activity-log.md
+
+  - id: D-19
+    completed: 2026-02-15
+    title: "Convert frontend-i18n-analytics.md to SvelteKit patterns"
+    description: |
+      Rewrite the i18n and analytics spec from i18next + PostHog React
+      patterns to SvelteKit equivalents. Evaluate paraglide-js or
+      similar Svelte-native i18n. Keep analytics approach generic.
+    priority: low
+    tags: [spec, frontend]
+    created: 2026-02-15
+    links:
+      - specs/frontend-i18n-analytics.md
+
 
 
 
