@@ -76,20 +76,6 @@ todo:
     links:
       - specs/frontend-pages.md
 
-  - id: T-5
-    title: "Convert frontend-components.md — React to Svelte 5 + shadcn-svelte"
-    description: |
-      Rewrite components spec. Replace React component taxonomy with
-      Svelte 5 components using shadcn-svelte and bits-ui primitives.
-      Define component hierarchy: primitives, containers, views.
-      Use Svelte 5 runes ($state, $derived, $effect) throughout.
-    priority: high
-    tags: [spec, frontend]
-    created: 2026-02-15
-    links:
-      - specs/frontend-components.md
-      - specs/tech-frontend-ui.md
-
   - id: T-6
     title: "Convert frontend-state-data.md — Zustand/React Query to Svelte stores"
     description: |
@@ -295,6 +281,22 @@ done:
     links:
       - specs/frontend-build-tooling.md
       - specs/tech-stack-overview.md
+
+  - id: D-5
+    completed: 2026-02-15
+    title: "Convert frontend-components.md — React to Svelte 5 + shadcn-svelte"
+    description: |
+      Rewrite components spec. Replace React component taxonomy with
+      Svelte 5 components using shadcn-svelte and bits-ui primitives.
+      Define component hierarchy: primitives, containers, views.
+      Use Svelte 5 runes ($state, $derived, $effect) throughout.
+    priority: high
+    tags: [spec, frontend]
+    created: 2026-02-15
+    links:
+      - specs/frontend-components.md
+      - specs/tech-frontend-ui.md
+
 
 
 
