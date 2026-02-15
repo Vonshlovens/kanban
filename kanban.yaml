@@ -64,19 +64,6 @@ todo:
 
   # ── Tech Stack Specs ───────────────────────────────────────────
 
-  - id: T-6
-    title: "Convert frontend-state-data.md — Zustand/React Query to Svelte stores"
-    description: |
-      Rewrite state management spec. Replace Zustand stores with Svelte
-      runes and $state. Replace React Query with SvelteKit load functions
-      and form actions. Define patterns for global state, server state,
-      and reactive derived data using Svelte 5 primitives.
-    priority: high
-    tags: [spec, frontend]
-    created: 2026-02-15
-    links:
-      - specs/frontend-state-data.md
-
   - id: T-9
     title: "Convert board-management.md to SvelteKit implementation patterns"
     description: |
@@ -298,6 +285,21 @@ done:
     created: 2026-02-15
     links:
       - specs/frontend-pages.md
+
+  - id: D-8
+    completed: 2026-02-15
+    title: "Convert frontend-state-data.md — Zustand/React Query to Svelte stores"
+    description: |
+      Rewrite state management spec. Replace Zustand stores with Svelte
+      runes and $state. Replace React Query with SvelteKit load functions
+      and form actions. Define patterns for global state, server state,
+      and reactive derived data using Svelte 5 primitives.
+    priority: high
+    tags: [spec, frontend]
+    created: 2026-02-15
+    links:
+      - specs/frontend-state-data.md
+
 
 
 
