@@ -1,0 +1,297 @@
+# Kanban App - Kanban Board
+# Usage: Track project tasks across workflow stages.
+# Conventions:
+#   - IDs are sequential per column, prefixed: B=backlog, T=todo, P=progress, R=review, D=done
+#   - Move tasks between columns by cut/pasting the block
+#   - Priority: critical > high > medium > low
+#   - Tags map to project areas (see `tags` section below)
+
+project: kanban
+updated: 2026-02-15
+
+# ── Tag definitions ──────────────────────────────────────────────
+tags:
+  frontend:   "SvelteKit UI, components, pages"
+  backend:    "API routes, server logic"
+  database:   "Drizzle schema, migrations, queries"
+  spec:       "Spec conversion / creation"
+  infra:      "Docker, deployment, CI/CD"
+  dx:         "Developer experience, tooling, scripts"
+
+# ── Columns ──────────────────────────────────────────────────────
+
+backlog:
+  # Items identified but not yet prioritized for work
+
+  - id: B-1
+    title: "Convert frontend-i18n-analytics.md to SvelteKit patterns"
+    description: |
+      Rewrite the i18n and analytics spec from i18next + PostHog React
+      patterns to SvelteKit equivalents. Evaluate paraglide-js or
+      similar Svelte-native i18n. Keep analytics approach generic.
+    priority: low
+    tags: [spec, frontend]
+    created: 2026-02-15
+    links:
+      - specs/frontend-i18n-analytics.md
+
+  - id: B-2
+    title: "Convert frontend-editor-diff.md to SvelteKit patterns"
+    description: |
+      Rewrite the rich-text editor and diff viewer spec. Replace Lexical
+      React with a Svelte-compatible editor (TipTap, ProseMirror, or
+      svelte-lexical if mature). Adapt diff viewer approach.
+    priority: low
+    tags: [spec, frontend]
+    created: 2026-02-15
+    links:
+      - specs/frontend-editor-diff.md
+
+  - id: B-3
+    title: "Set up Docker and Docker Compose"
+    description: |
+      Create Dockerfile and docker-compose.yml for local development.
+      Services: PostgreSQL (with pgvector if needed) + SvelteKit app.
+      Follow patterns from tech-containerization.md spec.
+    priority: medium
+    tags: [infra]
+    created: 2026-02-15
+    links:
+      - specs/tech-containerization.md
+
+todo:
+  # Tasks committed for near-term work
+
+  # ── Tech Stack Specs ───────────────────────────────────────────
+
+  - id: T-2
+    title: "Convert frontend-routing.md — React Router to SvelteKit routing"
+    description: |
+      Rewrite the routing spec from React Router v6 routes to SvelteKit
+      file-based routing. Map each route to a +page.svelte / +layout.svelte
+      structure. Remove legacy vs new UI route split — single routing tree.
+    priority: high
+    tags: [spec, frontend]
+    created: 2026-02-15
+    links:
+      - specs/frontend-routing.md
+
+  - id: T-3
+    title: "Convert frontend-pages.md — React pages to SvelteKit routes"
+    description: |
+      Rewrite pages spec. Replace React page components with SvelteKit
+      route modules (+page.svelte, +page.server.ts, +layout.svelte).
+      Map each page to its SvelteKit equivalent with load functions.
+    priority: high
+    tags: [spec, frontend]
+    created: 2026-02-15
+    links:
+      - specs/frontend-pages.md
+
+  - id: T-4
+    title: "Convert frontend-styling.md — Tailwind to Tailwind CSS 4"
+    description: |
+      Rewrite styling spec. Remove dual design system (legacy/new).
+      Update to Tailwind CSS 4 with Vite plugin, tailwind-merge,
+      tailwind-variants, tw-animate-css. Define single design token
+      system with dark mode via mode-watcher.
+    priority: high
+    tags: [spec, frontend]
+    created: 2026-02-15
+    links:
+      - specs/frontend-styling.md
+      - specs/tech-frontend-ui.md
+
+  - id: T-5
+    title: "Convert frontend-components.md — React to Svelte 5 + shadcn-svelte"
+    description: |
+      Rewrite components spec. Replace React component taxonomy with
+      Svelte 5 components using shadcn-svelte and bits-ui primitives.
+      Define component hierarchy: primitives, containers, views.
+      Use Svelte 5 runes ($state, $derived, $effect) throughout.
+    priority: high
+    tags: [spec, frontend]
+    created: 2026-02-15
+    links:
+      - specs/frontend-components.md
+      - specs/tech-frontend-ui.md
+
+  - id: T-6
+    title: "Convert frontend-state-data.md — Zustand/React Query to Svelte stores"
+    description: |
+      Rewrite state management spec. Replace Zustand stores with Svelte
+      runes and $state. Replace React Query with SvelteKit load functions
+      and form actions. Define patterns for global state, server state,
+      and reactive derived data using Svelte 5 primitives.
+    priority: high
+    tags: [spec, frontend]
+    created: 2026-02-15
+    links:
+      - specs/frontend-state-data.md
+
+  - id: T-7
+    title: "Convert frontend-dialogs.md — NiceModal to bits-ui dialogs"
+    description: |
+      Rewrite dialogs spec. Replace NiceModal framework with bits-ui
+      dialog/alert-dialog/sheet primitives wrapped by shadcn-svelte.
+      Define patterns for modal management in Svelte 5.
+    priority: medium
+    tags: [spec, frontend]
+    created: 2026-02-15
+    links:
+      - specs/frontend-dialogs.md
+      - specs/tech-frontend-ui.md
+
+  - id: T-8
+    title: "Convert frontend-build-tooling.md — Vite React to Vite + Deno + SvelteKit"
+    description: |
+      Rewrite build tooling spec. Replace Vite React config with
+      SvelteKit + Deno adapter setup. Update linting (eslint-plugin-svelte),
+      formatting (Prettier with svelte plugin), and TypeScript config
+      for SvelteKit conventions.
+    priority: medium
+    tags: [spec, dx]
+    created: 2026-02-15
+    links:
+      - specs/frontend-build-tooling.md
+      - specs/tech-stack-overview.md
+
+  - id: T-9
+    title: "Convert board-management.md to SvelteKit implementation patterns"
+    description: |
+      Rewrite board management spec with SvelteKit patterns: server-side
+      load functions, form actions for CRUD, Drizzle queries, and Svelte 5
+      component patterns. Keep feature requirements, update code patterns.
+    priority: high
+    tags: [spec, frontend, backend]
+    created: 2026-02-15
+    links:
+      - specs/board-management.md
+
+  - id: T-10
+    title: "Convert columns.md to SvelteKit implementation patterns"
+    description: |
+      Rewrite columns spec with SvelteKit patterns. CRUD via form actions,
+      reorder via API endpoint, WIP limits as reactive derived state.
+    priority: high
+    tags: [spec, frontend, backend]
+    created: 2026-02-15
+    links:
+      - specs/columns.md
+
+  - id: T-11
+    title: "Convert cards.md to SvelteKit implementation patterns"
+    description: |
+      Rewrite cards spec with SvelteKit patterns. Card CRUD via form
+      actions, detail overlay as a route parameter or modal, rich text
+      description editing.
+    priority: high
+    tags: [spec, frontend, backend]
+    created: 2026-02-15
+    links:
+      - specs/cards.md
+
+  - id: T-12
+    title: "Convert due-dates.md to SvelteKit implementation patterns"
+    description: |
+      Rewrite due dates spec with SvelteKit patterns. Date picker via
+      bits-ui, urgency indicators as derived state, optional sorting.
+    priority: medium
+    tags: [spec, frontend]
+    created: 2026-02-15
+    links:
+      - specs/due-dates.md
+
+  - id: T-13
+    title: "Convert labels.md to SvelteKit implementation patterns"
+    description: |
+      Rewrite labels spec with SvelteKit patterns. Label CRUD via form
+      actions, multi-label assignment, filtering with OR logic.
+    priority: medium
+    tags: [spec, frontend, backend]
+    created: 2026-02-15
+    links:
+      - specs/labels.md
+
+  - id: T-14
+    title: "Convert user-assignment.md to SvelteKit implementation patterns"
+    description: |
+      Rewrite user assignment spec with SvelteKit patterns. User picker
+      component, avatar display, self-assignment shortcut.
+    priority: medium
+    tags: [spec, frontend]
+    created: 2026-02-15
+    links:
+      - specs/user-assignment.md
+
+  - id: T-15
+    title: "Convert comments.md to SvelteKit implementation patterns"
+    description: |
+      Rewrite comments spec with SvelteKit patterns. Comment CRUD via
+      form actions, rich text support, chronological display.
+    priority: medium
+    tags: [spec, frontend, backend]
+    created: 2026-02-15
+    links:
+      - specs/comments.md
+
+  - id: T-16
+    title: "Convert activity-log.md to SvelteKit implementation patterns"
+    description: |
+      Rewrite activity log spec with SvelteKit patterns. Audit trail
+      via database triggers or application-level logging, display as
+      timeline component.
+    priority: low
+    tags: [spec, frontend, backend]
+    created: 2026-02-15
+    links:
+      - specs/activity-log.md
+
+  - id: T-17
+    title: "Convert drag-and-drop.md to SvelteKit implementation patterns"
+    description: |
+      Rewrite drag-and-drop spec with Svelte 5 patterns. Evaluate
+      svelte-dnd-action or native drag API with Svelte actions.
+      Visual feedback, keyboard alternative, accessibility.
+    priority: high
+    tags: [spec, frontend]
+    created: 2026-02-15
+    links:
+      - specs/drag-and-drop.md
+
+  - id: T-18
+    title: "Convert search-and-filter.md to SvelteKit implementation patterns"
+    description: |
+      Rewrite search/filter spec with SvelteKit patterns. URL-based
+      filter state via searchParams, server-side filtering in load
+      functions, reactive filter UI with Svelte 5 runes.
+    priority: medium
+    tags: [spec, frontend, backend]
+    created: 2026-02-15
+    links:
+      - specs/search-and-filter.md
+
+in_progress:
+
+review:
+
+done:
+
+  - id: D-1
+    completed: 2026-02-15
+    title: "Convert frontend-overview.md — React to Deno + SvelteKit"
+    description: |
+      Rewrite the frontend overview spec replacing the React 18 / Vite /
+      Zustand / React Router stack description with the SvelteKit target
+      stack: Deno runtime, SvelteKit 2, Svelte 5 (runes), Tailwind CSS 4,
+      shadcn-svelte, bits-ui, Zod 4. Remove references to dual UI systems
+      (legacy/new) — this is a greenfield SvelteKit app.
+    priority: high
+    tags: [spec, frontend]
+    created: 2026-02-15
+    links:
+      - specs/frontend-overview.md
+      - specs/tech-stack-overview.md
+
+
+archive:
