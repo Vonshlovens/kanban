@@ -64,17 +64,6 @@ todo:
 
   # ── Tech Stack Specs ───────────────────────────────────────────
 
-  - id: T-12
-    title: "Convert due-dates.md to SvelteKit implementation patterns"
-    description: |
-      Rewrite due dates spec with SvelteKit patterns. Date picker via
-      bits-ui, urgency indicators as derived state, optional sorting.
-    priority: medium
-    tags: [spec, frontend]
-    created: 2026-02-15
-    links:
-      - specs/due-dates.md
-
   - id: T-13
     title: "Convert labels.md to SvelteKit implementation patterns"
     description: |
@@ -303,6 +292,19 @@ done:
     created: 2026-02-15
     links:
       - specs/drag-and-drop.md
+
+  - id: D-13
+    completed: 2026-02-15
+    title: "Convert due-dates.md to SvelteKit implementation patterns"
+    description: |
+      Rewrite due dates spec with SvelteKit patterns. Date picker via
+      bits-ui, urgency indicators as derived state, optional sorting.
+    priority: medium
+    tags: [spec, frontend]
+    created: 2026-02-15
+    links:
+      - specs/due-dates.md
+
 
 
 
