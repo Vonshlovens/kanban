@@ -278,7 +278,7 @@ export const PUT: RequestHandler = async ({ request }) => {
 
 > **Status:** Implemented.
 
-Compact card shown in column lists. Clicking opens the detail view. On hover, a three-dot actions menu appears in the top-right corner with a "Delete" option that opens the `DeleteCardDialog`. The menu trigger uses `stopPropagation()` to prevent navigating when clicking the dropdown.
+Compact card shown in column lists. Clicking opens the detail view. On hover, a three-dot actions menu appears in the top-right corner with "Move to" (opens `MoveCardDialog`) and "Delete" (opens `DeleteCardDialog`) options. The "Move to" option only appears when other columns exist. The menu trigger uses `stopPropagation()` to prevent navigating when clicking the dropdown.
 
 Key implementation details:
 - Wrapped in a `group/card` container `<div>` so the actions menu can show/hide on hover
@@ -288,7 +288,9 @@ Key implementation details:
 
 ### Card Detail
 
-Full card view with editable title, description, and metadata sidebar.
+> **Status:** Implemented.
+
+Full card view with editable title, description, labels, comments, metadata, and delete. Uses shadcn Card components for section layout.
 
 ```svelte
 <!-- src/lib/components/card/CardDetail.svelte -->
@@ -309,7 +311,7 @@ Full card view with editable title, description, and metadata sidebar.
     updateForm: SuperValidated<UpdateCardSchema>;
   } = $props();
 
-  const { form, enhance } = superForm(updateForm);
+  const { form, enhance, errors: formErrors, submitting: updateSubmitting } = superForm(updateForm);
 
   let editingTitle = $state(false);
   let showDelete = $state(false);
@@ -359,7 +361,7 @@ Full card view with editable title, description, and metadata sidebar.
         rows={6}
       />
     </div>
-    <Button type="submit" size="sm">Save</Button>
+    <Button type="submit" size="sm" disabled={$updateSubmitting}>Save</Button>
   </form>
 
   <div class="border-t pt-4">
@@ -372,6 +374,22 @@ Full card view with editable title, description, and metadata sidebar.
 </div>
 ```
 
+### Move Card Dialog
+
+> **Status:** Implemented.
+
+Dialog for moving a card to another column via a dropdown picker. Provides a non-drag alternative for accessibility and quick moves.
+
+Key implementation details:
+- Uses `Dialog` (not `AlertDialog`) since this is a non-destructive action
+- Shows current column name with an arrow pointing to the selected target column
+- Uses `Select` component to pick the target column (current column excluded)
+- Submits to the existing `?/moveCard` form action with position 0 (top of target column)
+- Uses the hidden form + `requestSubmit()` pattern with `enhance` for progressive enhancement
+- Tracks `moving` state to disable the button and show a spinner during submission
+- Accessible from the `CardItem` dropdown menu ("Move to" option)
+- `open` prop is bindable; selection resets when dialog closes
+
 ### Delete Card Dialog
 
 > **Status:** Implemented.
@@ -381,13 +399,14 @@ AlertDialog confirmation for card deletion. Uses the hidden form + `requestSubmi
 Key implementation details:
 - Uses `AlertDialog.Action` with `onclick` to submit a hidden form (not a `<form>` inside the footer)
 - Posts to `/boards/{boardId}?/deleteCard` with `cardId` hidden input
-- Triggered from `CardItem`'s dropdown menu and (in the future) from the card detail view
+- Tracks `deleting` state to disable the button and show a spinner during submission
+- Triggered from `CardItem`'s dropdown menu and the card detail view
 
 ### Add Card (Column Footer)
 
 > **Status:** Implemented.
 
-Inline form that expands in the column footer to create a new card. Uses `superForm` with `resetForm: true` to clear the input after submission.
+Inline form that expands in the column footer to create a new card. Uses `superForm` with `resetForm: true` to clear the input after submission. Destructures `submitting` to disable the submit button and show a spinner during submission.
 
 ## Toast Notifications
 
@@ -396,6 +415,7 @@ Card CRUD actions show toast notifications for user feedback:
 | Action | Success Message | Error Message |
 | --- | --- | --- |
 | Add card | "Card added" | "Failed to add card" |
+| Move card | "Card moved to \"{column}\"" | "Failed to move card" |
 | Delete card | "Card deleted" | "Failed to delete card" |
 
 `AddCard` uses `superForm`'s `onResult`. `DeleteCardDialog` uses SvelteKit's `enhance` from `$app/forms`.
@@ -412,5 +432,6 @@ Card CRUD actions show toast notifications for user feedback:
 | `src/routes/(app)/boards/[boardId]/cards/reorder/+server.ts` | JSON API for drag-and-drop reorder |
 | `src/lib/components/card/CardItem.svelte` | Compact card in board column view |
 | `src/lib/components/card/CardDetail.svelte` | Full card detail with editable fields |
+| `src/lib/components/card/MoveCardDialog.svelte` | Move card to another column dialog |
 | `src/lib/components/card/DeleteCardDialog.svelte` | Delete confirmation dialog |
 | `src/lib/components/card/AddCard.svelte` | Inline form to create a new card |

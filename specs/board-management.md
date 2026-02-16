@@ -174,13 +174,14 @@ export const actions: Actions = {
 
 ### Form Pattern
 
-All forms use sveltekit-superforms with plain HTML form elements (no formsnap `Form.Field`). Forms include `onResult` callbacks for toast notifications:
+All forms use sveltekit-superforms with plain HTML form elements (no formsnap `Form.Field`). Forms include `onResult` callbacks for toast notifications and destructure `submitting` for loading states:
 
 ```svelte
 <script lang="ts">
   import { superForm } from "sveltekit-superforms";
   import { toast } from "svelte-sonner";
-  const { form, enhance, errors } = superForm(data.form, {
+  import LoaderCircleIcon from "@lucide/svelte/icons/loader-circle";
+  const { form, enhance, errors, submitting } = superForm(data.form, {
     onResult: ({ result }) => {
       if (result.type === "success") toast.success("Changes saved");
       else if (result.type === "error") toast.error("Failed to save changes");
@@ -193,19 +194,26 @@ All forms use sveltekit-superforms with plain HTML form elements (no formsnap `F
   {#if $errors.fieldName}
     <p class="text-destructive">{$errors.fieldName[0]}</p>
   {/if}
-  <Button type="submit">Save</Button>
+  <Button type="submit" disabled={$submitting}>
+    {#if $submitting}
+      <LoaderCircleIcon class="size-3.5 animate-spin" />
+    {/if}
+    Save
+  </Button>
 </form>
 ```
 
 ### Delete Confirmation Pattern
 
-Uses AlertDialog with a hidden form + `requestSubmit()`. The form uses SvelteKit's `enhance` for toast notifications:
+Uses AlertDialog with a hidden form + `requestSubmit()`. The form uses SvelteKit's `enhance` for toast notifications. A manual `$state` boolean tracks submission for loading UI:
 
 ```svelte
 <script lang="ts">
   import { enhance } from "$app/forms";
   import { toast } from "svelte-sonner";
+  import LoaderCircleIcon from "@lucide/svelte/icons/loader-circle";
   let deleteFormEl: HTMLFormElement | undefined = $state();
+  let deleting = $state(false);
 </script>
 
 <AlertDialog.Root>
@@ -218,7 +226,13 @@ Uses AlertDialog with a hidden form + `requestSubmit()`. The form uses SvelteKit
     <!-- header/description -->
     <AlertDialog.Footer>
       <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
-      <AlertDialog.Action onclick={() => deleteFormEl?.requestSubmit()}>
+      <AlertDialog.Action
+        onclick={() => { deleting = true; deleteFormEl?.requestSubmit(); }}
+        disabled={deleting}
+      >
+        {#if deleting}
+          <LoaderCircleIcon class="size-3.5 animate-spin" />
+        {/if}
         Delete board
       </AlertDialog.Action>
     </AlertDialog.Footer>
@@ -237,6 +251,7 @@ Uses AlertDialog with a hidden form + `requestSubmit()`. The form uses SvelteKit
         const { goto } = await import("$app/navigation");
         goto(result.location);
       } else if (result.type === "error") {
+        deleting = false;
         toast.error("Failed to delete board");
       }
     };

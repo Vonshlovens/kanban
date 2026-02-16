@@ -8,6 +8,7 @@
   import PencilIcon from "@lucide/svelte/icons/pencil";
   import GaugeIcon from "@lucide/svelte/icons/gauge";
   import Trash2Icon from "@lucide/svelte/icons/trash-2";
+  import LoaderCircleIcon from "@lucide/svelte/icons/loader-circle";
   import MinusIcon from "@lucide/svelte/icons/minus";
   import PlusIcon from "@lucide/svelte/icons/plus";
   import { dragHandle } from "svelte-dnd-action";
@@ -38,6 +39,7 @@
   let settingWip = $state(false);
   let wipValue = $state(0);
   let wipFormEl: HTMLFormElement | undefined = $state();
+  let wipSaving = $state(false);
 
   $effect(() => {
     // Sync edit name when column name changes (e.g. after rename)
@@ -173,7 +175,7 @@
       {#if column.wipLimit != null}
         <button
           class="text-[10px] text-muted-foreground/70 hover:text-foreground transition-colors"
-          onclick={() => { wipValue = 0; wipFormEl?.requestSubmit(); settingWip = false; }}
+          onclick={() => { wipValue = 0; wipSaving = true; wipFormEl?.requestSubmit(); settingWip = false; }}
         >
           Remove
         </button>
@@ -208,8 +210,12 @@
       <Button
         size="sm"
         class="ml-auto h-7 px-2.5 text-xs"
-        onclick={() => { wipFormEl?.requestSubmit(); settingWip = false; }}
+        disabled={wipSaving}
+        onclick={() => { wipSaving = true; wipFormEl?.requestSubmit(); settingWip = false; }}
       >
+        {#if wipSaving}
+          <LoaderCircleIcon class="size-3 animate-spin" />
+        {/if}
         Save
       </Button>
     </div>
@@ -225,6 +231,7 @@
   use:enhance={() => {
     return async ({ update, result }) => {
       await update();
+      wipSaving = false;
       if (result.type === "success") {
         toast.success(wipValue === 0 ? "WIP limit removed" : "WIP limit updated");
       } else if (result.type === "error") {

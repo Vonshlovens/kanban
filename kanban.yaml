@@ -154,24 +154,41 @@ backlog:
       - specs/frontend-components.md
       - specs/cards.md
 
-  - id: B-25
-    title: "Add \"Move to\" dialog for card context menu"
+  - id: B-24
+    title: "Add 'Move to column' action to CardDetail page"
     description: |
-      Add a MoveCardDialog component that lets users move a card to another column via a dropdown picker in the card context menu. This provides a non-drag alternative for accessibility and quick moves. The moveCard form action already exists. See specs/drag-and-drop.md for the planned component pattern.
+      The MoveCardDialog is currently only accessible from the CardItem dropdown on the board view. Add it to the CardDetail page as well, so users can move a card to another column from the detail view. This requires loading the board's columns in the card detail page server load function and passing them to CardDetail. Add a 'Move to' button or dropdown in the card detail sidebar/metadata area.
     priority: medium
     tags: [frontend]
     assignee: ""
     created: 2026-02-16
     subtasks:
-      - text: Create MoveCardDialog.svelte with column select picker
+      - text: Load board columns in card detail +page.server.ts
         done: false
-      - text: "Add 'Move to' option in CardItem dropdown menu"
+      - text: Pass columns to CardDetail component
         done: false
-      - text: Pass available columns to CardItem from Column component
+      - text: Add MoveCardDialog trigger in CardDetail UI
         done: false
     links:
-      - specs/drag-and-drop.md
       - specs/cards.md
+      - specs/drag-and-drop.md
+
+  - id: B-25
+    title: Fix column rename blur/submit race condition
+    description: |
+      In ColumnHeader.svelte, when the user presses Enter to submit a rename, handleKeydown calls form.requestSubmit() but the subsequent blur event fires onblur which resets editName back to the original column.name and sets editing=false. This means the form may submit the old name instead of the edited name, or the rename appears to not work. Fix: differentiate between intentional blur (user clicked away, should cancel) and blur caused by submit (should not reset). One approach: set a flag before requestSubmit() and check it in onblur.
+    priority: medium
+    tags: [frontend]
+    assignee: ""
+    created: 2026-02-16
+    subtasks:
+      - text: Add a submitting flag that prevents onblur from resetting the name
+        done: false
+      - text: Verify rename works correctly via both Enter and blur-away
+        done: false
+    links:
+      - specs/columns.md
+
 
 
 todo:
@@ -180,28 +197,6 @@ todo:
   # ── Tech Stack Specs ───────────────────────────────────────────
 
 in_progress:
-
-  - id: P-1
-    started: 2026-02-16
-    title: Add loading states to form submit buttons
-    description: |
-      Form buttons (rename, save description, add column, add card, delete, etc.) don't show any loading indicator during submission. Use superForm's `$submitting` store and SvelteKit enhance callbacks to disable buttons and show a spinner or 'Saving...' text while the action is in flight. This prevents double-submits and gives clear feedback that the action is processing.
-    priority: low
-    tags: [frontend]
-    assignee: ""
-    created: 2026-02-16
-    subtasks:
-      - text: "Add submitting state to superForm instances (settings, add column, add card)"
-        done: false
-      - text: "Add submitting state to plain enhance forms (favorite toggle, delete forms)"
-        done: false
-      - text: Show spinner or disabled state on submit buttons while submitting
-        done: false
-    links:
-      - specs/board-management.md
-      - specs/columns.md
-      - specs/cards.md
-
 
 review:
 
@@ -840,6 +835,50 @@ done:
     links:
       - specs/columns.md
       - specs/drag-and-drop.md
+
+  - id: D-36
+    completed: 2026-02-16
+    title: "Add \"Move to\" dialog for card context menu"
+    description: |
+      Add a MoveCardDialog component that lets users move a card to another column via a dropdown picker in the card context menu. This provides a non-drag alternative for accessibility and quick moves. The moveCard form action already exists. See specs/drag-and-drop.md for the planned component pattern.
+    priority: medium
+    tags: [frontend]
+    assignee: ""
+    created: 2026-02-16
+    subtasks:
+      - text: Create MoveCardDialog.svelte with column select picker
+        done: false
+      - text: "Add 'Move to' option in CardItem dropdown menu"
+        done: false
+      - text: Pass available columns to CardItem from Column component
+        done: false
+    links:
+      - specs/drag-and-drop.md
+      - specs/cards.md
+
+  - id: D-37
+    completed: 2026-02-16
+    started: 2026-02-16
+    title: Add loading states to form submit buttons
+    description: |
+      Form buttons (rename, save description, add column, add card, delete, etc.) don't show any loading indicator during submission. Use superForm's `$submitting` store and SvelteKit enhance callbacks to disable buttons and show a spinner or 'Saving...' text while the action is in flight. This prevents double-submits and gives clear feedback that the action is processing.
+    priority: low
+    tags: [frontend]
+    assignee: ""
+    created: 2026-02-16
+    subtasks:
+      - text: "Add submitting state to superForm instances (settings, add column, add card)"
+        done: false
+      - text: "Add submitting state to plain enhance forms (favorite toggle, delete forms)"
+        done: false
+      - text: Show spinner or disabled state on submit buttons while submitting
+        done: false
+    links:
+      - specs/board-management.md
+      - specs/columns.md
+      - specs/cards.md
+
+
 
 
 

@@ -299,6 +299,7 @@ The dropdown uses the `{#snippet child({ props })}` pattern on `DropdownMenu.Tri
 - If cards exist but no other columns: shows a destructive warning
 - If empty: simple confirmation message
 - Hidden form posts to `/boards/{boardId}?/deleteColumn` with `columnId` and optional `moveCardsTo`
+- Tracks `deleting` state to disable the button and show a spinner during submission
 
 ### Validation Schemas
 

@@ -1,5 +1,6 @@
 <script lang="ts">
   import * as AlertDialog from "$lib/components/ui/alert-dialog/index.js";
+  import LoaderCircleIcon from "@lucide/svelte/icons/loader-circle";
   import { enhance } from "$app/forms";
   import { toast } from "svelte-sonner";
 
@@ -14,6 +15,7 @@
   } = $props();
 
   let deleteFormEl: HTMLFormElement | undefined = $state();
+  let deleting = $state(false);
 </script>
 
 <AlertDialog.Root bind:open>
@@ -29,8 +31,12 @@
       <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
       <AlertDialog.Action
         class="bg-destructive text-white hover:bg-destructive/90"
-        onclick={() => deleteFormEl?.requestSubmit()}
+        onclick={() => { deleting = true; deleteFormEl?.requestSubmit(); }}
+        disabled={deleting}
       >
+        {#if deleting}
+          <LoaderCircleIcon class="size-3.5 animate-spin" />
+        {/if}
         Delete card
       </AlertDialog.Action>
     </AlertDialog.Footer>
@@ -48,6 +54,7 @@
       if (result.type === "success") {
         toast.success("Card deleted");
       } else if (result.type === "error") {
+        deleting = false;
         toast.error("Failed to delete card");
       }
     };

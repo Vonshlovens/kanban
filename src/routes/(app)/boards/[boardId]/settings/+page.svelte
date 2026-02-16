@@ -7,6 +7,7 @@
   import { enhance } from "$app/forms";
   import { toast } from "svelte-sonner";
   import ArrowLeftIcon from "@lucide/svelte/icons/arrow-left";
+  import LoaderCircleIcon from "@lucide/svelte/icons/loader-circle";
   import StarIcon from "@lucide/svelte/icons/star";
   import Trash2Icon from "@lucide/svelte/icons/trash-2";
 
@@ -16,6 +17,7 @@
     form: renameFormData,
     enhance: renameEnhance,
     errors: renameErrors,
+    submitting: renameSubmitting,
   } = superForm(data.renameForm, {
     onResult: ({ result }) => {
       if (result.type === "success") {
@@ -30,6 +32,7 @@
     form: descFormData,
     enhance: descEnhance,
     errors: descErrors,
+    submitting: descSubmitting,
   } = superForm(data.descriptionForm, {
     onResult: ({ result }) => {
       if (result.type === "success") {
@@ -43,6 +46,8 @@
   let descriptionLength = $derived($descFormData.description?.length ?? 0);
   let deleteDialogOpen = $state(false);
   let deleteFormEl: HTMLFormElement | undefined = $state();
+  let favSubmitting = $state(false);
+  let deleting = $state(false);
 </script>
 
 <div class="mx-auto max-w-2xl px-4 py-10">
@@ -77,7 +82,12 @@
               class="flex-1"
               aria-invalid={$renameErrors.name ? "true" : undefined}
             />
-            <Button type="submit" variant="secondary" size="sm" class="h-9">Save</Button>
+            <Button type="submit" variant="secondary" size="sm" class="h-9" disabled={$renameSubmitting}>
+              {#if $renameSubmitting}
+                <LoaderCircleIcon class="size-3.5 animate-spin" />
+              {/if}
+              Save
+            </Button>
           </div>
           {#if $renameErrors.name}
             <p class="text-[0.8rem] text-destructive">{$renameErrors.name[0]}</p>
@@ -111,7 +121,12 @@
               <span class="text-xs text-muted-foreground tabular-nums">
                 {descriptionLength}/500
               </span>
-              <Button type="submit" variant="secondary" size="sm">Save</Button>
+              <Button type="submit" variant="secondary" size="sm" disabled={$descSubmitting}>
+                {#if $descSubmitting}
+                  <LoaderCircleIcon class="size-3.5 animate-spin" />
+                {/if}
+                Save
+              </Button>
             </div>
           </div>
         </form>
@@ -130,7 +145,9 @@
             method="POST"
             action="?/toggleFavorite"
             use:enhance={() => {
+              favSubmitting = true;
               return async ({ update, result }) => {
+                favSubmitting = false;
                 await update();
                 if (result.type === "success") {
                   toast.success(
@@ -147,12 +164,17 @@
               variant={data.board.isFavorite ? "secondary" : "outline"}
               size="sm"
               class="gap-1.5"
+              disabled={favSubmitting}
             >
-              <StarIcon
-                class="size-3.5 {data.board.isFavorite
-                  ? 'fill-amber-400 text-amber-400 dark:fill-amber-300 dark:text-amber-300'
-                  : 'text-muted-foreground'}"
-              />
+              {#if favSubmitting}
+                <LoaderCircleIcon class="size-3.5 animate-spin" />
+              {:else}
+                <StarIcon
+                  class="size-3.5 {data.board.isFavorite
+                    ? 'fill-amber-400 text-amber-400 dark:fill-amber-300 dark:text-amber-300'
+                    : 'text-muted-foreground'}"
+                />
+              {/if}
               {data.board.isFavorite ? "Favorited" : "Add to favorites"}
             </Button>
           </form>
@@ -195,8 +217,12 @@
                 <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
                 <AlertDialog.Action
                   class="bg-destructive text-white hover:bg-destructive/90"
-                  onclick={() => deleteFormEl?.requestSubmit()}
+                  onclick={() => { deleting = true; deleteFormEl?.requestSubmit(); }}
+                  disabled={deleting}
                 >
+                  {#if deleting}
+                    <LoaderCircleIcon class="size-3.5 animate-spin" />
+                  {/if}
                   Delete board
                 </AlertDialog.Action>
               </AlertDialog.Footer>
@@ -213,10 +239,10 @@
             return async ({ result }) => {
               if (result.type === "redirect") {
                 toast.success("Board deleted");
-                // Let SvelteKit handle the redirect
                 const { goto } = await import("$app/navigation");
                 goto(result.location);
               } else if (result.type === "error") {
+                deleting = false;
                 toast.error("Failed to delete board");
               }
             };
