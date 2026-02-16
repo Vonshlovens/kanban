@@ -51,6 +51,7 @@
     submitting: updateSubmitting,
   } = superForm(updateForm, {
     onResult: ({ result }) => {
+      titleSubmitting = false;
       if (result.type === "success") {
         editingTitle = false;
         toast.success("Card updated");
@@ -61,6 +62,7 @@
   });
 
   let editingTitle = $state(false);
+  let titleSubmitting = $state(false);
   let showDelete = $state(false);
   let titleInputEl: HTMLInputElement | undefined = $state();
 
@@ -107,6 +109,7 @@
   let titleFormEl: HTMLFormElement | undefined = $state();
 
   function handleTitleBlur() {
+    if (titleSubmitting) return;
     if ($formData.title && $formData.title !== card.title) {
       titleFormEl?.requestSubmit();
     } else {
@@ -117,7 +120,12 @@
   function handleTitleKeydown(e: KeyboardEvent) {
     if (e.key === "Enter") {
       e.preventDefault();
-      handleTitleBlur();
+      if ($formData.title && $formData.title !== card.title) {
+        titleSubmitting = true;
+        titleFormEl?.requestSubmit();
+      } else {
+        editingTitle = false;
+      }
     } else if (e.key === "Escape") {
       $formData.title = card.title;
       editingTitle = false;

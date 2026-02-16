@@ -292,87 +292,13 @@ Key implementation details:
 
 Full card view with editable title, description, labels, comments, metadata, and delete. Uses shadcn Card components for section layout.
 
-```svelte
-<!-- src/lib/components/card/CardDetail.svelte -->
-<!-- NOTE: Requires textarea shadcn-svelte component to be installed -->
-<script lang="ts">
-  import { Button } from "$lib/components/ui/button/index.js";
-  import { Input } from "$lib/components/ui/input/index.js";
-  import { Textarea } from "$lib/components/ui/textarea";
-  import XIcon from "@lucide/svelte/icons/x";
-  import { superForm } from "sveltekit-superforms";
-  import type { SuperValidated } from "sveltekit-superforms";
-  import type { UpdateCardSchema } from "$lib/schemas/card";
-  import DeleteCardDialog from "$lib/components/card/DeleteCardDialog.svelte";
-
-  let { card, boardId, updateForm }: {
-    card: Card;
-    boardId: string;
-    updateForm: SuperValidated<UpdateCardSchema>;
-  } = $props();
-
-  const { form, enhance, errors: formErrors, submitting: updateSubmitting } = superForm(updateForm);
-
-  let editingTitle = $state(false);
-  let showDelete = $state(false);
-</script>
-
-<div class="mx-auto max-w-3xl space-y-6 py-8">
-  <div class="flex items-start justify-between">
-    {#if editingTitle}
-      <form method="POST" action="?/update" use:enhance class="flex-1">
-        <Input
-          name="title"
-          bind:value={$form.title}
-          class="text-xl font-bold"
-          onblur={() => editingTitle = false}
-          autofocus
-        />
-      </form>
-    {:else}
-      <h1
-        class="flex-1 text-xl font-bold"
-        role="button"
-        tabindex="0"
-        ondblclick={() => editingTitle = true}
-        onkeydown={(e) => { if (e.key === "Enter") editingTitle = true; }}
-      >
-        {card.title}
-      </h1>
-    {/if}
-
-    <a href="/boards/{boardId}">
-      <Button variant="ghost" size="icon">
-        <X class="h-4 w-4" />
-      </Button>
-    </a>
-  </div>
-
-  <form method="POST" action="?/update" use:enhance class="space-y-4">
-    <div>
-      <label for="description" class="mb-1 block text-sm font-medium text-neutral-500">
-        Description
-      </label>
-      <Textarea
-        id="description"
-        name="description"
-        bind:value={$form.description}
-        placeholder="Add a description..."
-        rows={6}
-      />
-    </div>
-    <Button type="submit" size="sm" disabled={$updateSubmitting}>Save</Button>
-  </form>
-
-  <div class="border-t pt-4">
-    <Button variant="destructive" size="sm" onclick={() => showDelete = true}>
-      Delete Card
-    </Button>
-  </div>
-
-  <DeleteCardDialog bind:open={showDelete} {card} {boardId} />
-</div>
-```
+Key implementation details:
+- Title is inline-editable: click the title to enter edit mode, press Enter or blur to save, Escape to cancel
+- Uses a `titleSubmitting` guard flag to prevent double-submit when Enter triggers both `requestSubmit()` and a subsequent blur event (same pattern as `ColumnHeader` rename)
+- Description is saved via a separate form with an explicit "Save" button
+- Labels, comments, and metadata are displayed in Card sections
+- Delete uses `DeleteCardDialog` in a danger zone section at the bottom
+- `superForm`'s `onResult` resets the `titleSubmitting` flag and exits edit mode on success
 
 ### Move Card Dialog
 

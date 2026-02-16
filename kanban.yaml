@@ -174,17 +174,23 @@ backlog:
       - specs/drag-and-drop.md
 
   - id: B-25
-    title: Fix CardDetail title edit double-submit on Enter
+    title: Add Markdown support for card descriptions
     description: |
-      In CardDetail.svelte, pressing Enter to save the title calls handleTitleBlur() from the keydown handler, which calls requestSubmit(). Then the input loses focus and the onblur handler fires handleTitleBlur() again, causing a second requestSubmit(). Fix: add a submitting guard flag (similar to the ColumnHeader rename fix in P-1/D-38) so the form only submits once. The blur after an Enter-triggered submit should be a no-op.
+      The cards spec requires "Description supports rich text (bold, italic, lists, links)" but the current implementation uses a plain <textarea>. Add Markdown rendering for card descriptions: store descriptions as Markdown text, render them with a Markdown library (e.g. marked or markdown-it) in read mode, and keep the plain textarea for editing. This avoids the complexity of a full WYSIWYG editor while fulfilling the rich text requirement. No schema changes needed since Markdown is plain text.
     priority: medium
     tags: [frontend]
     assignee: ""
     created: 2026-02-16
     subtasks:
-      - text: Add a submitting flag to prevent double-submit
+      - text: "Install a Markdown rendering library (e.g. marked, markdown-it, or mdsvex)"
         done: false
-      - text: Ensure blur after Enter submit is a no-op
+      - text: Add Markdown preview rendering in CardDetail description section
+        done: false
+      - text: Add edit/preview toggle for description editing
+        done: false
+      - text: Sanitize rendered HTML to prevent XSS
+        done: false
+      - text: Update cards.md spec to reflect Markdown approach instead of generic rich text
         done: false
     links:
       - specs/cards.md
@@ -894,6 +900,25 @@ done:
         done: false
     links:
       - specs/columns.md
+
+  - id: D-39
+    completed: 2026-02-16
+    started: 2026-02-16
+    title: Fix CardDetail title edit double-submit on Enter
+    description: |
+      In CardDetail.svelte, pressing Enter to save the title calls handleTitleBlur() from the keydown handler, which calls requestSubmit(). Then the input loses focus and the onblur handler fires handleTitleBlur() again, causing a second requestSubmit(). Fix: add a submitting guard flag (similar to the ColumnHeader rename fix in P-1/D-38) so the form only submits once. The blur after an Enter-triggered submit should be a no-op.
+    priority: medium
+    tags: [frontend]
+    assignee: ""
+    created: 2026-02-16
+    subtasks:
+      - text: Add a submitting flag to prevent double-submit
+        done: false
+      - text: Ensure blur after Enter submit is a no-op
+        done: false
+    links:
+      - specs/cards.md
+
 
 
 
