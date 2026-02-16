@@ -78,7 +78,9 @@ export const renameColumnSchema = z.object({
 });
 
 export const updateWipLimitSchema = z.object({
-  wipLimit: z.coerce.number().int().min(0).nullable(),
+  wipLimit: z
+    .union([z.literal(""), z.coerce.number().int().min(0)])
+    .transform((v) => (v === "" || v === 0 ? null : v)),
 });
 
 export const reorderColumnsSchema = z.object({
@@ -260,254 +262,67 @@ export const PUT: RequestHandler = async ({ request, params }) => {
 
 ## Component Patterns
 
+> **Status:** All column CRUD components are implemented. The code below reflects the actual implementation. There is no separate `ColumnFooter` component — the WIP warning and AddCard button are inline in `Column.svelte`.
+
 ### Column Component
 
-```svelte
-<!-- src/lib/components/column/Column.svelte -->
-<script lang="ts">
-  import type { Column, Card } from "$lib/types";
-  import ColumnHeader from "./ColumnHeader.svelte";
-  import ColumnFooter from "./ColumnFooter.svelte";
-  import CardItem from "$lib/components/card/CardItem.svelte";
+`Column.svelte` receives a column (with nested cards), `boardId`, `otherColumns` (sibling columns for delete migration), and the `createCardForm`. It computes WIP limit state and delegates to `ColumnHeader` and `AddCard`.
 
-  let { column, cards }: { column: Column; cards: Card[] } = $props();
-
-  let isOverWipLimit = $derived(
-    column.wipLimit != null && cards.length > column.wipLimit
-  );
-  let isAtWipLimit = $derived(
-    column.wipLimit != null && cards.length === column.wipLimit
-  );
-</script>
-
-<div
-  class="flex h-full w-80 shrink-0 flex-col rounded-xl bg-neutral-100 dark:bg-neutral-900"
-  class:ring-2={isOverWipLimit}
-  class:ring-amber-500={isOverWipLimit}
->
-  <ColumnHeader {column} cardCount={cards.length} />
-
-  <div class="flex-1 space-y-2 overflow-y-auto p-2">
-    {#each cards as card (card.id)}
-      <CardItem {card} />
-    {/each}
-  </div>
-
-  <ColumnFooter {column} {isAtWipLimit} {isOverWipLimit} />
-</div>
-```
+Key props:
+- `column` — full column object with nested `cards` array
+- `otherColumns` — `{ id, name }[]` of sibling columns (for card migration in delete dialog)
+- `boardId` — used for card links and form action URLs
+- `createCardForm` — supervalidated form for the AddCard component
 
 ### Column Header
 
-```svelte
-<!-- src/lib/components/column/ColumnHeader.svelte -->
-<!-- NOTE: DropdownMenu requires the dropdown-menu shadcn-svelte component to be installed -->
-<script lang="ts">
-  import { Button } from "$lib/components/ui/button/index.js";
-  import { Input } from "$lib/components/ui/input/index.js";
-  import GripVerticalIcon from "@lucide/svelte/icons/grip-vertical";
-  import MoreHorizontalIcon from "@lucide/svelte/icons/more-horizontal";
-  import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
-  import { cn } from "$lib/utils";
+`ColumnHeader.svelte` includes:
+- Drag handle (grip icon, visible on column hover)
+- Inline rename via double-click (Enter submits to `?/renameColumn`, Escape cancels)
+- Card count badge with WIP limit display (e.g., `5/8`)
+- Three-dot dropdown menu (visible on hover) with:
+  - **Rename** — triggers inline editing
+  - **Set WIP limit** — opens an inline panel with +/- stepper and number input; posts to `?/updateWipLimit` via hidden form. Setting to 0 removes the limit (sends empty string → null).
+  - **Delete column** — opens `DeleteColumnDialog`
 
-  let { column, cardCount }: {
-    column: { id: string; name: string; wipLimit?: number | null };
-    cardCount: number;
-  } = $props();
-
-  let editing = $state(false);
-  let editName = $state(column.name);
-</script>
-
-<div class="flex items-center gap-1.5 px-3 pt-3 pb-2">
-  <GripVerticalIcon class="size-3.5 shrink-0 cursor-grab text-muted-foreground/50" />
-
-  {#if editing}
-    <form method="POST" action="?/renameColumn" class="flex-1">
-      <input type="hidden" name="columnId" value={column.id} />
-      <Input
-        name="name"
-        bind:value={editName}
-        class="h-6 border-none bg-transparent px-0 text-sm font-semibold shadow-none"
-        onblur={() => { editing = false; editName = column.name; }}
-        autofocus
-      />
-    </form>
-  {:else}
-    <button
-      class="flex-1 truncate text-left text-sm font-semibold text-foreground"
-      ondblclick={() => editing = true}
-      title="Double-click to rename"
-    >
-      {column.name}
-    </button>
-  {/if}
-
-  <span class={cn(
-    "shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-medium tabular-nums leading-none",
-    column.wipLimit != null && cardCount > column.wipLimit
-      ? "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400"
-      : "bg-muted text-muted-foreground"
-  )}>
-    {cardCount}{#if column.wipLimit != null}<span class="opacity-50">/{column.wipLimit}</span>{/if}
-  </span>
-
-  <DropdownMenu.Root>
-    <DropdownMenu.Trigger>
-      {#snippet child({ props })}
-        <Button variant="ghost" size="icon-sm" class="size-7" {...props}>
-          <MoreHorizontalIcon class="size-4" />
-        </Button>
-      {/snippet}
-    </DropdownMenu.Trigger>
-    <DropdownMenu.Content align="end">
-      <DropdownMenu.Item onclick={() => editing = true}>Rename</DropdownMenu.Item>
-      <DropdownMenu.Item>Set WIP Limit</DropdownMenu.Item>
-      <DropdownMenu.Separator />
-      <DropdownMenu.Item class="text-destructive">Delete Column</DropdownMenu.Item>
-    </DropdownMenu.Content>
-  </DropdownMenu.Root>
-</div>
-```
-
-### Column Footer
-
-```svelte
-<!-- src/lib/components/column/ColumnFooter.svelte -->
-<!-- NOTE: ColumnFooter was merged into Column.svelte — WIP warning is inline, AddCard handles the button -->
-<script lang="ts">
-  import { Button } from "$lib/components/ui/button/index.js";
-  import PlusIcon from "@lucide/svelte/icons/plus";
-
-  let { column, isAtWipLimit, isOverWipLimit }: {
-    column: Column;
-    isAtWipLimit: boolean;
-    isOverWipLimit: boolean;
-  } = $props();
-</script>
-
-<div class="p-2">
-  {#if isOverWipLimit}
-    <p class="mb-2 text-center text-xs font-medium text-amber-600 dark:text-amber-400">
-      Over WIP limit ({column.wipLimit})
-    </p>
-  {/if}
-
-  <Button variant="ghost" class="w-full justify-start text-neutral-500" size="sm">
-    <Plus class="mr-2 h-4 w-4" />
-    Add Card
-  </Button>
-</div>
-```
+The dropdown uses the `{#snippet child({ props })}` pattern on `DropdownMenu.Trigger`. The WIP limit panel appears below the header inside the column (not in a popover) for a grounded, inline editing feel.
 
 ### Add Column
 
-```svelte
-<!-- src/lib/components/column/AddColumn.svelte -->
-<script lang="ts">
-  import { Button } from "$lib/components/ui/button/index.js";
-  import { Input } from "$lib/components/ui/input/index.js";
-  import PlusIcon from "@lucide/svelte/icons/plus";
-  import XIcon from "@lucide/svelte/icons/x";
-  import { superForm } from "sveltekit-superforms";
-  import type { SuperValidated, Infer } from "sveltekit-superforms";
-  import type { createColumnSchema } from "$lib/schemas/column";
-
-  let { form: formData }: { form: SuperValidated<CreateColumnSchema> } = $props();
-
-  const { form, enhance } = superForm(formData, {
-    resetForm: true,
-    onResult: () => { adding = false; },
-  });
-
-  let adding = $state(false);
-</script>
-
-{#if adding}
-  <form method="POST" action="?/createColumn" use:enhance class="w-80 shrink-0 space-y-2 rounded-xl bg-neutral-100 p-3 dark:bg-neutral-900">
-    <Input name="name" bind:value={$form.name} placeholder="Column name" autofocus />
-    <div class="flex gap-2">
-      <Button type="submit" size="sm">Add Column</Button>
-      <Button variant="ghost" size="sm" onclick={() => adding = false}>
-        <X class="h-4 w-4" />
-      </Button>
-    </div>
-  </form>
-{:else}
-  <Button
-    variant="ghost"
-    class="w-80 shrink-0 justify-start text-neutral-500"
-    onclick={() => adding = true}
-  >
-    <Plus class="mr-2 h-4 w-4" />
-    Add Column
-  </Button>
-{/if}
-```
+`AddColumn.svelte` toggles between a ghost button and an inline form. Uses `superForm` with `resetForm: true` and `onResult` to auto-close.
 
 ### Delete Column Dialog
 
-```svelte
-<!-- src/lib/components/column/DeleteColumnDialog.svelte -->
-<script lang="ts">
-  import type { Column } from "$lib/types";
-  import * as AlertDialog from "$lib/components/ui/alert-dialog";
-  import * as Select from "$lib/components/ui/select";
-  import { Button } from "$lib/components/ui/button";
+`DeleteColumnDialog.svelte` uses AlertDialog with:
+- `cardCount` prop to show how many cards are affected
+- If cards exist and other columns available: shows a Select picker for migration target
+- If cards exist but no other columns: shows a destructive warning
+- If empty: simple confirmation message
+- Hidden form posts to `/boards/{boardId}?/deleteColumn` with `columnId` and optional `moveCardsTo`
 
-  let { column, otherColumns, open = $bindable(false) }: {
-    column: Column;
-    otherColumns: Column[];
-    open: boolean;
-  } = $props();
+### Validation Schemas
 
-  let moveCardsTo = $state<string | undefined>(undefined);
-  let hasCards = $derived(column.cardCount > 0);
-</script>
-
-<AlertDialog.Root bind:open>
-  <AlertDialog.Content>
-    <AlertDialog.Header>
-      <AlertDialog.Title>Delete "{column.name}"?</AlertDialog.Title>
-      <AlertDialog.Description>
-        {#if hasCards}
-          This column has {column.cardCount} card{column.cardCount === 1 ? "" : "s"}. Choose what to do with them.
-        {:else}
-          This column is empty and will be permanently deleted.
-        {/if}
-      </AlertDialog.Description>
-    </AlertDialog.Header>
-
-    {#if hasCards && otherColumns.length > 0}
-      <div class="space-y-3 py-2">
-        <Select.Root type="single" onValueChange={(v) => moveCardsTo = v}>
-          <Select.Trigger placeholder="Move cards to...">
-          </Select.Trigger>
-          <Select.Content>
-            {#each otherColumns as col}
-              <Select.Item value={col.id}>{col.name}</Select.Item>
-            {/each}
-          </Select.Content>
-        </Select.Root>
-        <p class="text-xs text-neutral-500">
-          Or leave empty to delete all cards in this column.
-        </p>
-      </div>
-    {/if}
-
-    <AlertDialog.Footer>
-      <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
-      <form method="POST" action="?/deleteColumn">
-        <input type="hidden" name="columnId" value={column.id} />
-        {#if moveCardsTo}
-          <input type="hidden" name="moveCardsTo" value={moveCardsTo} />
-        {/if}
-        <Button type="submit" variant="destructive">Delete</Button>
-      </form>
-    </AlertDialog.Footer>
-  </AlertDialog.Content>
-</AlertDialog.Root>
+The `updateWipLimitSchema` uses a union type to handle the empty-string-to-null conversion:
+```typescript
+export const updateWipLimitSchema = z.object({
+  wipLimit: z
+    .union([z.literal(""), z.coerce.number().int().min(0)])
+    .transform((v) => (v === "" || v === 0 ? null : v)),
+});
 ```
+
+## Toast Notifications
+
+All column CRUD actions show toast notifications for user feedback:
+
+| Action | Success Message | Error Message |
+| --- | --- | --- |
+| Add column | "Column added" | "Failed to add column" |
+| Rename column | "Column renamed" | "Failed to rename column" |
+| Update WIP limit | "WIP limit updated" / "WIP limit removed" | "Failed to update WIP limit" |
+| Delete column | "Column \"{name}\" deleted" | "Failed to delete column" |
+
+`AddColumn` uses `superForm`'s `onResult`. `ColumnHeader` rename and WIP forms use SvelteKit's `enhance`. `DeleteColumnDialog` uses SvelteKit's `enhance`.
 
 ## File Locations
 
@@ -516,9 +331,8 @@ export const PUT: RequestHandler = async ({ request, params }) => {
 | `src/lib/db/schema/columns.ts` | Column database schema and relations |
 | `src/lib/schemas/column.ts` | Zod validation schemas for column forms |
 | `src/routes/(app)/boards/[boardId]/+page.server.ts` | Load board with columns; column CRUD form actions |
-| `src/routes/(app)/boards/[boardId]/columns/reorder/+server.ts` | JSON API for drag-and-drop reorder |
+| `src/routes/(app)/boards/[boardId]/columns/reorder/+server.ts` | JSON API for drag-and-drop reorder (not yet implemented) |
 | `src/lib/components/column/Column.svelte` | Main column container with WIP limit state |
-| `src/lib/components/column/ColumnHeader.svelte` | Header with name, inline rename, action menu |
-| `src/lib/components/column/ColumnFooter.svelte` | Footer with WIP indicator and add card button |
+| `src/lib/components/column/ColumnHeader.svelte` | Header with name, inline rename, dropdown menu, WIP limit panel |
 | `src/lib/components/column/AddColumn.svelte` | Inline form to create a new column |
 | `src/lib/components/column/DeleteColumnDialog.svelte` | Delete confirmation with card migration option |

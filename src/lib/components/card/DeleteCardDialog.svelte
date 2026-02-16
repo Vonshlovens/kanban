@@ -1,5 +1,7 @@
 <script lang="ts">
   import * as AlertDialog from "$lib/components/ui/alert-dialog/index.js";
+  import { enhance } from "$app/forms";
+  import { toast } from "svelte-sonner";
 
   let {
     card,
@@ -40,6 +42,16 @@
   method="POST"
   action="/boards/{boardId}?/deleteCard"
   class="hidden"
+  use:enhance={() => {
+    return async ({ update, result }) => {
+      await update();
+      if (result.type === "success") {
+        toast.success("Card deleted");
+      } else if (result.type === "error") {
+        toast.error("Failed to delete card");
+      }
+    };
+  }}
 >
   <input type="hidden" name="cardId" value={card.id} />
 </form>

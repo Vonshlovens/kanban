@@ -389,6 +389,17 @@ Key implementation details:
 
 Inline form that expands in the column footer to create a new card. Uses `superForm` with `resetForm: true` to clear the input after submission.
 
+## Toast Notifications
+
+Card CRUD actions show toast notifications for user feedback:
+
+| Action | Success Message | Error Message |
+| --- | --- | --- |
+| Add card | "Card added" | "Failed to add card" |
+| Delete card | "Card deleted" | "Failed to delete card" |
+
+`AddCard` uses `superForm`'s `onResult`. `DeleteCardDialog` uses SvelteKit's `enhance` from `$app/forms`.
+
 ## File Locations
 
 | File/Directory | Purpose |

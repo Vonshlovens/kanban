@@ -4,6 +4,7 @@
   import PlusIcon from "@lucide/svelte/icons/plus";
   import XIcon from "@lucide/svelte/icons/x";
   import { superForm } from "sveltekit-superforms";
+  import { toast } from "svelte-sonner";
   import type { SuperValidated, Infer } from "sveltekit-superforms";
   import type { createColumnSchema } from "$lib/schemas/column";
 
@@ -15,8 +16,13 @@
 
   const { form, enhance } = superForm(formData, {
     resetForm: true,
-    onResult: () => {
+    onResult: ({ result }) => {
       adding = false;
+      if (result.type === "success") {
+        toast.success("Column added");
+      } else if (result.type === "error") {
+        toast.error("Failed to add column");
+      }
     },
   });
 

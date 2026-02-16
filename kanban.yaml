@@ -142,22 +142,6 @@ backlog:
     links:
       - specs/frontend-components.md
 
-  - id: B-19
-    title: Add toast notifications for board CRUD actions
-    description: |
-      Board settings actions (rename, update description, toggle favorite) complete silently with no user feedback. Add svelte-sonner toast notifications to confirm success: 'Board renamed', 'Description updated', 'Added to favorites', etc. Also add error toasts for failed actions. The Toaster component is already in the root layout.
-    priority: medium
-    tags: [frontend]
-    assignee: ""
-    created: 2026-02-16
-    subtasks:
-      - text: Add success toasts to settings page form onResult callbacks
-        done: false
-      - text: Add error toast handling for failed mutations
-        done: false
-    links:
-      - specs/board-management.md
-
   - id: B-20
     title: Add breadcrumb segments for nested board pages
     description: |
@@ -173,29 +157,6 @@ backlog:
         done: false
     links:
       - specs/frontend-pages.md
-
-  - id: B-21
-    title: "Implement column CRUD actions: create, rename, delete with card migration"
-    description: |
-      The board page (D-26) renders columns but has no column management actions yet. Now that dropdown-menu, select, and alert-dialog are installed (P-1), build out the ColumnHeader action menu with rename inline editing, WIP limit setter, and delete flow. The DeleteColumnDialog should use Select to let users move cards to another column before deletion. Implement the form actions in +page.server.ts per specs/columns.md. Also build AddColumn inline form at the end of the board.
-    priority: high
-    tags: [frontend, backend]
-    assignee: ""
-    created: 2026-02-16
-    subtasks:
-      - text: "Build ColumnHeader dropdown menu (rename, set WIP limit, delete)"
-        done: false
-      - text: Implement AddColumn inline form component
-        done: false
-      - text: Build DeleteColumnDialog with card migration Select picker
-        done: false
-      - text: "Wire up createColumn, renameColumn, updateWipLimit, deleteColumn form actions"
-        done: false
-      - text: Test column CRUD end-to-end
-        done: false
-    links:
-      - specs/columns.md
-      - specs/frontend-components.md
 
   - id: B-22
     title: Build card detail page with view/edit UI
@@ -234,6 +195,51 @@ backlog:
     links:
       - specs/frontend-components.md
       - specs/cards.md
+
+  - id: B-24
+    title: Implement drag-and-drop reordering for columns and cards
+    description: |
+      The board supports columns and cards but has no drag-and-drop reordering yet. The grip handles are rendered in ColumnHeader and there is a planned reorder API endpoint (columns/reorder/+server.ts) in the columns spec. Implement: (1) the reorder JSON API endpoint for columns, (2) a similar reorder endpoint for cards across columns, (3) client-side drag-and-drop using svelte-dnd-action or native drag events. See specs/drag-and-drop.md and specs/columns.md for the reorder schema and endpoint design.
+    priority: high
+    tags: [frontend, backend]
+    assignee: ""
+    created: 2026-02-16
+    subtasks:
+      - text: "Create column reorder PUT endpoint at boards/[boardId]/columns/reorder/+server.ts"
+        done: false
+      - text: Create card reorder/move PUT endpoint
+        done: false
+      - text: Add drag-and-drop library or native drag implementation
+        done: false
+      - text: Wire up column drag handles to reorder API
+        done: false
+      - text: Wire up card drag to move/reorder API
+        done: false
+    links:
+      - specs/columns.md
+      - specs/drag-and-drop.md
+
+  - id: B-25
+    title: Add loading states to form submit buttons
+    description: |
+      Form buttons (rename, save description, add column, add card, delete, etc.) don't show any loading indicator during submission. Use superForm's `$submitting` store and SvelteKit enhance callbacks to disable buttons and show a spinner or 'Saving...' text while the action is in flight. This prevents double-submits and gives clear feedback that the action is processing.
+    priority: low
+    tags: [frontend]
+    assignee: ""
+    created: 2026-02-16
+    subtasks:
+      - text: "Add submitting state to superForm instances (settings, add column, add card)"
+        done: false
+      - text: "Add submitting state to plain enhance forms (favorite toggle, delete forms)"
+        done: false
+      - text: Show spinner or disabled state on submit buttons while submitting
+        done: false
+    links:
+      - specs/board-management.md
+      - specs/columns.md
+      - specs/cards.md
+
+
 
 
 
@@ -770,6 +776,51 @@ done:
     links:
       - specs/cards.md
       - specs/frontend-components.md
+
+  - id: D-31
+    completed: 2026-02-16
+    started: 2026-02-16
+    title: "Implement column CRUD actions: create, rename, delete with card migration"
+    description: |
+      The board page (D-26) renders columns but has no column management actions yet. Now that dropdown-menu, select, and alert-dialog are installed (P-1), build out the ColumnHeader action menu with rename inline editing, WIP limit setter, and delete flow. The DeleteColumnDialog should use Select to let users move cards to another column before deletion. Implement the form actions in +page.server.ts per specs/columns.md. Also build AddColumn inline form at the end of the board.
+    priority: high
+    tags: [frontend, backend]
+    assignee: ""
+    created: 2026-02-16
+    subtasks:
+      - text: "Build ColumnHeader dropdown menu (rename, set WIP limit, delete)"
+        done: false
+      - text: Implement AddColumn inline form component
+        done: false
+      - text: Build DeleteColumnDialog with card migration Select picker
+        done: false
+      - text: "Wire up createColumn, renameColumn, updateWipLimit, deleteColumn form actions"
+        done: false
+      - text: Test column CRUD end-to-end
+        done: false
+    links:
+      - specs/columns.md
+      - specs/frontend-components.md
+
+  - id: D-32
+    completed: 2026-02-16
+    started: 2026-02-16
+    title: Add toast notifications for board CRUD actions
+    description: |
+      Board settings actions (rename, update description, toggle favorite) complete silently with no user feedback. Add svelte-sonner toast notifications to confirm success: 'Board renamed', 'Description updated', 'Added to favorites', etc. Also add error toasts for failed actions. The Toaster component is already in the root layout.
+    priority: medium
+    tags: [frontend]
+    assignee: ""
+    created: 2026-02-16
+    subtasks:
+      - text: Add success toasts to settings page form onResult callbacks
+        done: false
+      - text: Add error toast handling for failed mutations
+        done: false
+    links:
+      - specs/board-management.md
+
+
 
 
 
