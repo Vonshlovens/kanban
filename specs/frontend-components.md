@@ -86,7 +86,7 @@ Kanban-specific components live in `src/lib/components/`. Organized by feature a
 | Comments | `src/lib/components/comment/` | `CommentList`, `CommentItem`, `CommentForm` |
 | Users | `src/lib/components/user/` | `UserAvatar`, `AssigneePicker`, `UserMenu` |
 | Search | `src/lib/components/search/` | `SearchBar`, `FilterPanel`, `FilterChip` |
-| Layout | `src/lib/components/layout/` | `AppShell`, `Navbar`, `Sidebar` |
+| Layout | `src/lib/components/layout/` | `AppSidebar`, `Navbar` |
 
 ### Component Conventions
 

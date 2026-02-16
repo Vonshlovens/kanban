@@ -35,31 +35,6 @@ backlog:
     links:
       - specs/tech-containerization.md
 
-  - id: B-7
-    title: "Create root layout, app shell, and Zod validation schemas"
-    description: |
-      Build the root +layout.svelte with ModeWatcher, Toaster (svelte-sonner), and a basic navigation shell. Create the (app) layout group. Set up all Zod validation schemas in src/lib/schemas/ (board, card, column, label, comment). Install sveltekit-superforms, formsnap, zod.
-    priority: high
-    tags: [frontend, backend]
-    assignee: ""
-    created: 2026-02-16
-    subtasks:
-      - text: Create src/routes/+layout.svelte with ModeWatcher + Toaster
-        done: false
-      - text: Create src/routes/(app)/+layout.svelte for board chrome
-        done: false
-      - text: "Create Zod schemas: board.ts, card.ts, column.ts, label.ts, comment.ts"
-        done: false
-      - text: "Install sveltekit-superforms, formsnap, zod"
-        done: false
-    links:
-      - specs/frontend-overview.md
-      - specs/frontend-routing.md
-      - specs/frontend-components.md
-      - specs/board-management.md
-      - specs/cards.md
-      - specs/columns.md
-
   - id: B-8
     title: "Board management: listing, create, and settings pages"
     description: |
@@ -185,6 +160,61 @@ backlog:
     links:
       - specs/tech-database.md
 
+  - id: B-15
+    title: Create label colors utility and shared constants
+    description: |
+      The specs reference src/lib/utils/label-colors.ts with a LABEL_COLORS constant (10 predefined colors with name and hex value) and a LabelColor type. This utility is needed by the label management UI (LabelManager, LabelPicker). Create the file as specified.
+    priority: low
+    tags: [frontend]
+    assignee: ""
+    created: 2026-02-16
+    subtasks:
+      - text: Create src/lib/utils/label-colors.ts with LABEL_COLORS array and LabelColor type
+        done: false
+    links:
+      - specs/labels.md
+
+  - id: B-16
+    title: Add sidebar keyboard shortcut hint and mobile sheet overlay
+    description: |
+      The shadcn-svelte sidebar supports Cmd+B toggle (built-in) and mobile sheet overlay (built-in via collapsible='offcanvas'). Add a visual keyboard shortcut hint to the sidebar footer showing 'Cmd+B' and verify the mobile sheet overlay works correctly on small screens. Consider adding a tooltip or subtle text indicator.
+    priority: low
+    tags: [frontend]
+    assignee: ""
+    created: 2026-02-16
+    subtasks:
+      - text: Add keyboard shortcut visual hint to sidebar footer
+        done: false
+      - text: Test mobile sheet overlay behavior
+        done: false
+      - text: Add aria-labels for accessibility
+        done: false
+    links:
+      - specs/frontend-components.md
+
+  - id: B-17
+    title: Add root landing page with board list or single-board redirect
+    description: |
+      The root page (src/routes/+page.svelte) is still a placeholder. It should load all boards and either redirect to the single board if there's only one, or show a board listing page. This page lives outside the (app) layout group since it doesn't need the sidebar. Implement the +page.server.ts load function and the board listing UI with links to each board and a 'Create Board' CTA.
+    priority: high
+    tags: [frontend, backend]
+    assignee: ""
+    created: 2026-02-16
+    subtasks:
+      - text: Create src/routes/+page.server.ts with board listing load and redirect logic
+        done: false
+      - text: Build board listing UI in src/routes/+page.svelte
+        done: false
+      - text: Handle empty state (no boards yet) with CTA to create first board
+        done: false
+    links:
+      - specs/frontend-pages.md
+      - specs/board-management.md
+
+
+
+
+
 
 
 
@@ -201,6 +231,30 @@ todo:
   # ── Tech Stack Specs ───────────────────────────────────────────
 
 in_progress:
+
+  - id: P-1
+    started: 2026-02-16
+    title: "Build app shell navigation: sidebar and navbar components"
+    description: |
+      The (app) layout group exists but has placeholder markup. Build the Sidebar component (board list navigation, theme toggle, new board link) and Navbar component (breadcrumbs, board name, settings link). Install shadcn-svelte sidebar and sheet components if needed. Wire up to the (app)/+layout.svelte.
+    priority: high
+    tags: [frontend]
+    assignee: ""
+    created: 2026-02-16
+    subtasks:
+      - text: Create src/lib/components/layout/Sidebar.svelte with board list and theme toggle
+        done: false
+      - text: Create src/lib/components/layout/Navbar.svelte with breadcrumbs and board actions
+        done: false
+      - text: "Install required shadcn-svelte components (sidebar, sheet, separator, etc.)"
+        done: false
+      - text: Wire sidebar and navbar into src/routes/(app)/+layout.svelte
+        done: false
+    links:
+      - specs/frontend-overview.md
+      - specs/frontend-components.md
+      - specs/frontend-routing.md
+
 
 review:
 
@@ -554,6 +608,33 @@ done:
       - specs/labels.md
       - specs/comments.md
       - specs/activity-log.md
+
+  - id: D-24
+    completed: 2026-02-16
+    title: "Create root layout, app shell, and Zod validation schemas"
+    description: |
+      Build the root +layout.svelte with ModeWatcher, Toaster (svelte-sonner), and a basic navigation shell. Create the (app) layout group. Set up all Zod validation schemas in src/lib/schemas/ (board, card, column, label, comment). Install sveltekit-superforms, formsnap, zod.
+    priority: high
+    tags: [frontend, backend]
+    assignee: ""
+    created: 2026-02-16
+    subtasks:
+      - text: Create src/routes/+layout.svelte with ModeWatcher + Toaster
+        done: false
+      - text: Create src/routes/(app)/+layout.svelte for board chrome
+        done: false
+      - text: "Create Zod schemas: board.ts, card.ts, column.ts, label.ts, comment.ts"
+        done: false
+      - text: "Install sveltekit-superforms, formsnap, zod"
+        done: false
+    links:
+      - specs/frontend-overview.md
+      - specs/frontend-routing.md
+      - specs/frontend-components.md
+      - specs/board-management.md
+      - specs/cards.md
+      - specs/columns.md
+
 
 
 

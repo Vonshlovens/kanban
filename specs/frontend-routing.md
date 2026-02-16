@@ -60,21 +60,30 @@ The `(app)` route group wraps all authenticated pages in a shared layout without
 <!-- src/routes/(app)/+layout.svelte -->
 <script lang="ts">
   import type { Snippet } from "svelte";
-  import Sidebar from "$lib/components/sidebar.svelte";
-  import Navbar from "$lib/components/navbar.svelte";
+  import { page } from "$app/stores";
+  import { Provider as SidebarProvider } from "$lib/components/ui/sidebar/index.js";
+  import AppSidebar from "$lib/components/layout/AppSidebar.svelte";
+  import Navbar from "$lib/components/layout/Navbar.svelte";
 
-  let { children }: { children: Snippet } = $props();
+  let { data, children }: { data: any; children: Snippet } = $props();
+
+  let activeBoardId = $derived($page.params.boardId);
+  let boardName = $derived(
+    activeBoardId
+      ? data.boards.find((b: { id: string }) => b.id === activeBoardId)?.name
+      : undefined
+  );
 </script>
 
-<div class="flex h-screen">
-  <Sidebar />
-  <div class="flex flex-1 flex-col">
-    <Navbar />
+<SidebarProvider>
+  <AppSidebar boards={data.boards} {activeBoardId} />
+  <div class="flex flex-1 flex-col overflow-hidden">
+    <Navbar {boardName} />
     <main class="flex-1 overflow-auto">
       {@render children()}
     </main>
   </div>
-</div>
+</SidebarProvider>
 ```
 
 ## Layouts
@@ -145,14 +154,14 @@ Mutations use SvelteKit form actions, validated with sveltekit-superforms + Zod:
 // src/routes/(app)/boards/new/+page.server.ts
 import type { Actions } from "./$types";
 import { superValidate, fail } from "sveltekit-superforms";
-import { zod } from "sveltekit-superforms/adapters";
+import { zod4 } from "sveltekit-superforms/adapters";
 import { redirect } from "@sveltejs/kit";
 import { createBoardSchema } from "$lib/schemas/board";
 import { db } from "$lib/db";
 
 export const actions: Actions = {
   default: async ({ request }) => {
-    const form = await superValidate(request, zod(createBoardSchema));
+    const form = await superValidate(request, zod4(createBoardSchema));
     if (!form.valid) return fail(400, { form });
 
     const board = await db.insert(boards).values(form.data).returning();

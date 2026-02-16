@@ -136,6 +136,18 @@ Detects system preference and allows manual toggle:
 <ModeWatcher />
 ```
 
+**Note:** In Svelte 5 runes mode, `mode` from `mode-watcher` is NOT a Svelte store — it's a rune-based object. Use `mode.current` instead of `$mode`:
+
+```svelte
+<script>
+  import { toggleMode, mode } from "mode-watcher";
+</script>
+
+{#if mode.current === "dark"}
+  <!-- dark mode UI -->
+{/if}
+```
+
 ## Toast Notifications: svelte-sonner
 
 | Package        | Version |
@@ -165,17 +177,17 @@ Detects system preference and allows manual toggle:
 ```typescript
 // +page.server.ts
 import { superValidate } from "sveltekit-superforms";
-import { zod } from "sveltekit-superforms/adapters";
+import { zod4 } from "sveltekit-superforms/adapters";
 import { createBoardSchema } from "$lib/schemas/board";
 
 export const load = async () => {
-  const form = await superValidate(zod(createBoardSchema));
+  const form = await superValidate(zod4(createBoardSchema));
   return { form };
 };
 
 export const actions = {
   default: async ({ request }) => {
-    const form = await superValidate(request, zod(createBoardSchema));
+    const form = await superValidate(request, zod4(createBoardSchema));
     if (!form.valid) return fail(400, { form });
     // ... create board
     return { form };

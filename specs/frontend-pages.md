@@ -146,7 +146,7 @@ Card detail can render as a standalone page or as a dialog overlay on top of the
 import type { PageServerLoad, Actions } from "./$types";
 import { error, fail } from "@sveltejs/kit";
 import { superValidate } from "sveltekit-superforms";
-import { zod } from "sveltekit-superforms/adapters";
+import { zod4 } from "sveltekit-superforms/adapters";
 import { updateCardSchema } from "$lib/schemas/card";
 import { db } from "$lib/db";
 
@@ -163,7 +163,7 @@ export const load: PageServerLoad = async ({ params }) => {
 
 export const actions: Actions = {
   update: async ({ request, params }) => {
-    const form = await superValidate(request, zod(updateCardSchema));
+    const form = await superValidate(request, zod4(updateCardSchema));
     if (!form.valid) return fail(400, { form });
 
     await db
@@ -268,7 +268,7 @@ Application-level preferences — theme, display options.
   <section class="space-y-3">
     <h2 class="text-lg font-semibold">Appearance</h2>
     <Button variant="outline" onclick={toggleMode}>
-      {#if $mode === "dark"}
+      {#if mode.current === "dark"}
         <Sun class="mr-2 h-4 w-4" /> Light Mode
       {:else}
         <Moon class="mr-2 h-4 w-4" /> Dark Mode
