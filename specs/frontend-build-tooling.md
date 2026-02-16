@@ -25,8 +25,11 @@ Deno is the project runtime. It provides native TypeScript support, secure-by-de
 
 **Configuration:** `deno.json` at the project root defines:
 - **Tasks** — all dev, build, lint, format, and database commands.
-- **Import maps** — dependency resolution (replaces `package.json` dependencies).
 - **Compiler options** — `strict: true`, `checkJs: false`.
+- **Node modules** — `"nodeModulesDir": "auto"` for npm compatibility.
+- **Unstable flags** — `"sloppy-imports"` for extensionless imports.
+
+Dependencies are managed in `package.json` (Deno reads it natively). No import maps needed.
 
 ```jsonc
 // deno.json (excerpt)
@@ -36,7 +39,9 @@ Deno is the project runtime. It provides native TypeScript support, secure-by-de
     "build": "deno run -A npm:vite build",
     "preview": "deno run -A npm:vite preview",
     "check": "deno run -A npm:svelte-check --tsconfig ./tsconfig.json"
-  }
+  },
+  "nodeModulesDir": "auto",
+  "unstable": ["sloppy-imports"]
 }
 ```
 

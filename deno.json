@@ -1,0 +1,22 @@
+{
+  "tasks": {
+    "dev": "deno run -A npm:vite dev",
+    "build": "deno run -A npm:vite build",
+    "preview": "deno run -A npm:vite preview",
+    "check": "deno run -A npm:svelte-check --tsconfig ./tsconfig.json",
+    "lint": "deno run -A npm:eslint .",
+    "lint:fix": "deno run -A npm:eslint . --fix",
+    "format": "deno run -A npm:prettier --write .",
+    "format:check": "deno run -A npm:prettier --check .",
+    "db:generate": "deno run -A npm:drizzle-kit generate",
+    "db:migrate": "deno run -A npm:drizzle-kit migrate",
+    "db:push": "deno run -A npm:drizzle-kit push",
+    "db:studio": "deno run -A npm:drizzle-kit studio"
+  },
+  "compilerOptions": {
+    "strict": true,
+    "checkJs": false
+  },
+  "nodeModulesDir": "auto",
+  "unstable": ["sloppy-imports"]
+}

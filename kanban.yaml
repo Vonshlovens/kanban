@@ -7,7 +7,7 @@
 #   - Tags map to project areas (see `tags` section below)
 
 project: kanban
-updated: 2026-02-15
+updated: 2026-02-16
 
 # ── Tag definitions ──────────────────────────────────────────────
 tags:
@@ -34,6 +34,179 @@ backlog:
     created: 2026-02-15
     links:
       - specs/tech-containerization.md
+
+  - id: B-5
+    title: "Set up shadcn-svelte, Tailwind theme, and cn() utility"
+    description: |
+      Initialize shadcn-svelte (components.json, registry). Create the cn() utility in src/lib/utils.ts (clsx + tailwind-merge). Set up global CSS with Tailwind CSS 4 design tokens and dark mode variables. Install: shadcn-svelte, bits-ui, tailwind-merge, tailwind-variants, clsx, tw-animate-css, mode-watcher, @lucide/svelte.
+    priority: high
+    tags: [frontend, dx]
+    assignee: ""
+    created: 2026-02-16
+    subtasks:
+      - text: "Run shadcn-svelte init, configure components.json"
+        done: false
+      - text: Create src/lib/utils.ts with cn() helper
+        done: false
+      - text: Set up app.css with Tailwind CSS 4 tokens and dark mode vars
+        done: false
+      - text: Install icon and animation packages
+        done: false
+    links:
+      - specs/tech-frontend-ui.md
+      - specs/frontend-styling.md
+
+  - id: B-6
+    title: "Set up Drizzle ORM, database schemas, and connection"
+    description: |
+      Configure Drizzle ORM with PostgreSQL. Create drizzle.config.ts, the DB connection module (src/lib/db/index.ts), and all domain schema files: boards, columns, cards, labels, card-labels, comments, activity-log, users. Define relations between tables. Wire up db:generate/migrate/push/studio tasks in deno.json.
+    priority: high
+    tags: [backend, infra]
+    assignee: ""
+    created: 2026-02-16
+    subtasks:
+      - text: "Install drizzle-orm, drizzle-kit, postgres driver"
+        done: false
+      - text: Create drizzle.config.ts
+        done: false
+      - text: Create src/lib/db/index.ts connection module
+        done: false
+      - text: "Create schema files: boards, columns, cards, labels, card-labels, comments, activity-log, users"
+        done: false
+      - text: Define all relations
+        done: false
+      - text: Generate and test initial migration
+        done: false
+    links:
+      - specs/tech-database.md
+      - specs/board-management.md
+      - specs/columns.md
+      - specs/cards.md
+      - specs/labels.md
+      - specs/comments.md
+      - specs/activity-log.md
+
+  - id: B-7
+    title: "Create root layout, app shell, and Zod validation schemas"
+    description: |
+      Build the root +layout.svelte with ModeWatcher, Toaster (svelte-sonner), and a basic navigation shell. Create the (app) layout group. Set up all Zod validation schemas in src/lib/schemas/ (board, card, column, label, comment). Install sveltekit-superforms, formsnap, zod.
+    priority: high
+    tags: [frontend, backend]
+    assignee: ""
+    created: 2026-02-16
+    subtasks:
+      - text: Create src/routes/+layout.svelte with ModeWatcher + Toaster
+        done: false
+      - text: Create src/routes/(app)/+layout.svelte for board chrome
+        done: false
+      - text: "Create Zod schemas: board.ts, card.ts, column.ts, label.ts, comment.ts"
+        done: false
+      - text: "Install sveltekit-superforms, formsnap, zod"
+        done: false
+    links:
+      - specs/frontend-overview.md
+      - specs/frontend-routing.md
+      - specs/frontend-components.md
+      - specs/board-management.md
+      - specs/cards.md
+      - specs/columns.md
+
+  - id: B-8
+    title: "Board management: listing, create, and settings pages"
+    description: |
+      Implement board CRUD. Root page lists boards (or redirects if only one). Create board page with form action that seeds default columns. Board settings page with rename, description, favorite toggle, and delete (with AlertDialog confirmation). This is the first real feature — proves the full stack works end-to-end.
+    priority: high
+    tags: [frontend, backend]
+    assignee: ""
+    created: 2026-02-16
+    subtasks:
+      - text: Create src/routes/+page.server.ts (board listing load)
+        done: false
+      - text: Create src/routes/+page.svelte (board listing UI)
+        done: false
+      - text: Create src/routes/(app)/boards/new/ (create board form + action)
+        done: false
+      - text: "Create src/routes/(app)/boards/[boardId]/settings/ (rename, delete, favorite)"
+        done: false
+      - text: Create BoardCard.svelte component
+        done: false
+    links:
+      - specs/board-management.md
+      - specs/frontend-pages.md
+
+  - id: B-9
+    title: Board page with columns and card list
+    description: |
+      Build the main board view at /boards/[boardId]. Server load function fetches board with columns and cards (ordered by position). Render columns in a horizontal scrollable layout. Each column shows its header (name, card count, WIP indicator), card list, and an Add Card footer. Include Add Column button at the end. This is the core kanban view.
+    priority: high
+    tags: [frontend, backend]
+    assignee: ""
+    created: 2026-02-16
+    subtasks:
+      - text: "Create src/routes/(app)/boards/[boardId]/+page.server.ts (load board + columns + cards, card/column form actions)"
+        done: false
+      - text: "Create src/routes/(app)/boards/[boardId]/+page.svelte (board view)"
+        done: false
+      - text: "Create Column.svelte, ColumnHeader.svelte, ColumnFooter.svelte"
+        done: false
+      - text: Create CardItem.svelte (compact card in column)
+        done: false
+      - text: Create AddCard.svelte (inline form)
+        done: false
+      - text: Create AddColumn.svelte (inline form)
+        done: false
+    links:
+      - specs/columns.md
+      - specs/cards.md
+      - specs/frontend-pages.md
+      - specs/frontend-components.md
+
+  - id: B-10
+    title: Card detail view and update actions
+    description: |
+      Build the card detail page at /boards/[boardId]/cards/[cardId]. Load card with labels and comments. Editable title (double-click to edit), description textarea with save, and delete button with AlertDialog. This is a separate page/route, not a modal (modal can come later).
+    priority: medium
+    tags: [frontend, backend]
+    assignee: ""
+    created: 2026-02-16
+    subtasks:
+      - text: "Create src/routes/(app)/boards/[boardId]/cards/[cardId]/+page.server.ts (load card, update action)"
+        done: false
+      - text: "Create src/routes/(app)/boards/[boardId]/cards/[cardId]/+page.svelte"
+        done: false
+      - text: Create CardDetail.svelte component
+        done: false
+      - text: Create DeleteCardDialog.svelte component
+        done: false
+    links:
+      - specs/cards.md
+      - specs/frontend-dialogs.md
+
+  - id: B-11
+    title: Add postinstall svelte-kit sync and lock file tracking
+    description: |
+      Configure a postinstall/prepare script that runs 'npx svelte-kit sync' after dependency installation to auto-generate .svelte-kit/tsconfig.json. Ensure deno.lock is committed for reproducible builds. Add 'deno task check' (svelte-check) to CI-ready scripts. Discovered during B-4: svelte-kit sync must be run via npx (not deno run -A npm:svelte-kit), and .svelte-kit/ is required for TypeScript path resolution.
+    priority: medium
+    tags: [infra, dx]
+    assignee: ""
+    created: 2026-02-16
+    subtasks:
+      - text: Add postinstall/prepare script to package.json for svelte-kit sync
+        done: false
+      - text: Commit deno.lock for reproducible dependency resolution
+        done: false
+      - text: Verify deno task check works after sync
+        done: false
+    links:
+      - specs/frontend-build-tooling.md
+
+
+
+
+
+
+
+
 
 todo:
   # Tasks committed for near-term work
@@ -312,6 +485,34 @@ done:
     created: 2026-02-15
     links:
       - specs/frontend-editor-diff.md
+
+  - id: D-21
+    completed: 2026-02-16
+    title: Scaffold SvelteKit project from Deno starter
+    description: |
+      Initialize the project using https://github.com/denoland/tutorial-with-svelte as a base. Set up deno.json (tasks, import maps), svelte.config.js, vite.config.ts, tsconfig.json, app.html, and app.css. Strip out tutorial-specific code but keep the Deno+SvelteKit wiring. Install core deps: tailwindcss 4, @tailwindcss/vite, svelte 5, typescript.
+    priority: high
+    tags: [infra, dx]
+    assignee: ""
+    created: 2026-02-16
+    subtasks:
+      - text: Clone/adapt deno starter template
+        done: false
+      - text: "Configure deno.json with tasks (dev, build, preview, db:*)"
+        done: false
+      - text: Set up svelte.config.js with Deno adapter
+        done: false
+      - text: Set up vite.config.ts with Tailwind + Svelte plugins
+        done: false
+      - text: Create tsconfig.json (strict mode)
+        done: false
+      - text: Create app.html shell and app.css with Tailwind imports
+        done: false
+    links:
+      - specs/tech-stack-overview.md
+      - specs/frontend-build-tooling.md
+      - https://github.com/denoland/tutorial-with-svelte
+
 
 
 
