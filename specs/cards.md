@@ -113,7 +113,7 @@ export const reorderCardsSchema = z.object({
 
 ### Card Detail Page
 
-Loads a single card with its labels and comments for the detail view:
+Loads a single card with its labels and comments for the detail view, plus the board's columns (for the MoveCardDialog):
 
 ```typescript
 // src/routes/(app)/boards/[boardId]/cards/[cardId]/+page.server.ts
@@ -123,23 +123,36 @@ import { superValidate } from "sveltekit-superforms";
 import { zod4 } from "sveltekit-superforms/adapters";
 import { updateCardSchema } from "$lib/schemas/card";
 import { db } from "$lib/db";
+import { columns } from "$lib/db/schema/columns";
+import { eq, asc } from "drizzle-orm";
 
 export const load: PageServerLoad = async ({ params }) => {
   const card = await db.query.cards.findFirst({
     where: (cards, { eq }) => eq(cards.id, params.cardId),
     with: {
+      column: true,
       cardLabels: { with: { label: true } },
       comments: {
-        orderBy: (comments, { desc }) => [desc(comments.createdAt)],
+        orderBy: (comments, { asc }) => [asc(comments.createdAt)],
+        with: { author: true },
       },
     },
   });
 
   if (!card) throw error(404, "Card not found");
 
-  const updateForm = await superValidate(card, zod4(updateCardSchema));
+  const boardColumns = await db
+    .select({ id: columns.id, name: columns.name })
+    .from(columns)
+    .where(eq(columns.boardId, params.boardId))
+    .orderBy(asc(columns.position));
 
-  return { card, boardId: params.boardId, updateForm };
+  const updateForm = await superValidate(
+    { title: card.title, description: card.description ?? "" },
+    zod4(updateCardSchema),
+  );
+
+  return { card, boardId: params.boardId, columns: boardColumns, updateForm };
 };
 ```
 
@@ -296,9 +309,11 @@ Key implementation details:
 - Title is inline-editable: click the title to enter edit mode, press Enter or blur to save, Escape to cancel
 - Uses a `titleSubmitting` guard flag to prevent double-submit when Enter triggers both `requestSubmit()` and a subsequent blur event (same pattern as `ColumnHeader` rename)
 - Description is saved via a separate form with an explicit "Save" button
-- Labels, comments, and metadata are displayed in Card sections
+- Labels, metadata, and interactive comments (via `CommentList` component) are displayed in Card sections
+- The Details card section includes a "Column" row showing the current column name and a "Move" button that opens `MoveCardDialog` (when other columns exist)
 - Delete uses `DeleteCardDialog` in a danger zone section at the bottom
 - `superForm`'s `onResult` resets the `titleSubmitting` flag and exits edit mode on success
+- The card detail page server load function fetches the board's columns (ordered by position) alongside the card data, so `MoveCardDialog` has the column list it needs
 
 ### Move Card Dialog
 
@@ -313,7 +328,7 @@ Key implementation details:
 - Submits to the existing `?/moveCard` form action with position 0 (top of target column)
 - Uses the hidden form + `requestSubmit()` pattern with `enhance` for progressive enhancement
 - Tracks `moving` state to disable the button and show a spinner during submission
-- Accessible from the `CardItem` dropdown menu ("Move to" option)
+- Accessible from the `CardItem` dropdown menu ("Move to" option) and the `CardDetail` page (Details section "Move" button)
 - `open` prop is bindable; selection resets when dialog closes
 
 ### Delete Card Dialog

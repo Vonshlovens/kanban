@@ -154,25 +154,6 @@ backlog:
       - specs/frontend-components.md
       - specs/cards.md
 
-  - id: B-24
-    title: "Add 'Move to column' action to CardDetail page"
-    description: |
-      The MoveCardDialog is currently only accessible from the CardItem dropdown on the board view. Add it to the CardDetail page as well, so users can move a card to another column from the detail view. This requires loading the board's columns in the card detail page server load function and passing them to CardDetail. Add a 'Move to' button or dropdown in the card detail sidebar/metadata area.
-    priority: medium
-    tags: [frontend]
-    assignee: ""
-    created: 2026-02-16
-    subtasks:
-      - text: Load board columns in card detail +page.server.ts
-        done: false
-      - text: Pass columns to CardDetail component
-        done: false
-      - text: Add MoveCardDialog trigger in CardDetail UI
-        done: false
-    links:
-      - specs/cards.md
-      - specs/drag-and-drop.md
-
   - id: B-25
     title: Add Markdown support for card descriptions
     description: |
@@ -193,6 +174,23 @@ backlog:
       - text: Update cards.md spec to reflect Markdown approach instead of generic rich text
         done: false
     links:
+      - specs/cards.md
+
+  - id: B-26
+    title: Include comment counts in board page card query
+    description: |
+      The board page load function (src/routes/(app)/boards/[boardId]/+page.server.ts) fetches cards with cardLabels but not comments. CardItem.svelte already renders a comment count indicator, but card.comments is always undefined at the board level. Either include a lightweight comments query (just IDs) or use a SQL count subquery to efficiently provide comment counts without loading full comment data.
+    priority: medium
+    tags: [frontend, backend]
+    assignee: ""
+    created: 2026-02-16
+    subtasks:
+      - text: Add comment count to board page card query
+        done: false
+      - text: Verify CardItem comment count indicator displays correctly
+        done: false
+    links:
+      - specs/comments.md
       - specs/cards.md
 
 
@@ -918,6 +916,53 @@ done:
         done: false
     links:
       - specs/cards.md
+
+  - id: D-40
+    completed: 2026-02-16
+    started: 2026-02-16
+    title: "Add 'Move to column' action to CardDetail page"
+    description: |
+      The MoveCardDialog is currently only accessible from the CardItem dropdown on the board view. Add it to the CardDetail page as well, so users can move a card to another column from the detail view. This requires loading the board's columns in the card detail page server load function and passing them to CardDetail. Add a 'Move to' button or dropdown in the card detail sidebar/metadata area.
+    priority: medium
+    tags: [frontend]
+    assignee: ""
+    created: 2026-02-16
+    subtasks:
+      - text: Load board columns in card detail +page.server.ts
+        done: false
+      - text: Pass columns to CardDetail component
+        done: false
+      - text: Add MoveCardDialog trigger in CardDetail UI
+        done: false
+    links:
+      - specs/cards.md
+      - specs/drag-and-drop.md
+
+  - id: D-41
+    completed: 2026-02-16
+    title: Implement comment CRUD on CardDetail page
+    description: |
+      The comments spec (specs/comments.md) defines full comment CRUD: create, edit, delete with author-only permissions. Currently the CardDetail page only displays comments read-only. Implement the createComment, updateComment, and deleteComment form actions on the card detail +page.server.ts, create CommentItem and CommentList components per the spec, and integrate into CardDetail. Requires auth/user context (locals.user) which may need to be set up first.
+    priority: high
+    tags: [frontend, backend]
+    assignee: ""
+    created: 2026-02-16
+    subtasks:
+      - text: "Create comment validation schemas (createCommentSchema, updateCommentSchema, deleteCommentSchema)"
+        done: false
+      - text: "Add createComment, updateComment, deleteComment form actions to card detail +page.server.ts"
+        done: false
+      - text: Create CommentItem component with edit/delete controls
+        done: false
+      - text: Create CommentList component with new comment form
+        done: false
+      - text: Replace read-only comments section in CardDetail with CommentList
+        done: false
+    links:
+      - specs/comments.md
+      - specs/cards.md
+
+
 
 
 

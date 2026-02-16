@@ -6,6 +6,7 @@
   import { toast } from "svelte-sonner";
   import { cn } from "$lib/utils";
   import ArrowLeftIcon from "@lucide/svelte/icons/arrow-left";
+  import ArrowRightLeftIcon from "@lucide/svelte/icons/arrow-right-left";
   import CalendarIcon from "@lucide/svelte/icons/calendar";
   import ClockIcon from "@lucide/svelte/icons/clock";
   import ColumnsIcon from "@lucide/svelte/icons/columns-3";
@@ -15,12 +16,16 @@
   import TagIcon from "@lucide/svelte/icons/tag";
   import Trash2Icon from "@lucide/svelte/icons/trash-2";
   import DeleteCardDialog from "./DeleteCardDialog.svelte";
+  import MoveCardDialog from "./MoveCardDialog.svelte";
+  import CommentList from "$lib/components/comment/CommentList.svelte";
   import type { SuperValidated } from "sveltekit-superforms";
 
   let {
     card,
     boardId,
+    columns,
     updateForm,
+    currentUserId,
   }: {
     card: {
       id: string;
@@ -41,7 +46,9 @@
       }[];
     };
     boardId: string;
+    columns: { id: string; name: string }[];
     updateForm: SuperValidated<Record<string, unknown>>;
+    currentUserId: string;
   } = $props();
 
   const {
@@ -64,6 +71,8 @@
   let editingTitle = $state(false);
   let titleSubmitting = $state(false);
   let showDelete = $state(false);
+  let showMove = $state(false);
+  let hasOtherColumns = $derived(columns.filter((c) => c.id !== card.column.id).length > 0);
   let titleInputEl: HTMLInputElement | undefined = $state();
 
   let labelCount = $derived(card.cardLabels?.length ?? 0);
@@ -267,6 +276,25 @@
       </Card.Header>
       <Card.Content>
         <dl class="grid grid-cols-[auto_1fr] gap-x-6 gap-y-3 text-sm">
+          <dt class="flex items-center gap-2 text-muted-foreground">
+            <ColumnsIcon class="size-3.5" />
+            Column
+          </dt>
+          <dd class="flex items-center gap-2">
+            <span class="font-medium">{card.column.name}</span>
+            {#if hasOtherColumns}
+              <Button
+                variant="ghost"
+                size="sm"
+                class="h-6 gap-1 px-2 text-xs text-muted-foreground"
+                onclick={() => (showMove = true)}
+              >
+                <ArrowRightLeftIcon class="size-3" />
+                Move
+              </Button>
+            {/if}
+          </dd>
+
           {#if dueDateFormatted}
             <dt class="flex items-center gap-2 text-muted-foreground">
               <CalendarIcon class="size-3.5" />
@@ -299,47 +327,7 @@
         </Card.Title>
       </Card.Header>
       <Card.Content>
-        {#if commentCount > 0}
-          <div class="space-y-4">
-            {#each card.comments as comment (comment.id)}
-              <div class="flex gap-3">
-                <div
-                  class="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-medium text-muted-foreground"
-                >
-                  {comment.author.name
-                    .split(" ")
-                    .map((n) => n[0])
-                    .join("")
-                    .slice(0, 2)
-                    .toUpperCase()}
-                </div>
-                <div class="min-w-0 flex-1">
-                  <div class="flex items-baseline gap-2">
-                    <span class="text-sm font-medium">{comment.author.name}</span>
-                    <span class="text-xs text-muted-foreground">
-                      {new Date(comment.createdAt).toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                        hour: "numeric",
-                        minute: "2-digit",
-                      })}
-                    </span>
-                    {#if new Date(comment.updatedAt).getTime() > new Date(comment.createdAt).getTime() + 1000}
-                      <span class="text-xs text-muted-foreground/60">(edited)</span>
-                    {/if}
-                  </div>
-                  <p class="mt-1 text-sm leading-relaxed text-foreground/80 whitespace-pre-wrap">
-                    {comment.content}
-                  </p>
-                </div>
-              </div>
-            {/each}
-          </div>
-        {:else}
-          <p class="text-sm text-muted-foreground/60">
-            No comments yet.
-          </p>
-        {/if}
+        <CommentList cardId={card.id} comments={card.comments} {currentUserId} />
       </Card.Content>
     </Card.Root>
 
@@ -369,3 +357,4 @@
 </div>
 
 <DeleteCardDialog bind:open={showDelete} {card} {boardId} />
+<MoveCardDialog bind:open={showMove} {card} {boardId} {columns} currentColumnId={card.column.id} />
