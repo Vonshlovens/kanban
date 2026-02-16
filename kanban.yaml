@@ -174,21 +174,20 @@ backlog:
       - specs/drag-and-drop.md
 
   - id: B-25
-    title: Fix column rename blur/submit race condition
+    title: Fix CardDetail title edit double-submit on Enter
     description: |
-      In ColumnHeader.svelte, when the user presses Enter to submit a rename, handleKeydown calls form.requestSubmit() but the subsequent blur event fires onblur which resets editName back to the original column.name and sets editing=false. This means the form may submit the old name instead of the edited name, or the rename appears to not work. Fix: differentiate between intentional blur (user clicked away, should cancel) and blur caused by submit (should not reset). One approach: set a flag before requestSubmit() and check it in onblur.
+      In CardDetail.svelte, pressing Enter to save the title calls handleTitleBlur() from the keydown handler, which calls requestSubmit(). Then the input loses focus and the onblur handler fires handleTitleBlur() again, causing a second requestSubmit(). Fix: add a submitting guard flag (similar to the ColumnHeader rename fix in P-1/D-38) so the form only submits once. The blur after an Enter-triggered submit should be a no-op.
     priority: medium
     tags: [frontend]
     assignee: ""
     created: 2026-02-16
     subtasks:
-      - text: Add a submitting flag that prevents onblur from resetting the name
+      - text: Add a submitting flag to prevent double-submit
         done: false
-      - text: Verify rename works correctly via both Enter and blur-away
+      - text: Ensure blur after Enter submit is a no-op
         done: false
     links:
-      - specs/columns.md
-
+      - specs/cards.md
 
 
 todo:
@@ -877,6 +876,25 @@ done:
       - specs/board-management.md
       - specs/columns.md
       - specs/cards.md
+
+  - id: D-38
+    completed: 2026-02-16
+    started: 2026-02-16
+    title: Fix column rename blur/submit race condition
+    description: |
+      In ColumnHeader.svelte, when the user presses Enter to submit a rename, handleKeydown calls form.requestSubmit() but the subsequent blur event fires onblur which resets editName back to the original column.name and sets editing=false. This means the form may submit the old name instead of the edited name, or the rename appears to not work. Fix: differentiate between intentional blur (user clicked away, should cancel) and blur caused by submit (should not reset). One approach: set a flag before requestSubmit() and check it in onblur.
+    priority: medium
+    tags: [frontend]
+    assignee: ""
+    created: 2026-02-16
+    subtasks:
+      - text: Add a submitting flag that prevents onblur from resetting the name
+        done: false
+      - text: Verify rename works correctly via both Enter and blur-away
+        done: false
+    links:
+      - specs/columns.md
+
 
 
 

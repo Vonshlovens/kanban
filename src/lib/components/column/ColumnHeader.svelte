@@ -34,6 +34,7 @@
 
   let editing = $state(false);
   let editName = $state(column.name);
+  let renameSubmitting = $state(false);
   let menuOpen = $state(false);
   let showDelete = $state(false);
   let settingWip = $state(false);
@@ -53,6 +54,7 @@
 
   function handleKeydown(e: KeyboardEvent) {
     if (e.key === "Enter") {
+      renameSubmitting = true;
       const form = (e.target as HTMLElement).closest("form");
       form?.requestSubmit();
     }
@@ -93,11 +95,13 @@
       use:enhance={() => {
         return async ({ update, result }) => {
           await update();
+          renameSubmitting = false;
           editing = false;
           if (result.type === "success") {
             toast.success("Column renamed");
           } else if (result.type === "error") {
             toast.error("Failed to rename column");
+            editName = column.name;
           }
         };
       }}
@@ -108,6 +112,7 @@
         bind:value={editName}
         class="h-6 border-none bg-transparent px-0 py-0 text-sm font-semibold shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
         onblur={() => {
+          if (renameSubmitting) return;
           editing = false;
           editName = column.name;
         }}

@@ -278,7 +278,7 @@ Key props:
 
 `ColumnHeader.svelte` includes:
 - Drag handle (grip icon, visible on column hover)
-- Inline rename via double-click (Enter submits to `?/renameColumn`, Escape cancels)
+- Inline rename via double-click (Enter submits to `?/renameColumn`, Escape cancels, blur cancels unless a submit is in-flight)
 - Card count badge with WIP limit display (e.g., `5/8`)
 - Three-dot dropdown menu (visible on hover) with:
   - **Rename** — triggers inline editing
