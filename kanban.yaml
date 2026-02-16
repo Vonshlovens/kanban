@@ -35,56 +35,6 @@ backlog:
     links:
       - specs/tech-containerization.md
 
-  - id: B-8
-    title: "Board management: listing, create, and settings pages"
-    description: |
-      Implement board CRUD. Root page lists boards (or redirects if only one). Create board page with form action that seeds default columns. Board settings page with rename, description, favorite toggle, and delete (with AlertDialog confirmation). This is the first real feature — proves the full stack works end-to-end.
-    priority: high
-    tags: [frontend, backend]
-    assignee: ""
-    created: 2026-02-16
-    subtasks:
-      - text: Create src/routes/+page.server.ts (board listing load)
-        done: false
-      - text: Create src/routes/+page.svelte (board listing UI)
-        done: false
-      - text: Create src/routes/(app)/boards/new/ (create board form + action)
-        done: false
-      - text: "Create src/routes/(app)/boards/[boardId]/settings/ (rename, delete, favorite)"
-        done: false
-      - text: Create BoardCard.svelte component
-        done: false
-    links:
-      - specs/board-management.md
-      - specs/frontend-pages.md
-
-  - id: B-9
-    title: Board page with columns and card list
-    description: |
-      Build the main board view at /boards/[boardId]. Server load function fetches board with columns and cards (ordered by position). Render columns in a horizontal scrollable layout. Each column shows its header (name, card count, WIP indicator), card list, and an Add Card footer. Include Add Column button at the end. This is the core kanban view.
-    priority: high
-    tags: [frontend, backend]
-    assignee: ""
-    created: 2026-02-16
-    subtasks:
-      - text: "Create src/routes/(app)/boards/[boardId]/+page.server.ts (load board + columns + cards, card/column form actions)"
-        done: false
-      - text: "Create src/routes/(app)/boards/[boardId]/+page.svelte (board view)"
-        done: false
-      - text: "Create Column.svelte, ColumnHeader.svelte, ColumnFooter.svelte"
-        done: false
-      - text: Create CardItem.svelte (compact card in column)
-        done: false
-      - text: Create AddCard.svelte (inline form)
-        done: false
-      - text: Create AddColumn.svelte (inline form)
-        done: false
-    links:
-      - specs/columns.md
-      - specs/cards.md
-      - specs/frontend-pages.md
-      - specs/frontend-components.md
-
   - id: B-10
     title: Card detail view and update actions
     description: |
@@ -211,6 +161,33 @@ backlog:
       - specs/frontend-pages.md
       - specs/board-management.md
 
+  - id: B-18
+    title: "Install missing shadcn-svelte UI components (dropdown-menu, select, textarea, popover, dialog)"
+    description: |
+      Several specs reference shadcn-svelte components that aren't installed yet. The ColumnHeader needs dropdown-menu for its action menu (rename, set WIP limit, delete). The DeleteColumnDialog needs select for move-cards-to picker. CardDetail needs textarea for description editing. Install these via the shadcn-svelte CLI: npx shadcn-svelte@next add dropdown-menu select textarea popover. This unblocks column action menus, card detail editing, and delete column dialog with card migration.
+    priority: high
+    tags: [frontend, dx]
+    assignee: ""
+    created: 2026-02-16
+    subtasks:
+      - text: Install dropdown-menu component
+        done: false
+      - text: Install select component
+        done: false
+      - text: Install textarea component
+        done: false
+      - text: Install popover component
+        done: false
+      - text: Add DropdownMenu to ColumnHeader for rename/WIP/delete actions
+        done: false
+      - text: Verify all components render correctly
+        done: false
+    links:
+      - specs/columns.md
+      - specs/cards.md
+      - specs/frontend-components.md
+
+
 
 
 
@@ -234,26 +211,27 @@ in_progress:
 
   - id: P-1
     started: 2026-02-16
-    title: "Build app shell navigation: sidebar and navbar components"
+    title: "Board management: listing, create, and settings pages"
     description: |
-      The (app) layout group exists but has placeholder markup. Build the Sidebar component (board list navigation, theme toggle, new board link) and Navbar component (breadcrumbs, board name, settings link). Install shadcn-svelte sidebar and sheet components if needed. Wire up to the (app)/+layout.svelte.
+      Implement board CRUD. Root page lists boards (or redirects if only one). Create board page with form action that seeds default columns. Board settings page with rename, description, favorite toggle, and delete (with AlertDialog confirmation). This is the first real feature — proves the full stack works end-to-end.
     priority: high
-    tags: [frontend]
+    tags: [frontend, backend]
     assignee: ""
     created: 2026-02-16
     subtasks:
-      - text: Create src/lib/components/layout/Sidebar.svelte with board list and theme toggle
+      - text: Create src/routes/+page.server.ts (board listing load)
         done: false
-      - text: Create src/lib/components/layout/Navbar.svelte with breadcrumbs and board actions
+      - text: Create src/routes/+page.svelte (board listing UI)
         done: false
-      - text: "Install required shadcn-svelte components (sidebar, sheet, separator, etc.)"
+      - text: Create src/routes/(app)/boards/new/ (create board form + action)
         done: false
-      - text: Wire sidebar and navbar into src/routes/(app)/+layout.svelte
+      - text: "Create src/routes/(app)/boards/[boardId]/settings/ (rename, delete, favorite)"
+        done: false
+      - text: Create BoardCard.svelte component
         done: false
     links:
-      - specs/frontend-overview.md
-      - specs/frontend-components.md
-      - specs/frontend-routing.md
+      - specs/board-management.md
+      - specs/frontend-pages.md
 
 
 review:
@@ -634,6 +612,60 @@ done:
       - specs/board-management.md
       - specs/cards.md
       - specs/columns.md
+
+  - id: D-25
+    completed: 2026-02-16
+    started: 2026-02-16
+    title: "Build app shell navigation: sidebar and navbar components"
+    description: |
+      The (app) layout group exists but has placeholder markup. Build the Sidebar component (board list navigation, theme toggle, new board link) and Navbar component (breadcrumbs, board name, settings link). Install shadcn-svelte sidebar and sheet components if needed. Wire up to the (app)/+layout.svelte.
+    priority: high
+    tags: [frontend]
+    assignee: ""
+    created: 2026-02-16
+    subtasks:
+      - text: Create src/lib/components/layout/Sidebar.svelte with board list and theme toggle
+        done: false
+      - text: Create src/lib/components/layout/Navbar.svelte with breadcrumbs and board actions
+        done: false
+      - text: "Install required shadcn-svelte components (sidebar, sheet, separator, etc.)"
+        done: false
+      - text: Wire sidebar and navbar into src/routes/(app)/+layout.svelte
+        done: false
+    links:
+      - specs/frontend-overview.md
+      - specs/frontend-components.md
+      - specs/frontend-routing.md
+
+  - id: D-26
+    completed: 2026-02-16
+    title: Board page with columns and card list
+    description: |
+      Build the main board view at /boards/[boardId]. Server load function fetches board with columns and cards (ordered by position). Render columns in a horizontal scrollable layout. Each column shows its header (name, card count, WIP indicator), card list, and an Add Card footer. Include Add Column button at the end. This is the core kanban view.
+    priority: high
+    tags: [frontend, backend]
+    assignee: ""
+    created: 2026-02-16
+    subtasks:
+      - text: "Create src/routes/(app)/boards/[boardId]/+page.server.ts (load board + columns + cards, card/column form actions)"
+        done: false
+      - text: "Create src/routes/(app)/boards/[boardId]/+page.svelte (board view)"
+        done: false
+      - text: "Create Column.svelte, ColumnHeader.svelte, ColumnFooter.svelte"
+        done: false
+      - text: Create CardItem.svelte (compact card in column)
+        done: false
+      - text: Create AddCard.svelte (inline form)
+        done: false
+      - text: Create AddColumn.svelte (inline form)
+        done: false
+    links:
+      - specs/columns.md
+      - specs/cards.md
+      - specs/frontend-pages.md
+      - specs/frontend-components.md
+
+
 
 
 

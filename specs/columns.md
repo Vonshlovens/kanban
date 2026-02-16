@@ -108,7 +108,7 @@ Columns are loaded as part of the board page, not as a separate route:
 import type { PageServerLoad } from "./$types";
 import { error } from "@sveltejs/kit";
 import { superValidate } from "sveltekit-superforms";
-import { zod } from "sveltekit-superforms/adapters";
+import { zod4 } from "sveltekit-superforms/adapters";
 import { createColumnSchema } from "$lib/schemas/column";
 import { db } from "$lib/db";
 
@@ -129,7 +129,7 @@ export const load: PageServerLoad = async ({ params }) => {
 
   if (!board) throw error(404, "Board not found");
 
-  const createColumnForm = await superValidate(zod(createColumnSchema));
+  const createColumnForm = await superValidate(zod4(createColumnSchema));
 
   return { board, createColumnForm };
 };
@@ -146,7 +146,7 @@ Appends a new column at the end of the board:
 import type { Actions } from "./$types";
 import { fail } from "@sveltejs/kit";
 import { superValidate } from "sveltekit-superforms";
-import { zod } from "sveltekit-superforms/adapters";
+import { zod4 } from "sveltekit-superforms/adapters";
 import { createColumnSchema, renameColumnSchema, updateWipLimitSchema, deleteColumnSchema } from "$lib/schemas/column";
 import { db } from "$lib/db";
 import { columns } from "$lib/db/schema/columns";
@@ -155,7 +155,7 @@ import { eq, and, max } from "drizzle-orm";
 
 export const actions: Actions = {
   createColumn: async ({ request, params }) => {
-    const form = await superValidate(request, zod(createColumnSchema));
+    const form = await superValidate(request, zod4(createColumnSchema));
     if (!form.valid) return fail(400, { form });
 
     const [maxPos] = await db
@@ -173,7 +173,7 @@ export const actions: Actions = {
   },
 
   renameColumn: async ({ request, params }) => {
-    const form = await superValidate(request, zod(renameColumnSchema));
+    const form = await superValidate(request, zod4(renameColumnSchema));
     if (!form.valid) return fail(400, { form });
 
     const formData = await request.clone().formData();
@@ -187,7 +187,7 @@ export const actions: Actions = {
   },
 
   updateWipLimit: async ({ request, params }) => {
-    const form = await superValidate(request, zod(updateWipLimitSchema));
+    const form = await superValidate(request, zod4(updateWipLimitSchema));
     if (!form.valid) return fail(400, { form });
 
     const formData = await request.clone().formData();
@@ -201,7 +201,7 @@ export const actions: Actions = {
   },
 
   deleteColumn: async ({ request, params }) => {
-    const form = await superValidate(request, zod(deleteColumnSchema));
+    const form = await superValidate(request, zod4(deleteColumnSchema));
     if (!form.valid) return fail(400, { form });
 
     const formData = await request.clone().formData();
@@ -301,21 +301,26 @@ export const PUT: RequestHandler = async ({ request, params }) => {
 
 ```svelte
 <!-- src/lib/components/column/ColumnHeader.svelte -->
+<!-- NOTE: DropdownMenu requires the dropdown-menu shadcn-svelte component to be installed -->
 <script lang="ts">
-  import type { Column } from "$lib/types";
-  import { Button } from "$lib/components/ui/button";
-  import { Input } from "$lib/components/ui/input";
-  import { GripVertical, MoreHorizontal } from "@lucide/svelte";
+  import { Button } from "$lib/components/ui/button/index.js";
+  import { Input } from "$lib/components/ui/input/index.js";
+  import GripVerticalIcon from "@lucide/svelte/icons/grip-vertical";
+  import MoreHorizontalIcon from "@lucide/svelte/icons/more-horizontal";
   import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
+  import { cn } from "$lib/utils";
 
-  let { column, cardCount }: { column: Column; cardCount: number } = $props();
+  let { column, cardCount }: {
+    column: { id: string; name: string; wipLimit?: number | null };
+    cardCount: number;
+  } = $props();
 
   let editing = $state(false);
   let editName = $state(column.name);
 </script>
 
-<div class="flex items-center gap-2 px-3 pt-3 pb-1">
-  <GripVertical class="h-4 w-4 shrink-0 cursor-grab text-neutral-400" />
+<div class="flex items-center gap-1.5 px-3 pt-3 pb-2">
+  <GripVerticalIcon class="size-3.5 shrink-0 cursor-grab text-muted-foreground/50" />
 
   {#if editing}
     <form method="POST" action="?/renameColumn" class="flex-1">
@@ -323,28 +328,37 @@ export const PUT: RequestHandler = async ({ request, params }) => {
       <Input
         name="name"
         bind:value={editName}
-        class="h-7 text-sm font-semibold"
-        onblur={() => editing = false}
+        class="h-6 border-none bg-transparent px-0 text-sm font-semibold shadow-none"
+        onblur={() => { editing = false; editName = column.name; }}
+        autofocus
       />
     </form>
   {:else}
     <button
-      class="flex-1 text-left text-sm font-semibold"
+      class="flex-1 truncate text-left text-sm font-semibold text-foreground"
       ondblclick={() => editing = true}
+      title="Double-click to rename"
     >
       {column.name}
     </button>
   {/if}
 
-  <span class="text-xs text-neutral-500">
-    {cardCount}{#if column.wipLimit != null}/{column.wipLimit}{/if}
+  <span class={cn(
+    "shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-medium tabular-nums leading-none",
+    column.wipLimit != null && cardCount > column.wipLimit
+      ? "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400"
+      : "bg-muted text-muted-foreground"
+  )}>
+    {cardCount}{#if column.wipLimit != null}<span class="opacity-50">/{column.wipLimit}</span>{/if}
   </span>
 
   <DropdownMenu.Root>
-    <DropdownMenu.Trigger asChild let:builder>
-      <Button variant="ghost" size="icon" class="h-7 w-7" builders={[builder]}>
-        <MoreHorizontal class="h-4 w-4" />
-      </Button>
+    <DropdownMenu.Trigger>
+      {#snippet child({ props })}
+        <Button variant="ghost" size="icon-sm" class="size-7" {...props}>
+          <MoreHorizontalIcon class="size-4" />
+        </Button>
+      {/snippet}
     </DropdownMenu.Trigger>
     <DropdownMenu.Content align="end">
       <DropdownMenu.Item onclick={() => editing = true}>Rename</DropdownMenu.Item>
@@ -360,10 +374,10 @@ export const PUT: RequestHandler = async ({ request, params }) => {
 
 ```svelte
 <!-- src/lib/components/column/ColumnFooter.svelte -->
+<!-- NOTE: ColumnFooter was merged into Column.svelte — WIP warning is inline, AddCard handles the button -->
 <script lang="ts">
-  import type { Column } from "$lib/types";
-  import { Button } from "$lib/components/ui/button";
-  import { Plus } from "@lucide/svelte";
+  import { Button } from "$lib/components/ui/button/index.js";
+  import PlusIcon from "@lucide/svelte/icons/plus";
 
   let { column, isAtWipLimit, isOverWipLimit }: {
     column: Column;
@@ -391,12 +405,13 @@ export const PUT: RequestHandler = async ({ request, params }) => {
 ```svelte
 <!-- src/lib/components/column/AddColumn.svelte -->
 <script lang="ts">
-  import { Button } from "$lib/components/ui/button";
-  import { Input } from "$lib/components/ui/input";
-  import { Plus, X } from "@lucide/svelte";
+  import { Button } from "$lib/components/ui/button/index.js";
+  import { Input } from "$lib/components/ui/input/index.js";
+  import PlusIcon from "@lucide/svelte/icons/plus";
+  import XIcon from "@lucide/svelte/icons/x";
   import { superForm } from "sveltekit-superforms";
-  import type { SuperValidated } from "sveltekit-superforms";
-  import type { CreateColumnSchema } from "$lib/schemas/column";
+  import type { SuperValidated, Infer } from "sveltekit-superforms";
+  import type { createColumnSchema } from "$lib/schemas/column";
 
   let { form: formData }: { form: SuperValidated<CreateColumnSchema> } = $props();
 

@@ -176,15 +176,19 @@ Dialogs use shadcn-svelte's `Dialog` component backed by bits-ui. See `specs/fro
 
 ## Icons
 
-All icons come from Lucide Svelte (`@lucide/svelte`). No other icon libraries.
+All icons come from Lucide Svelte (`@lucide/svelte`). No other icon libraries. Use tree-shakeable individual imports, not the barrel export:
 
 ```svelte
 <script lang="ts">
-  import { Plus, Trash2, GripVertical, Search, X } from "@lucide/svelte";
+  import PlusIcon from "@lucide/svelte/icons/plus";
+  import Trash2Icon from "@lucide/svelte/icons/trash-2";
+  import GripVerticalIcon from "@lucide/svelte/icons/grip-vertical";
+  import SearchIcon from "@lucide/svelte/icons/search";
+  import XIcon from "@lucide/svelte/icons/x";
 </script>
 
-<Plus class="h-4 w-4" />
-<Trash2 class="h-4 w-4 text-destructive" />
+<PlusIcon class="h-4 w-4" />
+<Trash2Icon class="h-4 w-4 text-destructive" />
 ```
 
 ## Keyboard Shortcuts

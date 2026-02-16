@@ -120,7 +120,7 @@ Loads a single card with its labels and comments for the detail view:
 import type { PageServerLoad } from "./$types";
 import { error } from "@sveltejs/kit";
 import { superValidate } from "sveltekit-superforms";
-import { zod } from "sveltekit-superforms/adapters";
+import { zod4 } from "sveltekit-superforms/adapters";
 import { updateCardSchema } from "$lib/schemas/card";
 import { db } from "$lib/db";
 
@@ -137,7 +137,7 @@ export const load: PageServerLoad = async ({ params }) => {
 
   if (!card) throw error(404, "Card not found");
 
-  const updateForm = await superValidate(card, zod(updateCardSchema));
+  const updateForm = await superValidate(card, zod4(updateCardSchema));
 
   return { card, boardId: params.boardId, updateForm };
 };
@@ -154,7 +154,7 @@ Creates a card at the top of a column (position 0), shifting existing cards down
 import type { Actions } from "./$types";
 import { fail } from "@sveltejs/kit";
 import { superValidate } from "sveltekit-superforms";
-import { zod } from "sveltekit-superforms/adapters";
+import { zod4 } from "sveltekit-superforms/adapters";
 import { createCardSchema, moveCardSchema, deleteCardSchema } from "$lib/schemas/card";
 import { db } from "$lib/db";
 import { cards } from "$lib/db/schema/cards";
@@ -162,7 +162,7 @@ import { eq, sql } from "drizzle-orm";
 
 export const actions: Actions = {
   createCard: async ({ request }) => {
-    const form = await superValidate(request, zod(createCardSchema));
+    const form = await superValidate(request, zod4(createCardSchema));
     if (!form.valid) return fail(400, { form });
 
     const formData = await request.clone().formData();
@@ -185,7 +185,7 @@ export const actions: Actions = {
   },
 
   moveCard: async ({ request }) => {
-    const form = await superValidate(request, zod(moveCardSchema));
+    const form = await superValidate(request, zod4(moveCardSchema));
     if (!form.valid) return fail(400, { form });
 
     await db.update(cards)
@@ -200,7 +200,7 @@ export const actions: Actions = {
   },
 
   deleteCard: async ({ request }) => {
-    const form = await superValidate(request, zod(deleteCardSchema));
+    const form = await superValidate(request, zod4(deleteCardSchema));
     if (!form.valid) return fail(400, { form });
 
     await db.delete(cards).where(eq(cards.id, form.data.cardId));
@@ -219,7 +219,7 @@ Updates card fields from the detail view:
 import type { Actions } from "./$types";
 import { fail } from "@sveltejs/kit";
 import { superValidate } from "sveltekit-superforms";
-import { zod } from "sveltekit-superforms/adapters";
+import { zod4 } from "sveltekit-superforms/adapters";
 import { updateCardSchema } from "$lib/schemas/card";
 import { db } from "$lib/db";
 import { cards } from "$lib/db/schema/cards";
@@ -227,7 +227,7 @@ import { eq } from "drizzle-orm";
 
 export const actions: Actions = {
   update: async ({ request, params }) => {
-    const form = await superValidate(request, zod(updateCardSchema));
+    const form = await superValidate(request, zod4(updateCardSchema));
     if (!form.valid) return fail(400, { form });
 
     await db.update(cards)
@@ -281,10 +281,12 @@ Compact card shown in column lists. Clicking opens the detail view.
 ```svelte
 <!-- src/lib/components/card/CardItem.svelte -->
 <script lang="ts">
-  import type { Card } from "$lib/types";
-  import { Calendar, MessageSquare } from "@lucide/svelte";
+  import CalendarIcon from "@lucide/svelte/icons/calendar";
+  import MessageSquareIcon from "@lucide/svelte/icons/message-square";
+  import AlignLeftIcon from "@lucide/svelte/icons/align-left";
+  import { cn } from "$lib/utils";
 
-  let { card, boardId }: { card: Card; boardId: string } = $props();
+  let { card, boardId }: { card: any; boardId: string } = $props();
 
   let hasDescription = $derived(!!card.description);
   let labelCount = $derived(card.cardLabels?.length ?? 0);
@@ -333,12 +335,12 @@ Full card view with editable title, description, and metadata sidebar.
 
 ```svelte
 <!-- src/lib/components/card/CardDetail.svelte -->
+<!-- NOTE: Requires textarea shadcn-svelte component to be installed -->
 <script lang="ts">
-  import type { Card } from "$lib/types";
-  import { Button } from "$lib/components/ui/button";
-  import { Input } from "$lib/components/ui/input";
+  import { Button } from "$lib/components/ui/button/index.js";
+  import { Input } from "$lib/components/ui/input/index.js";
   import { Textarea } from "$lib/components/ui/textarea";
-  import { X } from "@lucide/svelte";
+  import XIcon from "@lucide/svelte/icons/x";
   import { superForm } from "sveltekit-superforms";
   import type { SuperValidated } from "sveltekit-superforms";
   import type { UpdateCardSchema } from "$lib/schemas/card";
@@ -457,12 +459,13 @@ Inline form that expands in the column footer to create a new card.
 ```svelte
 <!-- src/lib/components/card/AddCard.svelte -->
 <script lang="ts">
-  import { Button } from "$lib/components/ui/button";
-  import { Input } from "$lib/components/ui/input";
-  import { Plus, X } from "@lucide/svelte";
+  import { Button } from "$lib/components/ui/button/index.js";
+  import { Input } from "$lib/components/ui/input/index.js";
+  import PlusIcon from "@lucide/svelte/icons/plus";
+  import XIcon from "@lucide/svelte/icons/x";
   import { superForm } from "sveltekit-superforms";
-  import type { SuperValidated } from "sveltekit-superforms";
-  import type { CreateCardSchema } from "$lib/schemas/card";
+  import type { SuperValidated, Infer } from "sveltekit-superforms";
+  import type { createCardSchema } from "$lib/schemas/card";
 
   let { columnId, form: formData }: {
     columnId: string;
