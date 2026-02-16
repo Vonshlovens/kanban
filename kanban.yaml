@@ -35,27 +35,6 @@ backlog:
     links:
       - specs/tech-containerization.md
 
-  - id: B-10
-    title: Card detail view and update actions
-    description: |
-      Build the card detail page at /boards/[boardId]/cards/[cardId]. Load card with labels and comments. Editable title (double-click to edit), description textarea with save, and delete button with AlertDialog. This is a separate page/route, not a modal (modal can come later).
-    priority: medium
-    tags: [frontend, backend]
-    assignee: ""
-    created: 2026-02-16
-    subtasks:
-      - text: "Create src/routes/(app)/boards/[boardId]/cards/[cardId]/+page.server.ts (load card, update action)"
-        done: false
-      - text: "Create src/routes/(app)/boards/[boardId]/cards/[cardId]/+page.svelte"
-        done: false
-      - text: Create CardDetail.svelte component
-        done: false
-      - text: Create DeleteCardDialog.svelte component
-        done: false
-    links:
-      - specs/cards.md
-      - specs/frontend-dialogs.md
-
   - id: B-11
     title: Add postinstall svelte-kit sync and lock file tracking
     description: |
@@ -158,27 +137,6 @@ backlog:
     links:
       - specs/frontend-pages.md
 
-  - id: B-22
-    title: Build card detail page with view/edit UI
-    description: |
-      The card detail page route (boards/[boardId]/cards/[cardId]) doesn't exist yet. Build the +page.server.ts load function and +page.svelte with CardDetail component. Should load card with labels and comments, support inline title editing, description editing with Textarea, and show a Delete button that opens DeleteCardDialog. Specs describe this in cards.md.
-    priority: high
-    tags: [frontend, backend]
-    assignee: ""
-    created: 2026-02-16
-    subtasks:
-      - text: Create card detail route directory and +page.server.ts
-        done: false
-      - text: Build CardDetail component with editable title and description
-        done: false
-      - text: Wire up delete button to DeleteCardDialog
-        done: false
-      - text: Add update form action for card fields
-        done: false
-    links:
-      - specs/cards.md
-      - specs/frontend-pages.md
-
   - id: B-23
     title: Create shared TypeScript types for domain models
     description: |
@@ -196,30 +154,35 @@ backlog:
       - specs/frontend-components.md
       - specs/cards.md
 
-  - id: B-24
-    title: Implement drag-and-drop reordering for columns and cards
+  - id: B-25
+    title: "Add \"Move to\" dialog for card context menu"
     description: |
-      The board supports columns and cards but has no drag-and-drop reordering yet. The grip handles are rendered in ColumnHeader and there is a planned reorder API endpoint (columns/reorder/+server.ts) in the columns spec. Implement: (1) the reorder JSON API endpoint for columns, (2) a similar reorder endpoint for cards across columns, (3) client-side drag-and-drop using svelte-dnd-action or native drag events. See specs/drag-and-drop.md and specs/columns.md for the reorder schema and endpoint design.
-    priority: high
-    tags: [frontend, backend]
+      Add a MoveCardDialog component that lets users move a card to another column via a dropdown picker in the card context menu. This provides a non-drag alternative for accessibility and quick moves. The moveCard form action already exists. See specs/drag-and-drop.md for the planned component pattern.
+    priority: medium
+    tags: [frontend]
     assignee: ""
     created: 2026-02-16
     subtasks:
-      - text: "Create column reorder PUT endpoint at boards/[boardId]/columns/reorder/+server.ts"
+      - text: Create MoveCardDialog.svelte with column select picker
         done: false
-      - text: Create card reorder/move PUT endpoint
+      - text: "Add 'Move to' option in CardItem dropdown menu"
         done: false
-      - text: Add drag-and-drop library or native drag implementation
-        done: false
-      - text: Wire up column drag handles to reorder API
-        done: false
-      - text: Wire up card drag to move/reorder API
+      - text: Pass available columns to CardItem from Column component
         done: false
     links:
-      - specs/columns.md
       - specs/drag-and-drop.md
+      - specs/cards.md
 
-  - id: B-25
+
+todo:
+  # Tasks committed for near-term work
+
+  # ── Tech Stack Specs ───────────────────────────────────────────
+
+in_progress:
+
+  - id: P-1
+    started: 2026-02-16
     title: Add loading states to form submit buttons
     description: |
       Form buttons (rename, save description, add column, add card, delete, etc.) don't show any loading indicator during submission. Use superForm's `$submitting` store and SvelteKit enhance callbacks to disable buttons and show a spinner or 'Saving...' text while the action is in flight. This prevents double-submits and gives clear feedback that the action is processing.
@@ -239,16 +202,6 @@ backlog:
       - specs/columns.md
       - specs/cards.md
 
-
-
-
-
-todo:
-  # Tasks committed for near-term work
-
-  # ── Tech Stack Specs ───────────────────────────────────────────
-
-in_progress:
 
 review:
 
@@ -819,6 +772,77 @@ done:
         done: false
     links:
       - specs/board-management.md
+
+  - id: D-33
+    completed: 2026-02-16
+    title: Build card detail page with view/edit UI
+    description: |
+      The card detail page route (boards/[boardId]/cards/[cardId]) doesn't exist yet. Build the +page.server.ts load function and +page.svelte with CardDetail component. Should load card with labels and comments, support inline title editing, description editing with Textarea, and show a Delete button that opens DeleteCardDialog. Specs describe this in cards.md.
+    priority: high
+    tags: [frontend, backend]
+    assignee: ""
+    created: 2026-02-16
+    subtasks:
+      - text: Create card detail route directory and +page.server.ts
+        done: false
+      - text: Build CardDetail component with editable title and description
+        done: false
+      - text: Wire up delete button to DeleteCardDialog
+        done: false
+      - text: Add update form action for card fields
+        done: false
+    links:
+      - specs/cards.md
+      - specs/frontend-pages.md
+
+  - id: D-34
+    completed: 2026-02-16
+    title: Card detail view and update actions
+    description: |
+      Build the card detail page at /boards/[boardId]/cards/[cardId]. Load card with labels and comments. Editable title (double-click to edit), description textarea with save, and delete button with AlertDialog. This is a separate page/route, not a modal (modal can come later).
+    priority: medium
+    tags: [frontend, backend]
+    assignee: ""
+    created: 2026-02-16
+    subtasks:
+      - text: "Create src/routes/(app)/boards/[boardId]/cards/[cardId]/+page.server.ts (load card, update action)"
+        done: false
+      - text: "Create src/routes/(app)/boards/[boardId]/cards/[cardId]/+page.svelte"
+        done: false
+      - text: Create CardDetail.svelte component
+        done: false
+      - text: Create DeleteCardDialog.svelte component
+        done: false
+    links:
+      - specs/cards.md
+      - specs/frontend-dialogs.md
+
+  - id: D-35
+    completed: 2026-02-16
+    title: Implement drag-and-drop reordering for columns and cards
+    description: |
+      The board supports columns and cards but has no drag-and-drop reordering yet. The grip handles are rendered in ColumnHeader and there is a planned reorder API endpoint (columns/reorder/+server.ts) in the columns spec. Implement: (1) the reorder JSON API endpoint for columns, (2) a similar reorder endpoint for cards across columns, (3) client-side drag-and-drop using svelte-dnd-action or native drag events. See specs/drag-and-drop.md and specs/columns.md for the reorder schema and endpoint design.
+    priority: high
+    tags: [frontend, backend]
+    assignee: ""
+    created: 2026-02-16
+    subtasks:
+      - text: "Create column reorder PUT endpoint at boards/[boardId]/columns/reorder/+server.ts"
+        done: false
+      - text: Create card reorder/move PUT endpoint
+        done: false
+      - text: Add drag-and-drop library or native drag implementation
+        done: false
+      - text: Wire up column drag handles to reorder API
+        done: false
+      - text: Wire up card drag to move/reorder API
+        done: false
+    links:
+      - specs/columns.md
+      - specs/drag-and-drop.md
+
+
+
 
 
 

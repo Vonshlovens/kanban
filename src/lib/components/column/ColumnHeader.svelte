@@ -10,6 +10,7 @@
   import Trash2Icon from "@lucide/svelte/icons/trash-2";
   import MinusIcon from "@lucide/svelte/icons/minus";
   import PlusIcon from "@lucide/svelte/icons/plus";
+  import { dragHandle } from "svelte-dnd-action";
   import { enhance } from "$app/forms";
   import { toast } from "svelte-sonner";
   import { cn } from "$lib/utils";
@@ -72,9 +73,15 @@
 </script>
 
 <div class="flex items-center gap-1.5 px-3 pt-3 pb-2">
-  <GripVerticalIcon
-    class="size-3.5 shrink-0 cursor-grab text-muted-foreground/50 opacity-0 transition-opacity group-hover/column:opacity-100"
-  />
+  <div
+    use:dragHandle
+    aria-label="Drag to reorder column"
+    class="shrink-0 cursor-grab opacity-0 transition-opacity group-hover/column:opacity-100 active:cursor-grabbing"
+  >
+    <GripVerticalIcon
+      class="size-3.5 text-muted-foreground/50"
+    />
+  </div>
 
   {#if editing}
     <form

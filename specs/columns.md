@@ -331,7 +331,7 @@ All column CRUD actions show toast notifications for user feedback:
 | `src/lib/db/schema/columns.ts` | Column database schema and relations |
 | `src/lib/schemas/column.ts` | Zod validation schemas for column forms |
 | `src/routes/(app)/boards/[boardId]/+page.server.ts` | Load board with columns; column CRUD form actions |
-| `src/routes/(app)/boards/[boardId]/columns/reorder/+server.ts` | JSON API for drag-and-drop reorder (not yet implemented) |
+| `src/routes/(app)/boards/[boardId]/columns/reorder/+server.ts` | JSON API for drag-and-drop reorder |
 | `src/lib/components/column/Column.svelte` | Main column container with WIP limit state |
 | `src/lib/components/column/ColumnHeader.svelte` | Header with name, inline rename, dropdown menu, WIP limit panel |
 | `src/lib/components/column/AddColumn.svelte` | Inline form to create a new column |

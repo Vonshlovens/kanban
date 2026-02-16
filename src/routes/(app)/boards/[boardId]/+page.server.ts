@@ -2,8 +2,8 @@ import type { PageServerLoad, Actions } from "./$types";
 import { error, fail } from "@sveltejs/kit";
 import { superValidate } from "sveltekit-superforms";
 import { zod4 } from "sveltekit-superforms/adapters";
-import { createColumnSchema, renameColumnSchema, deleteColumnSchema } from "$lib/schemas/column";
-import { createCardSchema, deleteCardSchema } from "$lib/schemas/card";
+import { createColumnSchema, renameColumnSchema, updateWipLimitSchema, deleteColumnSchema } from "$lib/schemas/column";
+import { createCardSchema, moveCardSchema, deleteCardSchema } from "$lib/schemas/card";
 import { db } from "$lib/db";
 import { columns } from "$lib/db/schema/columns";
 import { cards } from "$lib/db/schema/cards";
@@ -69,6 +69,21 @@ export const actions: Actions = {
     return { form };
   },
 
+  updateWipLimit: async ({ request, params }) => {
+    const form = await superValidate(request, zod4(updateWipLimitSchema));
+    if (!form.valid) return fail(400, { form });
+
+    const formData = await request.clone().formData();
+    const columnId = formData.get("columnId") as string;
+
+    await db
+      .update(columns)
+      .set({ wipLimit: form.data.wipLimit, updatedAt: new Date() })
+      .where(and(eq(columns.id, columnId), eq(columns.boardId, params.boardId)));
+
+    return { form };
+  },
+
   deleteColumn: async ({ request, params }) => {
     const form = await superValidate(request, zod4(deleteColumnSchema));
     if (!form.valid) return fail(400, { form });
@@ -113,6 +128,22 @@ export const actions: Actions = {
     });
 
     return { createCardForm: form };
+  },
+
+  moveCard: async ({ request }) => {
+    const form = await superValidate(request, zod4(moveCardSchema));
+    if (!form.valid) return fail(400, { form });
+
+    await db
+      .update(cards)
+      .set({
+        columnId: form.data.targetColumnId,
+        position: form.data.position,
+        updatedAt: new Date(),
+      })
+      .where(eq(cards.id, form.data.cardId));
+
+    return { form };
   },
 
   deleteCard: async ({ request }) => {

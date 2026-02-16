@@ -26,6 +26,7 @@
     "npm:shadcn-svelte@^1.1.1": "1.1.1",
     "npm:svelte-check@*": "4.4.0_svelte@5.51.2__acorn@8.15.0_typescript@5.9.3",
     "npm:svelte-check@4": "4.4.0_svelte@5.51.2__acorn@8.15.0_typescript@5.9.3",
+    "npm:svelte-dnd-action@~0.9.69": "0.9.69_svelte@5.51.2__acorn@8.15.0",
     "npm:svelte-eslint-parser@0.43": "0.43.0_svelte@5.51.2__acorn@8.15.0_postcss@8.5.6",
     "npm:svelte-sonner@^1.0.7": "1.0.7_svelte@5.51.2__acorn@8.15.0",
     "npm:svelte@5": "5.51.2_acorn@8.15.0",
@@ -1940,6 +1941,12 @@
       ],
       "bin": true
     },
+    "svelte-dnd-action@0.9.69_svelte@5.51.2__acorn@8.15.0": {
+      "integrity": "sha512-NAmSOH7htJoYraTQvr+q5whlIuVoq88vEuHr4NcFgscDRUxfWPPxgie2OoxepBCQCikrXZV4pqV86aun60wVyw==",
+      "dependencies": [
+        "svelte"
+      ]
+    },
     "svelte-eslint-parser@0.43.0_svelte@5.51.2__acorn@8.15.0_postcss@8.5.6": {
       "integrity": "sha512-GpU52uPKKcVnh8tKN5P4UZpJ/fUDndmq7wfsvoVXsyP+aY0anol7Yqo01fyrlaWGMFfm4av5DyrjlaXdLRJvGA==",
       "dependencies": [
@@ -2212,6 +2219,7 @@
         "npm:prettier@3",
         "npm:shadcn-svelte@^1.1.1",
         "npm:svelte-check@4",
+        "npm:svelte-dnd-action@~0.9.69",
         "npm:svelte-eslint-parser@0.43",
         "npm:svelte-sonner@^1.0.7",
         "npm:svelte@5",
