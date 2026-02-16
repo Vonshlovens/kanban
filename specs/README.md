@@ -4,35 +4,41 @@ Specifications for the Kanban application. Each spec focuses on a different slic
 
 ## Tech Stack
 
-- `specs/tech-stack-overview.md` — Runtime, framework, language, build, project structure
-- `specs/tech-database.md` — PostgreSQL + Drizzle ORM schemas, migrations, queries
-- `specs/tech-frontend-ui.md` — shadcn-svelte, Tailwind CSS 4, bits-ui, icons, forms
-- `specs/tech-containerization.md` — Docker, Docker Compose, local dev workflow
+| Spec | Code | Purpose |
+|------|------|---------|
+| `tech-stack-overview.md` | `svelte.config.js`, `vite.config.ts`, `deno.json`, `tsconfig.json` | Runtime, framework, language, build, project structure |
+| `tech-database.md` | `src/lib/db/schema/`, `src/lib/db/index.ts`, `drizzle.config.ts`, `drizzle/` | PostgreSQL + Drizzle ORM schemas, migrations, queries |
+| `tech-frontend-ui.md` | `src/lib/components/ui/`, `app.css` | shadcn-svelte, Tailwind CSS 4, bits-ui, icons, forms |
+| `tech-containerization.md` | `Dockerfile`, `docker-compose.yml`, `.dockerignore` | Docker, Docker Compose, local dev workflow |
 
 ## Feature Specs
 
-- `specs/board-management.md` — Create, rename, delete, list boards
-- `specs/columns.md` — Column CRUD, reordering, WIP limits
-- `specs/cards.md` — Card CRUD, move, detail view, rich text
-- `specs/due-dates.md` — Due date management, urgency indicators
-- `specs/labels.md` — Label CRUD, assignment, filtering
-- `specs/user-assignment.md` — User assignment, avatars
-- `specs/comments.md` — Comment CRUD, rich text
-- `specs/activity-log.md` — Audit trail, event tracking
-- `specs/drag-and-drop.md` — Card/column drag, visual feedback, accessibility
-- `specs/search-and-filter.md` — Text search, multi-filter
+| Spec | Code | Purpose |
+|------|------|---------|
+| `board-management.md` | `src/routes/boards/`, `src/lib/components/boards/` | Create, rename, delete, list boards |
+| `columns.md` | `src/routes/boards/[boardId]/`, `src/lib/components/columns/` | Column CRUD, reordering, WIP limits |
+| `cards.md` | `src/lib/components/cards/`, `src/routes/api/cards/` | Card CRUD, move, detail view, rich text |
+| `due-dates.md` | `src/lib/components/due-date/`, `src/lib/utils/dates.ts` | Due date management, urgency indicators |
+| `labels.md` | `src/lib/components/labels/`, `src/routes/api/labels/` | Label CRUD, assignment, filtering |
+| `user-assignment.md` | `src/lib/components/user-assignment/` | User assignment, avatars |
+| `comments.md` | `src/lib/components/comments/`, `src/routes/api/comments/` | Comment CRUD, rich text |
+| `activity-log.md` | `src/lib/components/activity-log/`, `src/lib/server/activity/` | Audit trail, event tracking |
+| `drag-and-drop.md` | `src/lib/actions/dnd.ts`, `src/lib/components/dnd/` | Card/column drag, visual feedback, accessibility |
+| `search-and-filter.md` | `src/lib/components/search/`, `src/lib/components/filters/` | Text search, multi-filter |
 
-## Frontend Architecture Specs (Converting from React → SvelteKit)
+## Frontend Architecture
 
-These specs currently describe React patterns and need conversion to SvelteKit equivalents. See `kanban.yaml` for tracking tasks.
+These specs describe the SvelteKit frontend patterns (converted from earlier React-based designs).
 
-- `specs/frontend-overview.md` — Tech stack overview, entry points, layout strategy
-- `specs/frontend-routing.md` — SvelteKit file-based routing, layouts, load functions
-- `specs/frontend-pages.md` — Pages (React → SvelteKit routes)
-- `specs/frontend-styling.md` — Styling (needs Tailwind 4 update)
-- `specs/frontend-components.md` — Components (React → Svelte 5 + shadcn-svelte)
-- `specs/frontend-state-data.md` — State (Zustand → Svelte runes/stores)
-- `specs/frontend-dialogs.md` — Dialogs (NiceModal → bits-ui)
-- `specs/frontend-editor-diff.md` — Editor/diff (Lexical React → Svelte alternative)
-- `specs/frontend-build-tooling.md` — Build tooling (Vite React → Vite + Deno)
-- `specs/frontend-i18n-analytics.md` — i18n and analytics
+| Spec | Code | Purpose |
+|------|------|---------|
+| `frontend-overview.md` | `src/routes/+layout.svelte`, `src/app.html` | Tech stack overview, entry points, layout strategy |
+| `frontend-routing.md` | `src/routes/**/+page.svelte`, `src/routes/**/+layout.ts` | SvelteKit file-based routing, layouts, load functions |
+| `frontend-pages.md` | `src/routes/**/+page.svelte` | Page components and route-level UI |
+| `frontend-styling.md` | `app.css`, `src/lib/utils.ts` | Tailwind CSS 4 config, theme, utility classes |
+| `frontend-components.md` | `src/lib/components/` | Svelte 5 + shadcn-svelte component patterns |
+| `frontend-state-data.md` | `src/lib/stores/`, component-level runes | State management with Svelte 5 runes and stores |
+| `frontend-dialogs.md` | `src/lib/components/dialogs/` | Dialog/modal patterns using bits-ui |
+| `frontend-editor-diff.md` | `src/lib/components/editor/` | Rich text editor and diff viewer |
+| `frontend-build-tooling.md` | `vite.config.ts`, `svelte.config.js`, `deno.json` | Build tooling with Vite + Deno |
+| `frontend-i18n-analytics.md` | `src/lib/i18n/`, `src/lib/analytics/` | Internationalization and analytics |

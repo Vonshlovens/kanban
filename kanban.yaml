@@ -35,36 +35,6 @@ backlog:
     links:
       - specs/tech-containerization.md
 
-  - id: B-6
-    title: "Set up Drizzle ORM, database schemas, and connection"
-    description: |
-      Configure Drizzle ORM with PostgreSQL. Create drizzle.config.ts, the DB connection module (src/lib/db/index.ts), and all domain schema files: boards, columns, cards, labels, card-labels, comments, activity-log, users. Define relations between tables. Wire up db:generate/migrate/push/studio tasks in deno.json.
-    priority: high
-    tags: [backend, infra]
-    assignee: ""
-    created: 2026-02-16
-    subtasks:
-      - text: "Install drizzle-orm, drizzle-kit, postgres driver"
-        done: false
-      - text: Create drizzle.config.ts
-        done: false
-      - text: Create src/lib/db/index.ts connection module
-        done: false
-      - text: "Create schema files: boards, columns, cards, labels, card-labels, comments, activity-log, users"
-        done: false
-      - text: Define all relations
-        done: false
-      - text: Generate and test initial migration
-        done: false
-    links:
-      - specs/tech-database.md
-      - specs/board-management.md
-      - specs/columns.md
-      - specs/cards.md
-      - specs/labels.md
-      - specs/comments.md
-      - specs/activity-log.md
-
   - id: B-7
     title: "Create root layout, app shell, and Zod validation schemas"
     description: |
@@ -196,6 +166,25 @@ backlog:
         done: false
     links:
       - specs/frontend-build-tooling.md
+
+  - id: B-13
+    title: Create database seed script with sample data
+    description: |
+      Create a seed script (scripts/seed.ts) that populates the database with sample data for local development: a demo board with columns, sample cards with labels and comments, and a test user. Run via 'deno task db:seed'. This enables frontend development against realistic data without manual setup.
+    priority: medium
+    tags: [backend, dx]
+    assignee: ""
+    created: 2026-02-16
+    subtasks:
+      - text: "Create scripts/seed.ts with sample boards, columns, cards, labels, comments, and a test user"
+        done: false
+      - text: "Add db:seed task to deno.json"
+        done: false
+      - text: Verify seed populates database correctly
+        done: false
+    links:
+      - specs/tech-database.md
+
 
 
 
@@ -533,6 +522,39 @@ done:
     links:
       - specs/tech-frontend-ui.md
       - specs/frontend-styling.md
+
+  - id: D-23
+    completed: 2026-02-16
+    started: 2026-02-16
+    title: "Set up Drizzle ORM, database schemas, and connection"
+    description: |
+      Configure Drizzle ORM with PostgreSQL. Create drizzle.config.ts, the DB connection module (src/lib/db/index.ts), and all domain schema files: boards, columns, cards, labels, card-labels, comments, activity-log, users. Define relations between tables. Wire up db:generate/migrate/push/studio tasks in deno.json.
+    priority: high
+    tags: [backend, infra]
+    assignee: ""
+    created: 2026-02-16
+    subtasks:
+      - text: "Install drizzle-orm, drizzle-kit, postgres driver"
+        done: false
+      - text: Create drizzle.config.ts
+        done: false
+      - text: Create src/lib/db/index.ts connection module
+        done: false
+      - text: "Create schema files: boards, columns, cards, labels, card-labels, comments, activity-log, users"
+        done: false
+      - text: Define all relations
+        done: false
+      - text: Generate and test initial migration
+        done: false
+    links:
+      - specs/tech-database.md
+      - specs/board-management.md
+      - specs/columns.md
+      - specs/cards.md
+      - specs/labels.md
+      - specs/comments.md
+      - specs/activity-log.md
+
 
 
 
