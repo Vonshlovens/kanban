@@ -35,7 +35,7 @@ export default defineConfig({
 All class composition goes through `cn()` in `src/lib/utils.ts`:
 
 ```typescript
-import { clsx, type ClassValue } from "clsx";
+import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -44,6 +44,19 @@ export function cn(...inputs: ClassValue[]) {
 ```
 
 Use `cn()` whenever merging conditional or user-supplied classes to avoid Tailwind conflicts.
+
+### Type Helpers
+
+`src/lib/utils.ts` also exports type helpers required by shadcn-svelte components:
+
+```typescript
+export type WithoutChild<T> = T extends { child?: any } ? Omit<T, "child"> : T;
+export type WithoutChildren<T> = T extends { children?: any } ? Omit<T, "children"> : T;
+export type WithoutChildrenOrChild<T> = WithoutChildren<WithoutChild<T>>;
+export type WithElementRef<T, U extends HTMLElement = HTMLElement> = T & { ref?: U | null };
+```
+
+These types are used by generated shadcn-svelte components for prop inference and element ref binding.
 
 ## Global Stylesheet
 
@@ -121,12 +134,14 @@ Dark mode is managed by `mode-watcher`, which toggles a `.dark` class on `<html>
 
 ```svelte
 <!-- src/routes/+layout.svelte -->
-<script>
+<script lang="ts">
   import { ModeWatcher } from "mode-watcher";
+
+  let { children } = $props();
 </script>
 
 <ModeWatcher />
-<slot />
+{@render children()}
 ```
 
 The custom variant `@custom-variant dark (&:is(.dark *))` lets Tailwind's `dark:` prefix work with the class-based toggle.
@@ -205,16 +220,20 @@ const badge = tv({
   "$schema": "https://shadcn-svelte.com/schema.json",
   "style": "default",
   "tailwind": {
-    "config": "",
     "css": "src/app.css",
     "baseColor": "slate"
   },
   "aliases": {
-    "components": "$lib/components/ui",
-    "utils": "$lib/utils"
-  }
+    "components": "$lib/components",
+    "utils": "$lib/utils",
+    "hooks": "$lib/hooks",
+    "ui": "$lib/components/ui"
+  },
+  "registry": "https://shadcn-svelte.com/registry"
 }
 ```
+
+> **Note:** Tailwind CSS 4 no longer uses a `tailwind.config.js` file — the `"config"` field in `components.json` is omitted. All tokens and configuration are defined in `src/app.css`.
 
 All generated components inherit the token system from `src/app.css`.
 
@@ -238,7 +257,6 @@ Global resets and base styles live in `src/app.css`:
 | File                        | Purpose                             |
 |-----------------------------|-------------------------------------|
 | `src/app.css`               | Tailwind imports, tokens, base styles |
-| `src/lib/utils.ts`          | `cn()` helper                       |
-| `src/lib/styles/`           | Additional shared styles if needed  |
+| `src/lib/utils.ts`          | `cn()` helper + type utilities      |
 | `components.json`           | shadcn-svelte configuration         |
 | `vite.config.ts`            | Tailwind Vite plugin registration   |

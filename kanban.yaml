@@ -35,27 +35,6 @@ backlog:
     links:
       - specs/tech-containerization.md
 
-  - id: B-5
-    title: "Set up shadcn-svelte, Tailwind theme, and cn() utility"
-    description: |
-      Initialize shadcn-svelte (components.json, registry). Create the cn() utility in src/lib/utils.ts (clsx + tailwind-merge). Set up global CSS with Tailwind CSS 4 design tokens and dark mode variables. Install: shadcn-svelte, bits-ui, tailwind-merge, tailwind-variants, clsx, tw-animate-css, mode-watcher, @lucide/svelte.
-    priority: high
-    tags: [frontend, dx]
-    assignee: ""
-    created: 2026-02-16
-    subtasks:
-      - text: "Run shadcn-svelte init, configure components.json"
-        done: false
-      - text: Create src/lib/utils.ts with cn() helper
-        done: false
-      - text: Set up app.css with Tailwind CSS 4 tokens and dark mode vars
-        done: false
-      - text: Install icon and animation packages
-        done: false
-    links:
-      - specs/tech-frontend-ui.md
-      - specs/frontend-styling.md
-
   - id: B-6
     title: "Set up Drizzle ORM, database schemas, and connection"
     description: |
@@ -199,6 +178,25 @@ backlog:
         done: false
     links:
       - specs/frontend-build-tooling.md
+
+  - id: B-12
+    title: "Fix svelte-check by adding @types/node and excluding node_modules type errors"
+    description: |
+      Running 'deno task check' (svelte-check) reports 43 errors, all from node_modules (vite, @sveltejs/kit, svelte-toolbelt). These are caused by missing @types/node and missing csstype type definitions. Install @types/node as a devDependency and configure tsconfig.json to skip library checking (skipLibCheck) or exclude node_modules from svelte-check. This was discovered while implementing B-5 (shadcn-svelte setup). Related to B-11 which covers CI-readiness of svelte-check.
+    priority: medium
+    tags: [dx, infra]
+    assignee: ""
+    created: 2026-02-16
+    subtasks:
+      - text: "Install @types/node as devDependency"
+        done: false
+      - text: Evaluate skipLibCheck vs explicit excludes in tsconfig.json
+        done: false
+      - text: Verify svelte-check passes with zero errors on src/ files
+        done: false
+    links:
+      - specs/frontend-build-tooling.md
+
 
 
 
@@ -512,6 +510,30 @@ done:
       - specs/tech-stack-overview.md
       - specs/frontend-build-tooling.md
       - https://github.com/denoland/tutorial-with-svelte
+
+  - id: D-22
+    completed: 2026-02-16
+    started: 2026-02-16
+    title: "Set up shadcn-svelte, Tailwind theme, and cn() utility"
+    description: |
+      Initialize shadcn-svelte (components.json, registry). Create the cn() utility in src/lib/utils.ts (clsx + tailwind-merge). Set up global CSS with Tailwind CSS 4 design tokens and dark mode variables. Install: shadcn-svelte, bits-ui, tailwind-merge, tailwind-variants, clsx, tw-animate-css, mode-watcher, @lucide/svelte.
+    priority: high
+    tags: [frontend, dx]
+    assignee: ""
+    created: 2026-02-16
+    subtasks:
+      - text: "Run shadcn-svelte init, configure components.json"
+        done: false
+      - text: Create src/lib/utils.ts with cn() helper
+        done: false
+      - text: Set up app.css with Tailwind CSS 4 tokens and dark mode vars
+        done: false
+      - text: Install icon and animation packages
+        done: false
+    links:
+      - specs/tech-frontend-ui.md
+      - specs/frontend-styling.md
+
 
 
 
