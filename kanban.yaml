@@ -198,42 +198,42 @@ backlog:
       - specs/frontend-components.md
 
   - id: B-22
-    title: Implement card create and delete actions on the board page
+    title: Build card detail page with view/edit UI
     description: |
-      The board page shows cards but has no inline card creation or deletion yet. Now that dialog and alert-dialog components are installed, build the AddCard inline form in column footers and the DeleteCardDialog confirmation. Wire up createCard and deleteCard form actions in the board page's +page.server.ts per specs/cards.md.
+      The card detail page route (boards/[boardId]/cards/[cardId]) doesn't exist yet. Build the +page.server.ts load function and +page.svelte with CardDetail component. Should load card with labels and comments, support inline title editing, description editing with Textarea, and show a Delete button that opens DeleteCardDialog. Specs describe this in cards.md.
     priority: high
     tags: [frontend, backend]
     assignee: ""
     created: 2026-02-16
     subtasks:
-      - text: Build AddCard inline form component in column footer
+      - text: Create card detail route directory and +page.server.ts
         done: false
-      - text: Build DeleteCardDialog with AlertDialog confirmation
+      - text: Build CardDetail component with editable title and description
         done: false
-      - text: Wire up createCard and deleteCard form actions
+      - text: Wire up delete button to DeleteCardDialog
         done: false
-      - text: Test card create and delete flows
+      - text: Add update form action for card fields
         done: false
     links:
       - specs/cards.md
+      - specs/frontend-pages.md
+
+  - id: B-23
+    title: Create shared TypeScript types for domain models
+    description: |
+      The codebase has no $lib/types directory or shared type exports. Multiple components use inline type annotations for Card, Column, Board, etc. Create $lib/types/index.ts with exported types inferred from Drizzle schema (using typeof db.query.X.findFirst return types or manual interfaces). This will reduce duplication and make component props cleaner. Several specs reference 'import type { Card } from $lib/types' which doesn't exist yet.
+    priority: medium
+    tags: [frontend, dx]
+    assignee: ""
+    created: 2026-02-16
+    subtasks:
+      - text: "Create $lib/types/index.ts with Card, Column, Board types"
+        done: false
+      - text: Update components to use shared types instead of inline annotations
+        done: false
+    links:
       - specs/frontend-components.md
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+      - specs/cards.md
 
 
 
@@ -747,6 +747,30 @@ done:
       - specs/columns.md
       - specs/cards.md
       - specs/frontend-components.md
+
+  - id: D-30
+    completed: 2026-02-16
+    started: 2026-02-16
+    title: Implement card create and delete actions on the board page
+    description: |
+      The board page shows cards but has no inline card creation or deletion yet. Now that dialog and alert-dialog components are installed, build the AddCard inline form in column footers and the DeleteCardDialog confirmation. Wire up createCard and deleteCard form actions in the board page's +page.server.ts per specs/cards.md.
+    priority: high
+    tags: [frontend, backend]
+    assignee: ""
+    created: 2026-02-16
+    subtasks:
+      - text: Build AddCard inline form component in column footer
+        done: false
+      - text: Build DeleteCardDialog with AlertDialog confirmation
+        done: false
+      - text: Wire up createCard and deleteCard form actions
+        done: false
+      - text: Test card create and delete flows
+        done: false
+    links:
+      - specs/cards.md
+      - specs/frontend-components.md
+
 
 
 

@@ -276,58 +276,15 @@ export const PUT: RequestHandler = async ({ request }) => {
 
 ### Card Item (Board View)
 
-Compact card shown in column lists. Clicking opens the detail view.
+> **Status:** Implemented.
 
-```svelte
-<!-- src/lib/components/card/CardItem.svelte -->
-<script lang="ts">
-  import CalendarIcon from "@lucide/svelte/icons/calendar";
-  import MessageSquareIcon from "@lucide/svelte/icons/message-square";
-  import AlignLeftIcon from "@lucide/svelte/icons/align-left";
-  import { cn } from "$lib/utils";
+Compact card shown in column lists. Clicking opens the detail view. On hover, a three-dot actions menu appears in the top-right corner with a "Delete" option that opens the `DeleteCardDialog`. The menu trigger uses `stopPropagation()` to prevent navigating when clicking the dropdown.
 
-  let { card, boardId }: { card: any; boardId: string } = $props();
-
-  let hasDescription = $derived(!!card.description);
-  let labelCount = $derived(card.cardLabels?.length ?? 0);
-  let commentCount = $derived(card.comments?.length ?? 0);
-</script>
-
-<a
-  href="/boards/{boardId}/cards/{card.id}"
-  class="block rounded-lg border bg-white p-3 shadow-sm transition-shadow hover:shadow-md dark:border-neutral-800 dark:bg-neutral-950"
->
-  {#if labelCount > 0}
-    <div class="mb-2 flex flex-wrap gap-1">
-      {#each card.cardLabels as cl}
-        <span
-          class="inline-block h-2 w-8 rounded-full"
-          style="background-color: {cl.label.color}"
-        ></span>
-      {/each}
-    </div>
-  {/if}
-
-  <p class="text-sm font-medium">{card.title}</p>
-
-  {#if hasDescription || commentCount > 0 || card.dueDate}
-    <div class="mt-2 flex items-center gap-3 text-xs text-neutral-500">
-      {#if card.dueDate}
-        <span class="flex items-center gap-1">
-          <Calendar class="h-3 w-3" />
-          {new Date(card.dueDate).toLocaleDateString()}
-        </span>
-      {/if}
-      {#if commentCount > 0}
-        <span class="flex items-center gap-1">
-          <MessageSquare class="h-3 w-3" />
-          {commentCount}
-        </span>
-      {/if}
-    </div>
-  {/if}
-</a>
-```
+Key implementation details:
+- Wrapped in a `group/card` container `<div>` so the actions menu can show/hide on hover
+- Title text has `pr-6` padding to avoid overlapping with the actions button
+- Uses `DropdownMenu` from shadcn-svelte for the actions menu
+- Actions menu stays visible when the dropdown is open (`menuOpen` state)
 
 ### Card Detail
 
@@ -417,89 +374,20 @@ Full card view with editable title, description, and metadata sidebar.
 
 ### Delete Card Dialog
 
-AlertDialog confirmation for card deletion.
+> **Status:** Implemented.
 
-```svelte
-<!-- src/lib/components/card/DeleteCardDialog.svelte -->
-<script lang="ts">
-  import type { Card } from "$lib/types";
-  import * as AlertDialog from "$lib/components/ui/alert-dialog";
-  import { Button } from "$lib/components/ui/button";
+AlertDialog confirmation for card deletion. Uses the hidden form + `requestSubmit()` pattern (same as board delete in settings page). Props take inline types `{ id: string; title: string }` rather than a `Card` type since `$lib/types` doesn't exist yet.
 
-  let { card, boardId, open = $bindable(false) }: {
-    card: Card;
-    boardId: string;
-    open: boolean;
-  } = $props();
-</script>
-
-<AlertDialog.Root bind:open>
-  <AlertDialog.Content>
-    <AlertDialog.Header>
-      <AlertDialog.Title>Delete "{card.title}"?</AlertDialog.Title>
-      <AlertDialog.Description>
-        This action cannot be undone. The card and all its comments will be permanently removed.
-      </AlertDialog.Description>
-    </AlertDialog.Header>
-    <AlertDialog.Footer>
-      <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
-      <form method="POST" action="/boards/{boardId}?/deleteCard">
-        <input type="hidden" name="cardId" value={card.id} />
-        <Button type="submit" variant="destructive">Delete</Button>
-      </form>
-    </AlertDialog.Footer>
-  </AlertDialog.Content>
-</AlertDialog.Root>
-```
+Key implementation details:
+- Uses `AlertDialog.Action` with `onclick` to submit a hidden form (not a `<form>` inside the footer)
+- Posts to `/boards/{boardId}?/deleteCard` with `cardId` hidden input
+- Triggered from `CardItem`'s dropdown menu and (in the future) from the card detail view
 
 ### Add Card (Column Footer)
 
-Inline form that expands in the column footer to create a new card.
+> **Status:** Implemented.
 
-```svelte
-<!-- src/lib/components/card/AddCard.svelte -->
-<script lang="ts">
-  import { Button } from "$lib/components/ui/button/index.js";
-  import { Input } from "$lib/components/ui/input/index.js";
-  import PlusIcon from "@lucide/svelte/icons/plus";
-  import XIcon from "@lucide/svelte/icons/x";
-  import { superForm } from "sveltekit-superforms";
-  import type { SuperValidated, Infer } from "sveltekit-superforms";
-  import type { createCardSchema } from "$lib/schemas/card";
-
-  let { columnId, form: formData }: {
-    columnId: string;
-    form: SuperValidated<CreateCardSchema>;
-  } = $props();
-
-  const { form, enhance } = superForm(formData, {
-    resetForm: true,
-    onResult: () => { adding = false; },
-  });
-
-  let adding = $state(false);
-</script>
-
-{#if adding}
-  <form method="POST" action="?/createCard" use:enhance class="space-y-2 p-2">
-    <input type="hidden" name="columnId" value={columnId} />
-    <Input name="title" bind:value={$form.title} placeholder="Card title" autofocus />
-    <div class="flex gap-2">
-      <Button type="submit" size="sm">Add Card</Button>
-      <Button variant="ghost" size="sm" onclick={() => adding = false}>
-        <X class="h-4 w-4" />
-      </Button>
-    </div>
-  </form>
-{:else}
-  <div class="p-2">
-    <Button variant="ghost" class="w-full justify-start text-neutral-500" size="sm" onclick={() => adding = true}>
-      <Plus class="mr-2 h-4 w-4" />
-      Add Card
-    </Button>
-  </div>
-{/if}
-```
+Inline form that expands in the column footer to create a new card. Uses `superForm` with `resetForm: true` to clear the input after submission.
 
 ## File Locations
 
