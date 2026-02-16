@@ -21,25 +21,30 @@ shadcn-svelte components live in `src/lib/components/ui/`. These are generated v
 
 | Component | Usage |
 | --- | --- |
-| `button` | Primary actions, toolbar buttons |
-| `dialog` | Card detail modals, confirmations |
 | `alert-dialog` | Destructive action confirmations |
+| `breadcrumb` | Navigation breadcrumbs |
+| `button` | Primary actions, toolbar buttons |
+| `card` | Card containers with header/content/footer |
+| `collapsible` | Expandable sections |
+| `command` | Command palette / search |
+| `dialog` | Card detail modals, confirmations |
+| `dropdown-menu` | Context menus, action menus |
+| `form` | Form wrapper with validation |
 | `input` | Text fields, search bars |
 | `label` | Form field labels |
+| `popover` | Floating panels (pickers, filters) |
+| `progress` | Progress indicators |
 | `select` | Dropdowns (assignee picker, label picker) |
-| `sheet` | Slide-over panels |
-| `table` | Tabular data views |
-| `form` | Form wrapper with validation |
 | `separator` | Visual dividers |
-| `tooltip` | Hover hints |
+| `sheet` | Slide-over panels |
+| `sidebar` | Navigation sidebar |
 | `skeleton` | Loading placeholders |
 | `sonner` | Toast notifications |
-| `sidebar` | Navigation sidebar |
-| `command` | Command palette / search |
-| `collapsible` | Expandable sections |
-| `breadcrumb` | Navigation breadcrumbs |
 | `switch` | Toggle switches |
-| `progress` | Progress indicators |
+| `table` | Tabular data views |
+| `tabs` | Tabbed content sections |
+| `textarea` | Multi-line text input (descriptions) |
+| `tooltip` | Hover hints |
 
 Import from `$lib/components/ui/<component>`:
 
@@ -51,26 +56,23 @@ Import from `$lib/components/ui/<component>`:
 </script>
 ```
 
-### No Tabs Component
+### Tabs
 
-shadcn-svelte does not include a Tabs component. Use a custom segmented control:
+shadcn-svelte now includes a Tabs component (backed by bits-ui). Use it instead of custom segmented controls:
 
 ```svelte
-<div class="flex rounded-lg bg-neutral-100 p-1 dark:bg-neutral-800">
-  {#each tabs as tab}
-    <button
-      class={cn(
-        "rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
-        activeTab === tab.id
-          ? "bg-white shadow-sm dark:bg-neutral-700"
-          : "text-neutral-600 hover:text-neutral-900 dark:text-neutral-400"
-      )}
-      onclick={() => activeTab = tab.id}
-    >
-      {tab.label}
-    </button>
-  {/each}
-</div>
+<script lang="ts">
+  import * as Tabs from "$lib/components/ui/tabs";
+</script>
+
+<Tabs.Root value="overview">
+  <Tabs.List>
+    <Tabs.Trigger value="overview">Overview</Tabs.Trigger>
+    <Tabs.Trigger value="settings">Settings</Tabs.Trigger>
+  </Tabs.List>
+  <Tabs.Content value="overview">Overview content</Tabs.Content>
+  <Tabs.Content value="settings">Settings content</Tabs.Content>
+</Tabs.Root>
 ```
 
 ## Domain Components
@@ -162,8 +164,10 @@ Dialogs use shadcn-svelte's `Dialog` component backed by bits-ui. See `specs/fro
 </script>
 
 <Dialog.Root bind:open>
-  <Dialog.Trigger asChild let:builder>
-    <Button builders={[builder]}>Open</Button>
+  <Dialog.Trigger>
+    {#snippet child({ props })}
+      <Button {...props}>Open</Button>
+    {/snippet}
   </Dialog.Trigger>
   <Dialog.Content>
     <Dialog.Header>

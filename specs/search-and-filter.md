@@ -270,8 +270,9 @@ The main container for all search and filter controls. Sits above the board colu
 
   <!-- Assignee filter -->
   <Popover.Root>
-    <Popover.Trigger asChild let:builder>
-      <Button variant="outline" size="sm" builders={[builder]} class={cn("h-8", filters.assigneeId && "ring-2 ring-neutral-400")}>
+    <Popover.Trigger>
+      {#snippet child({ props })}
+      <Button variant="outline" size="sm" {...props} class={cn("h-8", filters.assigneeId && "ring-2 ring-neutral-400")}>
         <Filter class="mr-1.5 h-3.5 w-3.5" />
         {#if filters.assigneeId === "unassigned"}
           Unassigned
@@ -281,6 +282,7 @@ The main container for all search and filter controls. Sits above the board colu
           Assignee
         {/if}
       </Button>
+      {/snippet}
     </Popover.Trigger>
     <Popover.Content class="w-48 p-1" align="start">
       <button
@@ -302,10 +304,12 @@ The main container for all search and filter controls. Sits above the board colu
 
   <!-- Due date filter -->
   <Popover.Root>
-    <Popover.Trigger asChild let:builder>
-      <Button variant="outline" size="sm" builders={[builder]} class={cn("h-8", filters.dueDateFilter && "ring-2 ring-neutral-400")}>
+    <Popover.Trigger>
+      {#snippet child({ props })}
+      <Button variant="outline" size="sm" {...props} class={cn("h-8", filters.dueDateFilter && "ring-2 ring-neutral-400")}>
         Due date
       </Button>
+      {/snippet}
     </Popover.Trigger>
     <Popover.Content class="w-44 p-1" align="start">
       {#each [

@@ -308,9 +308,8 @@ For users who prefer a non-drag interface, a "Move to" action in the card's cont
       <Dialog.Description>Select the destination column.</Dialog.Description>
     </Dialog.Header>
 
-    <Select.Root onSelectedChange={(v) => targetColumnId = v?.value}>
-      <Select.Trigger>
-        <Select.Value placeholder="Select column..." />
+    <Select.Root type="single" onValueChange={(v) => targetColumnId = v}>
+      <Select.Trigger placeholder="Select column...">
       </Select.Trigger>
       <Select.Content>
         {#each columns as col}

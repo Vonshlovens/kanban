@@ -142,50 +142,85 @@ backlog:
     links:
       - specs/frontend-components.md
 
-  - id: B-17
-    title: Add root landing page with board list or single-board redirect
+  - id: B-19
+    title: Add toast notifications for board CRUD actions
     description: |
-      The root page (src/routes/+page.svelte) is still a placeholder. It should load all boards and either redirect to the single board if there's only one, or show a board listing page. This page lives outside the (app) layout group since it doesn't need the sidebar. Implement the +page.server.ts load function and the board listing UI with links to each board and a 'Create Board' CTA.
+      Board settings actions (rename, update description, toggle favorite) complete silently with no user feedback. Add svelte-sonner toast notifications to confirm success: 'Board renamed', 'Description updated', 'Added to favorites', etc. Also add error toasts for failed actions. The Toaster component is already in the root layout.
+    priority: medium
+    tags: [frontend]
+    assignee: ""
+    created: 2026-02-16
+    subtasks:
+      - text: Add success toasts to settings page form onResult callbacks
+        done: false
+      - text: Add error toast handling for failed mutations
+        done: false
+    links:
+      - specs/board-management.md
+
+  - id: B-20
+    title: Add breadcrumb segments for nested board pages
+    description: |
+      The Navbar breadcrumb currently shows 'Boards > Board Name' but doesn't distinguish between the board view and sub-pages like settings. When on /boards/[boardId]/settings, the breadcrumb should show 'Boards > Board Name > Settings'. This requires the Navbar to accept an optional breadcrumb segments prop or detect the current route path.
+    priority: low
+    tags: [frontend]
+    assignee: ""
+    created: 2026-02-16
+    subtasks:
+      - text: Pass route-aware breadcrumb data to Navbar
+        done: false
+      - text: Render additional breadcrumb segments for settings and other sub-pages
+        done: false
+    links:
+      - specs/frontend-pages.md
+
+  - id: B-21
+    title: "Implement column CRUD actions: create, rename, delete with card migration"
+    description: |
+      The board page (D-26) renders columns but has no column management actions yet. Now that dropdown-menu, select, and alert-dialog are installed (P-1), build out the ColumnHeader action menu with rename inline editing, WIP limit setter, and delete flow. The DeleteColumnDialog should use Select to let users move cards to another column before deletion. Implement the form actions in +page.server.ts per specs/columns.md. Also build AddColumn inline form at the end of the board.
     priority: high
     tags: [frontend, backend]
     assignee: ""
     created: 2026-02-16
     subtasks:
-      - text: Create src/routes/+page.server.ts with board listing load and redirect logic
+      - text: "Build ColumnHeader dropdown menu (rename, set WIP limit, delete)"
         done: false
-      - text: Build board listing UI in src/routes/+page.svelte
+      - text: Implement AddColumn inline form component
         done: false
-      - text: Handle empty state (no boards yet) with CTA to create first board
+      - text: Build DeleteColumnDialog with card migration Select picker
         done: false
-    links:
-      - specs/frontend-pages.md
-      - specs/board-management.md
-
-  - id: B-18
-    title: "Install missing shadcn-svelte UI components (dropdown-menu, select, textarea, popover, dialog)"
-    description: |
-      Several specs reference shadcn-svelte components that aren't installed yet. The ColumnHeader needs dropdown-menu for its action menu (rename, set WIP limit, delete). The DeleteColumnDialog needs select for move-cards-to picker. CardDetail needs textarea for description editing. Install these via the shadcn-svelte CLI: npx shadcn-svelte@next add dropdown-menu select textarea popover. This unblocks column action menus, card detail editing, and delete column dialog with card migration.
-    priority: high
-    tags: [frontend, dx]
-    assignee: ""
-    created: 2026-02-16
-    subtasks:
-      - text: Install dropdown-menu component
+      - text: "Wire up createColumn, renameColumn, updateWipLimit, deleteColumn form actions"
         done: false
-      - text: Install select component
-        done: false
-      - text: Install textarea component
-        done: false
-      - text: Install popover component
-        done: false
-      - text: Add DropdownMenu to ColumnHeader for rename/WIP/delete actions
-        done: false
-      - text: Verify all components render correctly
+      - text: Test column CRUD end-to-end
         done: false
     links:
       - specs/columns.md
+      - specs/frontend-components.md
+
+  - id: B-22
+    title: Implement card create and delete actions on the board page
+    description: |
+      The board page shows cards but has no inline card creation or deletion yet. Now that dialog and alert-dialog components are installed, build the AddCard inline form in column footers and the DeleteCardDialog confirmation. Wire up createCard and deleteCard form actions in the board page's +page.server.ts per specs/cards.md.
+    priority: high
+    tags: [frontend, backend]
+    assignee: ""
+    created: 2026-02-16
+    subtasks:
+      - text: Build AddCard inline form component in column footer
+        done: false
+      - text: Build DeleteCardDialog with AlertDialog confirmation
+        done: false
+      - text: Wire up createCard and deleteCard form actions
+        done: false
+      - text: Test card create and delete flows
+        done: false
+    links:
       - specs/cards.md
       - specs/frontend-components.md
+
+
+
+
 
 
 
@@ -208,31 +243,6 @@ todo:
   # ── Tech Stack Specs ───────────────────────────────────────────
 
 in_progress:
-
-  - id: P-1
-    started: 2026-02-16
-    title: "Board management: listing, create, and settings pages"
-    description: |
-      Implement board CRUD. Root page lists boards (or redirects if only one). Create board page with form action that seeds default columns. Board settings page with rename, description, favorite toggle, and delete (with AlertDialog confirmation). This is the first real feature — proves the full stack works end-to-end.
-    priority: high
-    tags: [frontend, backend]
-    assignee: ""
-    created: 2026-02-16
-    subtasks:
-      - text: Create src/routes/+page.server.ts (board listing load)
-        done: false
-      - text: Create src/routes/+page.svelte (board listing UI)
-        done: false
-      - text: Create src/routes/(app)/boards/new/ (create board form + action)
-        done: false
-      - text: "Create src/routes/(app)/boards/[boardId]/settings/ (rename, delete, favorite)"
-        done: false
-      - text: Create BoardCard.svelte component
-        done: false
-    links:
-      - specs/board-management.md
-      - specs/frontend-pages.md
-
 
 review:
 
@@ -664,6 +674,82 @@ done:
       - specs/cards.md
       - specs/frontend-pages.md
       - specs/frontend-components.md
+
+  - id: D-27
+    completed: 2026-02-16
+    started: 2026-02-16
+    title: "Board management: listing, create, and settings pages"
+    description: |
+      Implement board CRUD. Root page lists boards (or redirects if only one). Create board page with form action that seeds default columns. Board settings page with rename, description, favorite toggle, and delete (with AlertDialog confirmation). This is the first real feature — proves the full stack works end-to-end.
+    priority: high
+    tags: [frontend, backend]
+    assignee: ""
+    created: 2026-02-16
+    subtasks:
+      - text: Create src/routes/+page.server.ts (board listing load)
+        done: false
+      - text: Create src/routes/+page.svelte (board listing UI)
+        done: false
+      - text: Create src/routes/(app)/boards/new/ (create board form + action)
+        done: false
+      - text: "Create src/routes/(app)/boards/[boardId]/settings/ (rename, delete, favorite)"
+        done: false
+      - text: Create BoardCard.svelte component
+        done: false
+    links:
+      - specs/board-management.md
+      - specs/frontend-pages.md
+
+  - id: D-28
+    completed: 2026-02-16
+    title: Add root landing page with board list or single-board redirect
+    description: |
+      The root page (src/routes/+page.svelte) is still a placeholder. It should load all boards and either redirect to the single board if there's only one, or show a board listing page. This page lives outside the (app) layout group since it doesn't need the sidebar. Implement the +page.server.ts load function and the board listing UI with links to each board and a 'Create Board' CTA.
+    priority: high
+    tags: [frontend, backend]
+    assignee: ""
+    created: 2026-02-16
+    subtasks:
+      - text: Create src/routes/+page.server.ts with board listing load and redirect logic
+        done: false
+      - text: Build board listing UI in src/routes/+page.svelte
+        done: false
+      - text: Handle empty state (no boards yet) with CTA to create first board
+        done: false
+    links:
+      - specs/frontend-pages.md
+      - specs/board-management.md
+
+  - id: D-29
+    completed: 2026-02-16
+    started: 2026-02-16
+    title: "Install missing shadcn-svelte UI components (dropdown-menu, select, textarea, popover, dialog)"
+    description: |
+      Several specs reference shadcn-svelte components that aren't installed yet. The ColumnHeader needs dropdown-menu for its action menu (rename, set WIP limit, delete). The DeleteColumnDialog needs select for move-cards-to picker. CardDetail needs textarea for description editing. Install these via the shadcn-svelte CLI: npx shadcn-svelte@next add dropdown-menu select textarea popover. This unblocks column action menus, card detail editing, and delete column dialog with card migration.
+    priority: high
+    tags: [frontend, dx]
+    assignee: ""
+    created: 2026-02-16
+    subtasks:
+      - text: Install dropdown-menu component
+        done: false
+      - text: Install select component
+        done: false
+      - text: Install textarea component
+        done: false
+      - text: Install popover component
+        done: false
+      - text: Add DropdownMenu to ColumnHeader for rename/WIP/delete actions
+        done: false
+      - text: Verify all components render correctly
+        done: false
+    links:
+      - specs/columns.md
+      - specs/cards.md
+      - specs/frontend-components.md
+
+
+
 
 
 

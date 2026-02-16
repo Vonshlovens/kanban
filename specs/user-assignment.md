@@ -194,7 +194,7 @@ export const actions: Actions = {
   // ... existing actions (update, toggleLabel)
 
   assign: async ({ request }) => {
-    const form = await superValidate(request, zod(assignCardSchema));
+    const form = await superValidate(request, zod4(assignCardSchema));
     if (!form.valid) return fail(400, { form });
 
     await db.update(cards)
@@ -205,7 +205,7 @@ export const actions: Actions = {
   },
 
   unassign: async ({ request }) => {
-    const form = await superValidate(request, zod(unassignCardSchema));
+    const form = await superValidate(request, zod4(unassignCardSchema));
     if (!form.valid) return fail(400, { form });
 
     await db.update(cards)
@@ -293,8 +293,9 @@ A popover to assign or change the user on a card. Selecting a user submits the `
 <div class="space-y-1">
   <label class="text-sm font-medium text-neutral-500">Assignee</label>
   <Popover.Root bind:open>
-    <Popover.Trigger asChild let:builder>
-      <Button variant="outline" size="sm" builders={[builder]} class="w-full justify-start">
+    <Popover.Trigger>
+      {#snippet child({ props })}
+      <Button variant="outline" size="sm" {...props} class="w-full justify-start">
         {#if currentAssignee}
           <UserAvatar name={currentAssignee.name} avatarUrl={currentAssignee.avatarUrl} size="sm" />
           <span class="ml-2">{currentAssignee.name}</span>
@@ -303,6 +304,7 @@ A popover to assign or change the user on a card. Selecting a user submits the `
           Assign
         {/if}
       </Button>
+      {/snippet}
     </Popover.Trigger>
     <Popover.Content class="w-60 p-2" align="start">
       <div class="space-y-1">

@@ -86,7 +86,7 @@ The existing `update` form action on the card detail page already spreads `form.
 // src/routes/(app)/boards/[boardId]/cards/[cardId]/+page.server.ts (actions)
 export const actions: Actions = {
   update: async ({ request, params }) => {
-    const form = await superValidate(request, zod(updateCardSchema));
+    const form = await superValidate(request, zod4(updateCardSchema));
     if (!form.valid) return fail(400, { form });
 
     await db.update(cards)
@@ -236,8 +236,9 @@ The card detail page uses a `bits-ui` `DatePicker` to set or clear the due date:
 <div class="space-y-1">
   <label class="text-sm font-medium text-neutral-500">Due Date</label>
   <Popover.Root bind:open>
-    <Popover.Trigger asChild let:builder>
-      <Button variant="outline" size="sm" builders={[builder]} class={cn("w-full justify-start", status && dueStatusStyles[status])}>
+    <Popover.Trigger>
+      {#snippet child({ props })}
+      <Button variant="outline" size="sm" {...props} class={cn("w-full justify-start", status && dueStatusStyles[status])}>
         <Calendar class="mr-2 h-4 w-4" />
         {#if dueDate}
           {new Date(dueDate).toLocaleDateString()}
@@ -245,6 +246,7 @@ The card detail page uses a `bits-ui` `DatePicker` to set or clear the due date:
           Set due date
         {/if}
       </Button>
+      {/snippet}
     </Popover.Trigger>
     <Popover.Content class="w-auto p-0" align="start">
       <CalendarComponent

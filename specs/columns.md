@@ -480,9 +480,8 @@ export const PUT: RequestHandler = async ({ request, params }) => {
 
     {#if hasCards && otherColumns.length > 0}
       <div class="space-y-3 py-2">
-        <Select.Root onSelectedChange={(v) => moveCardsTo = v?.value}>
-          <Select.Trigger>
-            <Select.Value placeholder="Move cards to..." />
+        <Select.Root type="single" onValueChange={(v) => moveCardsTo = v}>
+          <Select.Trigger placeholder="Move cards to...">
           </Select.Trigger>
           <Select.Content>
             {#each otherColumns as col}

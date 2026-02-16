@@ -219,7 +219,7 @@ Create, update, and delete labels at the board level:
 ```typescript
 // src/routes/(app)/boards/[boardId]/+page.server.ts (actions — label-related)
 import { superValidate } from "sveltekit-superforms";
-import { zod } from "sveltekit-superforms/adapters";
+import { zod4 } from "sveltekit-superforms/adapters";
 import { createLabelSchema, updateLabelSchema, deleteLabelSchema } from "$lib/schemas/label";
 import { labels } from "$lib/db/schema/labels";
 import { eq } from "drizzle-orm";
@@ -228,7 +228,7 @@ export const actions: Actions = {
   // ... existing card actions
 
   createLabel: async ({ request, params }) => {
-    const form = await superValidate(request, zod(createLabelSchema));
+    const form = await superValidate(request, zod4(createLabelSchema));
     if (!form.valid) return fail(400, { form });
 
     await db.insert(labels).values({
@@ -241,7 +241,7 @@ export const actions: Actions = {
   },
 
   updateLabel: async ({ request }) => {
-    const form = await superValidate(request, zod(updateLabelSchema));
+    const form = await superValidate(request, zod4(updateLabelSchema));
     if (!form.valid) return fail(400, { form });
 
     await db.update(labels)
@@ -252,7 +252,7 @@ export const actions: Actions = {
   },
 
   deleteLabel: async ({ request }) => {
-    const form = await superValidate(request, zod(deleteLabelSchema));
+    const form = await superValidate(request, zod4(deleteLabelSchema));
     if (!form.valid) return fail(400, { form });
 
     await db.delete(labels).where(eq(labels.id, form.data.labelId));
@@ -276,7 +276,7 @@ export const actions: Actions = {
   // ... existing update action
 
   toggleLabel: async ({ request }) => {
-    const form = await superValidate(request, zod(toggleCardLabelSchema));
+    const form = await superValidate(request, zod4(toggleCardLabelSchema));
     if (!form.valid) return fail(400, { form });
 
     const existing = await db.query.cardLabels.findFirst({
@@ -368,8 +368,9 @@ A popover with checkboxes to assign/remove labels from a card. Each toggle submi
 <div class="space-y-1">
   <label class="text-sm font-medium text-neutral-500">Labels</label>
   <Popover.Root bind:open>
-    <Popover.Trigger asChild let:builder>
-      <Button variant="outline" size="sm" builders={[builder]} class="w-full justify-start">
+    <Popover.Trigger>
+      {#snippet child({ props })}
+      <Button variant="outline" size="sm" {...props} class="w-full justify-start">
         <Tag class="mr-2 h-4 w-4" />
         {#if assignedLabelIds.length > 0}
           {assignedLabelIds.length} label{assignedLabelIds.length === 1 ? "" : "s"}
@@ -377,6 +378,7 @@ A popover with checkboxes to assign/remove labels from a card. Each toggle submi
           Add labels
         {/if}
       </Button>
+      {/snippet}
     </Popover.Trigger>
     <Popover.Content class="w-60 p-2" align="start">
       <div class="space-y-1">
