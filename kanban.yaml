@@ -53,20 +53,6 @@ backlog:
     links:
       - specs/frontend-build-tooling.md
 
-  - id: B-15
-    title: Create label colors utility and shared constants
-    description: |
-      The specs reference src/lib/utils/label-colors.ts with a LABEL_COLORS constant (10 predefined colors with name and hex value) and a LabelColor type. This utility is needed by the label management UI (LabelManager, LabelPicker). Create the file as specified.
-    priority: low
-    tags: [frontend]
-    assignee: ""
-    created: 2026-02-16
-    subtasks:
-      - text: Create src/lib/utils/label-colors.ts with LABEL_COLORS array and LabelColor type
-        done: false
-    links:
-      - specs/labels.md
-
   - id: B-16
     title: Add sidebar keyboard shortcut hint and mobile sheet overlay
     description: |
@@ -1108,6 +1094,22 @@ done:
     links:
       - src/lib/types/index.ts
       - specs/frontend-components.md
+
+  - id: D-50
+    completed: 2026-02-17
+    title: Create label colors utility and shared constants
+    description: |
+      The specs reference src/lib/utils/label-colors.ts with a LABEL_COLORS constant (10 predefined colors with name and hex value) and a LabelColor type. This utility is needed by the label management UI (LabelManager, LabelPicker). Create the file as specified.
+    priority: low
+    tags: [frontend]
+    assignee: ""
+    created: 2026-02-16
+    subtasks:
+      - text: Create src/lib/utils/label-colors.ts with LABEL_COLORS array and LabelColor type
+        done: false
+    links:
+      - specs/labels.md
+
 
 
 
