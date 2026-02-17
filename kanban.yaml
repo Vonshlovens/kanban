@@ -53,24 +53,6 @@ backlog:
     links:
       - specs/frontend-build-tooling.md
 
-  - id: B-12
-    title: "Fix svelte-check by adding @types/node and excluding node_modules type errors"
-    description: |
-      Running 'deno task check' (svelte-check) reports 43 errors, all from node_modules (vite, @sveltejs/kit, svelte-toolbelt). These are caused by missing @types/node and missing csstype type definitions. Install @types/node as a devDependency and configure tsconfig.json to skip library checking (skipLibCheck) or exclude node_modules from svelte-check. This was discovered while implementing B-5 (shadcn-svelte setup). Related to B-11 which covers CI-readiness of svelte-check.
-    priority: medium
-    tags: [dx, infra]
-    assignee: ""
-    created: 2026-02-16
-    subtasks:
-      - text: "Install @types/node as devDependency"
-        done: false
-      - text: Evaluate skipLibCheck vs explicit excludes in tsconfig.json
-        done: false
-      - text: Verify svelte-check passes with zero errors on src/ files
-        done: false
-    links:
-      - specs/frontend-build-tooling.md
-
   - id: B-15
     title: Create label colors utility and shared constants
     description: |
@@ -182,6 +164,26 @@ backlog:
     links:
       - src/lib/types/index.ts
       - specs/frontend-components.md
+
+  - id: B-31
+    title: Add .env file generation or svelte-check env stub for zero-error CI
+    description: |
+      After B-12, svelte-check reports 1 error: DATABASE_URL not exported from $env/static/private. This happens because SvelteKit generates $env types from actual env vars, which are not available during CI or fresh checkout. Options: (1) Add a stub .env to .env.example and copy in CI, (2) Use $env/dynamic/private instead with runtime validation, (3) Add a pre-check script that ensures .env exists. Goal: deno task check exits 0 without requiring a running database or manual setup.
+    priority: medium
+    tags: [dx, infra]
+    assignee: ""
+    created: 2026-02-17
+    subtasks:
+      - text: "Evaluate approaches: stub .env, dynamic env, or pre-check script"
+        done: false
+      - text: Implement chosen approach
+        done: false
+      - text: Verify deno task check exits 0 in clean checkout
+        done: false
+    links:
+      - specs/frontend-build-tooling.md
+      - src/lib/db/index.ts
+
 
 
 
@@ -1078,6 +1080,26 @@ done:
     links:
       - specs/frontend-components.md
       - specs/cards.md
+
+  - id: D-48
+    completed: 2026-02-17
+    title: "Fix svelte-check by adding @types/node and excluding node_modules type errors"
+    description: |
+      Running 'deno task check' (svelte-check) reports 43 errors, all from node_modules (vite, @sveltejs/kit, svelte-toolbelt). These are caused by missing @types/node and missing csstype type definitions. Install @types/node as a devDependency and configure tsconfig.json to skip library checking (skipLibCheck) or exclude node_modules from svelte-check. This was discovered while implementing B-5 (shadcn-svelte setup). Related to B-11 which covers CI-readiness of svelte-check.
+    priority: medium
+    tags: [dx, infra]
+    assignee: ""
+    created: 2026-02-16
+    subtasks:
+      - text: "Install @types/node as devDependency"
+        done: false
+      - text: Evaluate skipLibCheck vs explicit excludes in tsconfig.json
+        done: false
+      - text: Verify svelte-check passes with zero errors on src/ files
+        done: false
+    links:
+      - specs/frontend-build-tooling.md
+
 
 
 

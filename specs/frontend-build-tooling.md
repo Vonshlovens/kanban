@@ -103,10 +103,15 @@ export default {
   "extends": "./.svelte-kit/tsconfig.json",
   "compilerOptions": {
     "strict": true,
-    "moduleResolution": "bundler"
+    "moduleResolution": "bundler",
+    "skipLibCheck": true
   }
 }
 ```
+
+**`skipLibCheck`** skips type checking of `.d.ts` files in `node_modules`. This is needed because third-party packages (drizzle-orm, vite, postgres) ship type declarations with internal errors that don't affect application code. Without it, `svelte-check` reports dozens of false positives from library internals.
+
+**`@types/node`** is installed as a devDependency. It provides type declarations for Node.js built-in modules (`node:http`, `node:fs`, `Buffer`, etc.) that libraries like Vite and `@sveltejs/kit` reference in their type definitions.
 
 **Type checking:** Run `deno task check` which invokes `svelte-check`. This validates both TypeScript and Svelte template types in a single pass — no separate `tsc` step needed.
 
