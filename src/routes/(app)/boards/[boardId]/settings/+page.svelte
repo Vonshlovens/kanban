@@ -7,6 +7,7 @@
   import { enhance } from "$app/forms";
   import { toast } from "svelte-sonner";
   import { untrack } from "svelte";
+  import LabelManager from "$lib/components/label/LabelManager.svelte";
   import ArrowLeftIcon from "@lucide/svelte/icons/arrow-left";
   import LoaderCircleIcon from "@lucide/svelte/icons/loader-circle";
   import StarIcon from "@lucide/svelte/icons/star";
@@ -180,6 +181,17 @@
             </Button>
           </form>
         </div>
+      </Card.Content>
+    </Card.Root>
+
+    <!-- Labels -->
+    <Card.Root>
+      <Card.Header>
+        <Card.Title>Labels</Card.Title>
+        <Card.Description>Create and manage labels for categorizing cards.</Card.Description>
+      </Card.Header>
+      <Card.Content>
+        <LabelManager labels={data.boardLabels} />
       </Card.Content>
     </Card.Root>
 

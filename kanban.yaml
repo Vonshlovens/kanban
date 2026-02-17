@@ -160,27 +160,6 @@ backlog:
     assignee: ""
     created: 2026-02-17
 
-  - id: B-35
-    title: Create LabelManager component for board-level label CRUD
-    description: >-
-      Create src/lib/components/label/LabelManager.svelte as specified in specs/labels.md.
-      The component renders a panel for creating, editing, and deleting labels at the board level.
-      Requires adding createLabel, updateLabel, and deleteLabel form actions to the board page server.
-      Depends on LabelPicker (now implemented) and the label Zod schemas (implemented).
-    priority: medium
-    tags: [frontend]
-    assignee: ""
-    created: 2026-02-17
-    subtasks:
-      - text: Create LabelManager.svelte with create/edit/delete UI
-        done: false
-      - text: Add createLabel, updateLabel, deleteLabel form actions to board page.server.ts
-        done: false
-      - text: Integrate LabelManager into board settings page
-        done: false
-    links:
-      - specs/labels.md
-
   - id: B-36
     title: Add metadata command to kanban-cli for agent handoff notes
     description: |
@@ -198,6 +177,25 @@ backlog:
         done: false
     links:
       - scripts/kanban-cli.ts
+
+  - id: B-37
+    title: Add board-level label loading and LabelFilterBar component
+    description: |
+      The board page load function needs to include `labels: true` in the board query so labels are available for filtering. Then create LabelFilterBar.svelte as specified in specs/labels.md — a row of label toggle pills above the board columns with OR-logic filtering. Requires updating BoardWithColumns type to include labels.
+    priority: medium
+    tags: [frontend]
+    assignee: ""
+    created: 2026-02-17
+    subtasks:
+      - text: "Add labels: true to board page load query and update BoardWithColumns type"
+        done: false
+      - text: Create LabelFilterBar.svelte with toggle pills and clear button
+        done: false
+      - text: Integrate LabelFilterBar into board page with client-side card filtering
+        done: false
+    links:
+      - specs/labels.md
+
 
 
 
@@ -1199,6 +1197,29 @@ done:
         done: false
       - text: "Handle both string[] and {text,done}[] formats"
         done: false
+
+  - id: D-54
+    completed: 2026-02-17
+    title: Create LabelManager component for board-level label CRUD
+    description: >-
+      Create src/lib/components/label/LabelManager.svelte as specified in specs/labels.md.
+      The component renders a panel for creating, editing, and deleting labels at the board level.
+      Requires adding createLabel, updateLabel, and deleteLabel form actions to the board page server.
+      Depends on LabelPicker (now implemented) and the label Zod schemas (implemented).
+    priority: medium
+    tags: [frontend]
+    assignee: ""
+    created: 2026-02-17
+    subtasks:
+      - text: Create LabelManager.svelte with create/edit/delete UI
+        done: false
+      - text: Add createLabel, updateLabel, deleteLabel form actions to board page.server.ts
+        done: false
+      - text: Integrate LabelManager into board settings page
+        done: false
+    links:
+      - specs/labels.md
+
 
 
 

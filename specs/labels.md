@@ -141,7 +141,7 @@ export const toggleCardLabelSchema = z.object({
 
 | Route | Purpose |
 | --- | --- |
-| `src/routes/(app)/boards/[boardId]/+page.server.ts` | Label CRUD form actions (createLabel, updateLabel, deleteLabel) — Planned |
+| `src/routes/(app)/boards/[boardId]/settings/+page.server.ts` | Label CRUD form actions (createLabel, updateLabel, deleteLabel); loads board labels — Implemented |
 | `src/routes/(app)/boards/[boardId]/cards/[cardId]/+page.server.ts` | `toggleLabel` action to assign/remove a label from a card — Implemented |
 
 ## Server Load Functions
@@ -181,6 +181,27 @@ export const load: PageServerLoad = async ({ params }) => {
 };
 ```
 
+### Board Settings Page (Labels Included) — Implemented
+
+The settings page load function includes all board labels for the LabelManager component:
+
+```typescript
+// src/routes/(app)/boards/[boardId]/settings/+page.server.ts (load)
+export const load: PageServerLoad = async ({ params }) => {
+  const board = await db.query.boards.findFirst({
+    where: (boards, { eq }) => eq(boards.id, params.boardId),
+    with: {
+      labels: true,
+    },
+  });
+
+  if (!board) throw error(404, "Board not found");
+
+  // ... form initialization
+  return { board, boardLabels: board.labels, renameForm, descriptionForm };
+};
+```
+
 ### Card Detail Page (Labels Included) — Implemented
 
 The card detail load includes the card's assigned labels and the full board label list for the assignment popover:
@@ -212,12 +233,12 @@ export const load: PageServerLoad = async ({ params }) => {
 
 ## Form Actions
 
-### Label CRUD — Planned
+### Label CRUD — Implemented
 
-Create, update, and delete labels at the board level:
+Create, update, and delete labels at the board level (on the settings page):
 
 ```typescript
-// src/routes/(app)/boards/[boardId]/+page.server.ts (actions — label-related)
+// src/routes/(app)/boards/[boardId]/settings/+page.server.ts (actions — label-related)
 import { superValidate } from "sveltekit-superforms";
 import { zod4 } from "sveltekit-superforms/adapters";
 import { createLabelSchema, updateLabelSchema, deleteLabelSchema } from "$lib/schemas/label";
@@ -416,9 +437,9 @@ A popover with checkboxes to assign/remove labels from a card. Each toggle submi
 </div>
 ```
 
-### Label Manager (Planned)
+### Label Manager (Implemented)
 
-A panel or dialog for creating, editing, and deleting labels at the board level:
+A panel for creating, editing, and deleting labels at the board level, integrated into the board settings page:
 
 ```svelte
 <!-- src/lib/components/label/LabelManager.svelte -->
@@ -636,11 +657,13 @@ A row of label toggles displayed above the board columns:
 | `src/lib/db/schema/card-labels.ts` | Card–label join table schema and relations | Implemented |
 | `src/lib/schemas/label.ts` | Zod validation schemas for label forms | Implemented |
 | `src/lib/utils/label-colors.ts` | Predefined color palette constant | Implemented |
-| `src/routes/(app)/boards/[boardId]/+page.server.ts` | Label CRUD form actions; board load includes labels | Planned |
+| `src/routes/(app)/boards/[boardId]/settings/+page.server.ts` | Label CRUD form actions; settings load includes labels | Implemented |
+| `src/routes/(app)/boards/[boardId]/settings/+page.svelte` | Board settings page with LabelManager integration | Implemented |
+| `src/routes/(app)/boards/[boardId]/+page.server.ts` | Board page load includes labels for filtering (Planned) | Planned |
 | `src/routes/(app)/boards/[boardId]/cards/[cardId]/+page.server.ts` | `toggleLabel` action; loads board labels for picker | Implemented |
 | `src/lib/components/label/LabelBadge.svelte` | Colored badge for displaying a label | Implemented |
 | `src/lib/components/label/LabelPicker.svelte` | Popover multi-select to assign labels to a card | Implemented |
-| `src/lib/components/label/LabelManager.svelte` | Board-level label CRUD panel | Planned |
+| `src/lib/components/label/LabelManager.svelte` | Board-level label CRUD panel in settings | Implemented |
 | `src/lib/components/label/LabelFilterBar.svelte` | Board-level filter bar with label toggles | Planned |
 | `src/lib/components/card/CardItem.svelte` | Displays label badges on board cards | Implemented |
 | `src/lib/components/card/CardDetail.svelte` | Includes LabelPicker in sidebar | Implemented |
