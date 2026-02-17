@@ -254,6 +254,87 @@ Key implementation details:
 - Loading spinner on delete button during submission
 - Toast notifications for success/error
 
+```svelte
+<!-- src/lib/components/comment/CommentItem.svelte -->
+<script lang="ts">
+  import { Button } from "$lib/components/ui/button";
+  import { Pencil, Trash2 } from "@lucide/svelte";
+  import UserAvatar from "$lib/components/user/UserAvatar.svelte";
+  import { enhance } from "$app/forms";
+
+  let { comment, currentUserId, onEdit }: {
+    comment: {
+      id: string;
+      content: string;
+      createdAt: Date;
+      updatedAt: Date;
+      author: { id: string; name: string; avatarUrl?: string | null };
+    };
+    currentUserId?: string;
+    onEdit: (commentId: string, content: string) => void;
+  } = $props();
+
+  let isAuthor = $derived(currentUserId === comment.author.id);
+  let isEdited = $derived(
+    comment.updatedAt.getTime() > comment.createdAt.getTime(),
+  );
+  let confirmingDelete = $state(false);
+</script>
+
+<div class="group flex gap-3 rounded-lg p-3 hover:bg-neutral-50 dark:hover:bg-neutral-800/50">
+  <UserAvatar name={comment.author.name} avatarUrl={comment.author.avatarUrl} size="md" />
+  <div class="flex-1 space-y-1">
+    <div class="flex items-center gap-2">
+      <span class="text-sm font-medium">{comment.author.name}</span>
+      <span class="text-xs text-neutral-500">
+        {comment.createdAt.toLocaleDateString(undefined, {
+          month: "short",
+          day: "numeric",
+          hour: "numeric",
+          minute: "2-digit",
+        })}
+      </span>
+      {#if isEdited}
+        <span class="text-xs text-neutral-400">(edited)</span>
+      {/if}
+    </div>
+    <div class="text-sm text-neutral-700 dark:text-neutral-300 whitespace-pre-wrap">
+      {comment.content}
+    </div>
+  </div>
+
+  {#if isAuthor}
+    <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+      <Button
+        variant="ghost"
+        size="icon"
+        class="h-7 w-7"
+        onclick={() => onEdit(comment.id, comment.content)}
+      >
+        <Pencil class="h-3 w-3" />
+      </Button>
+      {#if confirmingDelete}
+        <form method="POST" action="?/deleteComment" use:enhance>
+          <input type="hidden" name="commentId" value={comment.id} />
+          <Button type="submit" variant="ghost" size="icon" class="h-7 w-7 text-red-500">
+            <Trash2 class="h-3 w-3" />
+          </Button>
+        </form>
+      {:else}
+        <Button
+          variant="ghost"
+          size="icon"
+          class="h-7 w-7 text-neutral-400"
+          onclick={() => confirmingDelete = true}
+        >
+          <Trash2 class="h-3 w-3" />
+        </Button>
+      {/if}
+    </div>
+  {/if}
+</div>
+```
+
 ### Comment List
 
 > **Status:** Implemented.
@@ -269,6 +350,107 @@ Key implementation details:
 - Toast notifications: "Comment added", "Comment updated", "Comment deleted" / error variants
 - Submit buttons disabled when content is empty or during submission
 - Uses `cn()` utility for textarea styling consistent with shadcn-svelte theme
+
+```svelte
+<!-- src/lib/components/comment/CommentList.svelte -->
+<script lang="ts">
+  import { Button } from "$lib/components/ui/button";
+  import { MessageSquare, Send } from "@lucide/svelte";
+  import CommentItem from "$lib/components/comment/CommentItem.svelte";
+  import { enhance } from "$app/forms";
+
+  let { cardId, comments, currentUserId }: {
+    cardId: string;
+    comments: Array<{
+      id: string;
+      content: string;
+      createdAt: Date;
+      updatedAt: Date;
+      author: { id: string; name: string; avatarUrl?: string | null };
+    }>;
+    currentUserId?: string;
+  } = $props();
+
+  let newComment = $state("");
+  let editingId = $state<string | null>(null);
+  let editContent = $state("");
+
+  function startEdit(commentId: string, content: string) {
+    editingId = commentId;
+    editContent = content;
+  }
+
+  function cancelEdit() {
+    editingId = null;
+    editContent = "";
+  }
+</script>
+
+<div class="space-y-4">
+  <div class="flex items-center gap-2">
+    <MessageSquare class="h-4 w-4 text-neutral-500" />
+    <h3 class="text-sm font-medium">Comments ({comments.length})</h3>
+  </div>
+
+  <!-- Comment list -->
+  <div class="space-y-1">
+    {#each comments as comment}
+      {#if editingId === comment.id}
+        <form
+          method="POST"
+          action="?/updateComment"
+          use:enhance={() => {
+            return async ({ update }) => {
+              await update();
+              cancelEdit();
+            };
+          }}
+          class="flex gap-2 p-3"
+        >
+          <input type="hidden" name="commentId" value={comment.id} />
+          <textarea
+            name="content"
+            bind:value={editContent}
+            class="flex-1 resize-none rounded-md border bg-transparent px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700"
+            rows="3"
+          ></textarea>
+          <div class="flex flex-col gap-1">
+            <Button type="submit" size="sm">Save</Button>
+            <Button variant="ghost" size="sm" onclick={cancelEdit}>Cancel</Button>
+          </div>
+        </form>
+      {:else}
+        <CommentItem {comment} {currentUserId} onEdit={startEdit} />
+      {/if}
+    {/each}
+  </div>
+
+  <!-- New comment form -->
+  <form
+    method="POST"
+    action="?/createComment"
+    use:enhance={() => {
+      return async ({ update }) => {
+        await update();
+        newComment = "";
+      };
+    }}
+    class="flex gap-2"
+  >
+    <input type="hidden" name="cardId" value={cardId} />
+    <textarea
+      name="content"
+      bind:value={newComment}
+      placeholder="Write a comment..."
+      class="flex-1 resize-none rounded-md border bg-transparent px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-700"
+      rows="2"
+    ></textarea>
+    <Button type="submit" size="icon" disabled={!newComment.trim()}>
+      <Send class="h-4 w-4" />
+    </Button>
+  </form>
+</div>
+```
 
 ### Card Detail Integration
 
@@ -291,7 +473,16 @@ The `currentUserId` is passed from the page server load through the page compone
 
 ### CardItem Integration
 
-The board-level card can optionally show a comment count indicator:
+> **Status:** Implemented.
+
+The board-level card shows a comment count indicator. The board page load function (`src/routes/(app)/boards/[boardId]/+page.server.ts`) includes a lightweight comments query that fetches only comment IDs (not full content) for efficient counting:
+
+```typescript
+// In the board page load, nested within the cards query:
+comments: { columns: { id: true } },
+```
+
+`CardItem.svelte` derives the count from the resulting array:
 
 ```svelte
 <!-- In src/lib/components/card/CardItem.svelte -->
@@ -304,10 +495,10 @@ The board-level card can optionally show a comment count indicator:
 
 <!-- In the card footer area, alongside label badges and due date -->
 {#if commentCount > 0}
-  <div class="flex items-center gap-1 text-xs text-neutral-500">
-    <MessageSquare class="h-3 w-3" />
-    <span>{commentCount}</span>
-  </div>
+  <span class="flex items-center gap-1">
+    <MessageSquare class="size-3" />
+    {commentCount}
+  </span>
 {/if}
 ```
 

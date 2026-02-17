@@ -20,6 +20,7 @@ export const load: PageServerLoad = async ({ params }) => {
             orderBy: (cards, { asc }) => [asc(cards.position)],
             with: {
               cardLabels: { with: { label: true } },
+              comments: { columns: { id: true } },
             },
           },
         },

@@ -7,7 +7,7 @@
 #   - Tags map to project areas (see `tags` section below)
 
 project: kanban
-updated: 2026-02-16
+updated: 2026-02-17
 
 # ── Tag definitions ──────────────────────────────────────────────
 tags:
@@ -177,20 +177,19 @@ backlog:
       - specs/cards.md
 
   - id: B-26
-    title: Include comment counts in board page card query
+    title: Fix CardDetail form error display type errors
     description: |
-      The board page load function (src/routes/(app)/boards/[boardId]/+page.server.ts) fetches cards with cardLabels but not comments. CardItem.svelte already renders a comment count indicator, but card.comments is always undefined at the board level. Either include a lightweight comments query (just IDs) or use a SQL count subquery to efficiently provide comment counts without loading full comment data.
-    priority: medium
-    tags: [frontend, backend]
+      CardDetail.svelte has two svelte-check type errors where `$formErrors.title[0]` and `$formErrors.description[0]` index into a potentially undefined array. The `{#if $formErrors.title}` conditional should narrow the type, but svelte-check doesn't recognize it. Fix by using optional chaining (`$formErrors.title?.[0]`) or a different pattern that satisfies TypeScript's type narrowing within Svelte templates.
+    priority: low
+    tags: [frontend, dx]
     assignee: ""
-    created: 2026-02-16
+    created: 2026-02-17
     subtasks:
-      - text: Add comment count to board page card query
+      - text: "Fix $formErrors.title[0] type error around line 196"
         done: false
-      - text: Verify CardItem comment count indicator displays correctly
+      - text: "Fix $formErrors.description[0] type error around line 229"
         done: false
     links:
-      - specs/comments.md
       - specs/cards.md
 
 
@@ -961,6 +960,25 @@ done:
     links:
       - specs/comments.md
       - specs/cards.md
+
+  - id: D-42
+    completed: 2026-02-17
+    title: Include comment counts in board page card query
+    description: |
+      The board page load function (src/routes/(app)/boards/[boardId]/+page.server.ts) fetches cards with cardLabels but not comments. CardItem.svelte already renders a comment count indicator, but card.comments is always undefined at the board level. Either include a lightweight comments query (just IDs) or use a SQL count subquery to efficiently provide comment counts without loading full comment data.
+    priority: medium
+    tags: [frontend, backend]
+    assignee: ""
+    created: 2026-02-16
+    subtasks:
+      - text: Add comment count to board page card query
+        done: false
+      - text: Verify CardItem comment count indicator displays correctly
+        done: false
+    links:
+      - specs/comments.md
+      - specs/cards.md
+
 
 
 

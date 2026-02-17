@@ -87,7 +87,10 @@ export const load: PageServerLoad = async ({ params }) => {
         with: {
           cards: {
             orderBy: (cards, { asc }) => [asc(cards.position)],
-            with: { labels: true, assignees: true },
+            with: {
+              cardLabels: { with: { label: true } },
+              comments: { columns: { id: true } },
+            },
           },
         },
       },
@@ -96,7 +99,10 @@ export const load: PageServerLoad = async ({ params }) => {
 
   if (!board) throw error(404, "Board not found");
 
-  return { board };
+  const createColumnForm = await superValidate(zod4(createColumnSchema));
+  const createCardForm = await superValidate(zod4(createCardSchema));
+
+  return { board, createColumnForm, createCardForm };
 };
 ```
 
@@ -138,13 +144,13 @@ All data mutations use SvelteKit form actions, validated with sveltekit-superfor
 // src/routes/(app)/boards/[boardId]/+page.server.ts
 import type { Actions } from "./$types";
 import { superValidate, fail } from "sveltekit-superforms";
-import { zod } from "sveltekit-superforms/adapters";
+import { zod4 } from "sveltekit-superforms/adapters";
 import { moveCardSchema } from "$lib/schemas/card";
 import { db } from "$lib/db";
 
 export const actions: Actions = {
   moveCard: async ({ request }) => {
-    const form = await superValidate(request, zod(moveCardSchema));
+    const form = await superValidate(request, zod4(moveCardSchema));
     if (!form.valid) return fail(400, { form });
 
     await db.update(cards)
