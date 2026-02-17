@@ -160,6 +160,38 @@ backlog:
     assignee: ""
     created: 2026-02-17
 
+  - id: B-33
+    title: Create LabelBadge component for displaying colored label tags
+    description: |
+      Create src/lib/components/label/LabelBadge.svelte as specified in specs/labels.md. The component takes name, color, and optional size (sm | md) props. Small size renders a minimal color swatch; medium size renders a pill with the label name. This component is used by CardItem (board view) and LabelManager.
+    priority: medium
+    tags: [frontend]
+    assignee: ""
+    created: 2026-02-17
+    subtasks:
+      - text: Create src/lib/components/label/LabelBadge.svelte with sm/md size variants
+        done: false
+      - text: Verify the component matches the spec pattern
+        done: false
+    links:
+      - specs/labels.md
+
+  - id: B-34
+    title: Fix kanban-cli add command to normalize subtasks from JSON input
+    description: |
+      When piping JSON to kanban-cli add, subtasks provided as plain strings (e.g. ["Step 1", "Step 2"]) crash with TypeError because escapeYamlString receives undefined. The cmdAdd function should normalize string subtasks to {text, done} objects before passing to taskToYaml. The flag-based path already does this correctly (line 464).
+    priority: medium
+    tags: [dx]
+    assignee: ""
+    created: 2026-02-17
+    subtasks:
+      - text: Add subtask normalization in cmdAdd after JSON.parse
+        done: false
+      - text: "Handle both string[] and {text,done}[] formats"
+        done: false
+
+
+
 
 
 
