@@ -4,11 +4,13 @@
   import { Input } from "$lib/components/ui/input/index.js";
   import { superForm } from "sveltekit-superforms";
   import { toast } from "svelte-sonner";
+  import { untrack } from "svelte";
   import ArrowLeftIcon from "@lucide/svelte/icons/arrow-left";
+  import LoaderCircleIcon from "@lucide/svelte/icons/loader-circle";
 
   let { data } = $props();
 
-  const { form, enhance, errors } = superForm(data.form, {
+  const { form, enhance, errors, submitting } = superForm(untrack(() => data.form), {
     onResult: ({ result }) => {
       if (result.type === "redirect") {
         toast.success("Board created");
@@ -86,7 +88,12 @@
 
           <div class="flex items-center justify-end gap-3 pt-2">
             <Button variant="ghost" href="/">Cancel</Button>
-            <Button type="submit">Create Board</Button>
+            <Button type="submit" disabled={$submitting}>
+              {#if $submitting}
+                <LoaderCircleIcon class="size-3.5 animate-spin" />
+              {/if}
+              Create Board
+            </Button>
           </div>
         </form>
       </Card.Content>

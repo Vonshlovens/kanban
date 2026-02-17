@@ -4,6 +4,7 @@
   import ColumnHeader from "./ColumnHeader.svelte";
   import CardItem from "$lib/components/card/CardItem.svelte";
   import AddCard from "$lib/components/card/AddCard.svelte";
+  import { untrack } from "svelte";
   import { cn } from "$lib/utils";
   import type { SuperValidated, Infer } from "sveltekit-superforms";
   import type { createCardSchema } from "$lib/schemas/card";
@@ -12,6 +13,7 @@
     column,
     boardId,
     otherColumns,
+    allColumns = [],
     createCardForm,
   }: {
     column: {
@@ -33,15 +35,16 @@
     };
     boardId: string;
     otherColumns: { id: string; name: string }[];
+    allColumns?: { id: string; name: string }[];
     createCardForm: SuperValidated<Infer<typeof createCardSchema>>;
   } = $props();
 
   const FLIP_MS = 200;
 
-  let cardItems = $state(column.cards);
+  let cardItems = $state(untrack(() => column.cards));
 
   // Track original card IDs for cross-column move detection
-  let originalCardIds = $state(new Set(column.cards.map((c) => c.id)));
+  let originalCardIds = $state(untrack(() => new Set(column.cards.map((c) => c.id))));
 
   // Sync when server data changes (e.g. after card create/delete)
   $effect(() => {
@@ -118,7 +121,7 @@
     onfinalize={handleCardFinalize}
   >
     {#each cardItems as card (card.id)}
-      <CardItem {card} {boardId} />
+      <CardItem {card} {boardId} columns={allColumns} currentColumnId={column.id} />
     {/each}
   </div>
 

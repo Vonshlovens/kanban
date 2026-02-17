@@ -6,6 +6,7 @@
   import XIcon from "@lucide/svelte/icons/x";
   import { superForm } from "sveltekit-superforms";
   import { toast } from "svelte-sonner";
+  import { untrack } from "svelte";
   import type { SuperValidated, Infer } from "sveltekit-superforms";
   import type { createCardSchema } from "$lib/schemas/card";
 
@@ -17,7 +18,7 @@
     form: SuperValidated<Infer<typeof createCardSchema>>;
   } = $props();
 
-  const { form, enhance, submitting } = superForm(formData, {
+  const { form, enhance, submitting } = superForm(untrack(() => formData), {
     resetForm: true,
     onResult: ({ result }) => {
       adding = false;

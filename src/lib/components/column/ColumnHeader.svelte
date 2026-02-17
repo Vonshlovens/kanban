@@ -11,6 +11,7 @@
   import LoaderCircleIcon from "@lucide/svelte/icons/loader-circle";
   import MinusIcon from "@lucide/svelte/icons/minus";
   import PlusIcon from "@lucide/svelte/icons/plus";
+  import { untrack } from "svelte";
   import { dragHandle } from "svelte-dnd-action";
   import { enhance } from "$app/forms";
   import { toast } from "svelte-sonner";
@@ -33,7 +34,7 @@
   } = $props();
 
   let editing = $state(false);
-  let editName = $state(column.name);
+  let editName = $state(untrack(() => column.name));
   let renameSubmitting = $state(false);
   let menuOpen = $state(false);
   let showDelete = $state(false);

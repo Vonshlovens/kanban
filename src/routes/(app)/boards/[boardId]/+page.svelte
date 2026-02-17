@@ -1,6 +1,7 @@
 <script lang="ts">
   import { dragHandleZone } from "svelte-dnd-action";
   import type { DndEvent } from "svelte-dnd-action";
+  import { untrack } from "svelte";
   import Column from "$lib/components/column/Column.svelte";
   import AddColumn from "$lib/components/column/AddColumn.svelte";
 
@@ -8,7 +9,7 @@
 
   const FLIP_MS = 200;
 
-  let columnItems = $state(data.board.columns);
+  let columnItems = $state(untrack(() => data.board.columns));
 
   // Sync when server data changes (e.g. after column create/delete/rename)
   $effect(() => {
@@ -52,6 +53,7 @@
             otherColumns={columnItems
               .filter((c) => c.id !== column.id)
               .map((c) => ({ id: c.id, name: c.name }))}
+            allColumns={columnItems.map((c) => ({ id: c.id, name: c.name }))}
             createCardForm={data.createCardForm}
           />
         {/each}

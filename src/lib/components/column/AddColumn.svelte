@@ -1,10 +1,12 @@
 <script lang="ts">
   import { Button } from "$lib/components/ui/button/index.js";
   import { Input } from "$lib/components/ui/input/index.js";
+  import LoaderCircleIcon from "@lucide/svelte/icons/loader-circle";
   import PlusIcon from "@lucide/svelte/icons/plus";
   import XIcon from "@lucide/svelte/icons/x";
   import { superForm } from "sveltekit-superforms";
   import { toast } from "svelte-sonner";
+  import { untrack } from "svelte";
   import type { SuperValidated, Infer } from "sveltekit-superforms";
   import type { createColumnSchema } from "$lib/schemas/column";
 
@@ -14,7 +16,7 @@
     form: SuperValidated<Infer<typeof createColumnSchema>>;
   } = $props();
 
-  const { form, enhance } = superForm(formData, {
+  const { form, enhance, submitting } = superForm(untrack(() => formData), {
     resetForm: true,
     onResult: ({ result }) => {
       adding = false;
@@ -40,7 +42,10 @@
         autofocus
       />
       <div class="flex items-center gap-1.5">
-        <Button type="submit" size="sm" class="h-7 px-3 text-xs">
+        <Button type="submit" size="sm" class="h-7 px-3 text-xs" disabled={$submitting}>
+          {#if $submitting}
+            <LoaderCircleIcon class="size-3 animate-spin" />
+          {/if}
           Add column
         </Button>
         <Button

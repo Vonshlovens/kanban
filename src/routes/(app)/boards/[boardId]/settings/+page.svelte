@@ -6,6 +6,7 @@
   import { superForm } from "sveltekit-superforms";
   import { enhance } from "$app/forms";
   import { toast } from "svelte-sonner";
+  import { untrack } from "svelte";
   import ArrowLeftIcon from "@lucide/svelte/icons/arrow-left";
   import LoaderCircleIcon from "@lucide/svelte/icons/loader-circle";
   import StarIcon from "@lucide/svelte/icons/star";
@@ -18,7 +19,7 @@
     enhance: renameEnhance,
     errors: renameErrors,
     submitting: renameSubmitting,
-  } = superForm(data.renameForm, {
+  } = superForm(untrack(() => data.renameForm), {
     onResult: ({ result }) => {
       if (result.type === "success") {
         toast.success("Board renamed");
@@ -33,7 +34,7 @@
     enhance: descEnhance,
     errors: descErrors,
     submitting: descSubmitting,
-  } = superForm(data.descriptionForm, {
+  } = superForm(untrack(() => data.descriptionForm), {
     onResult: ({ result }) => {
       if (result.type === "success") {
         toast.success("Description updated");

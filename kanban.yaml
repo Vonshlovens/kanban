@@ -177,36 +177,11 @@ backlog:
       - scripts/seed.ts
 
   - id: B-29
-    title: Fix state_referenced_locally warnings in form components
-    description: |
-      10 Svelte 5 warnings for `state_referenced_locally` across AddCard, CardDetail, AddColumn, ColumnHeader, Column, board page, settings page, and new board page. These occur when $props() values are passed to superForm() or used in derived expressions at the top level of the script. Fix by wrapping in closures or using $derived where Svelte suggests.
+    title: Fix self-closing HTML tag warnings in Svelte components
     priority: low
     tags: [frontend, dx]
     assignee: ""
     created: 2026-02-17
-    subtasks:
-      - text: Fix AddCard.svelte formData warning
-        done: false
-      - text: Fix CardDetail.svelte updateForm warning
-        done: false
-      - text: Fix AddColumn.svelte formData warning
-        done: false
-      - text: Fix ColumnHeader.svelte column warning
-        done: false
-      - text: Fix Column.svelte column warnings (2)
-        done: false
-      - text: "Fix boards/[boardId]/+page.svelte data warning"
-        done: false
-      - text: "Fix boards/[boardId]/settings/+page.svelte data warnings (2)"
-        done: false
-      - text: Fix boards/new/+page.svelte data warning
-        done: false
-    links:
-      - specs/cards.md
-      - specs/columns.md
-
-
-
 
 
 todo:
@@ -1053,6 +1028,38 @@ done:
         done: false
     links:
       - specs/cards.md
+
+  - id: D-46
+    completed: 2026-02-17
+    started: 2026-02-17
+    title: Fix state_referenced_locally warnings in form components
+    description: |
+      10 Svelte 5 warnings for `state_referenced_locally` across AddCard, CardDetail, AddColumn, ColumnHeader, Column, board page, settings page, and new board page. These occur when $props() values are passed to superForm() or used in derived expressions at the top level of the script. Fix by wrapping in closures or using $derived where Svelte suggests.
+    priority: low
+    tags: [frontend, dx]
+    assignee: ""
+    created: 2026-02-17
+    subtasks:
+      - text: Fix AddCard.svelte formData warning
+        done: false
+      - text: Fix CardDetail.svelte updateForm warning
+        done: false
+      - text: Fix AddColumn.svelte formData warning
+        done: false
+      - text: Fix ColumnHeader.svelte column warning
+        done: false
+      - text: Fix Column.svelte column warnings (2)
+        done: false
+      - text: "Fix boards/[boardId]/+page.svelte data warning"
+        done: false
+      - text: "Fix boards/[boardId]/settings/+page.svelte data warnings (2)"
+        done: false
+      - text: Fix boards/new/+page.svelte data warning
+        done: false
+    links:
+      - specs/cards.md
+      - specs/columns.md
+
 
 
 

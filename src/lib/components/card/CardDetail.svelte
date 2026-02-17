@@ -4,6 +4,7 @@
   import { Input } from "$lib/components/ui/input/index.js";
   import { superForm } from "sveltekit-superforms";
   import { toast } from "svelte-sonner";
+  import { untrack } from "svelte";
   import { cn } from "$lib/utils";
   import ArrowLeftIcon from "@lucide/svelte/icons/arrow-left";
   import ArrowRightLeftIcon from "@lucide/svelte/icons/arrow-right-left";
@@ -62,7 +63,7 @@
     enhance: updateEnhance,
     errors: formErrors,
     submitting: updateSubmitting,
-  } = superForm(updateForm, {
+  } = superForm(untrack(() => updateForm), {
     onResult: ({ result }) => {
       titleSubmitting = false;
       if (result.type === "success") {
