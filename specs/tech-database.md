@@ -61,6 +61,7 @@ deno task db:generate    # Generate migration from schema diff
 deno task db:migrate     # Apply pending migrations
 deno task db:push        # Push schema directly (dev only)
 deno task db:studio      # Open Drizzle Studio browser UI
+deno task db:seed         # Seed database with sample data (dev only)
 ```
 
 ### Configuration
@@ -124,6 +125,17 @@ const boardWithColumns = await db.query.boards.findFirst({
   with: { columns: { with: { cards: true } } },
 });
 ```
+
+## Seeding
+
+`scripts/seed.ts` populates the database with sample data for local development. Requires `DATABASE_URL` env var. Safe to run multiple times — truncates all tables first.
+
+```bash
+deno task db:seed
+# or: DATABASE_URL=postgresql://kanban:kanban@localhost:5432/kanban deno run -A scripts/seed.ts
+```
+
+Creates: 3 users, 1 board with 5 columns, 5 labels, 9 cards (spread across columns with labels, assignees, and due dates), 5 comments, and 5 activity log entries.
 
 ## Environment Variables
 

@@ -11,7 +11,8 @@
     "db:generate": "deno run -A npm:drizzle-kit generate",
     "db:migrate": "deno run -A npm:drizzle-kit migrate",
     "db:push": "deno run -A npm:drizzle-kit push",
-    "db:studio": "deno run -A npm:drizzle-kit studio"
+    "db:studio": "deno run -A npm:drizzle-kit studio",
+    "db:seed": "deno run -A scripts/seed.ts"
   },
   "compilerOptions": {
     "strict": true,

@@ -71,24 +71,6 @@ backlog:
     links:
       - specs/frontend-build-tooling.md
 
-  - id: B-13
-    title: Create database seed script with sample data
-    description: |
-      Create a seed script (scripts/seed.ts) that populates the database with sample data for local development: a demo board with columns, sample cards with labels and comments, and a test user. Run via 'deno task db:seed'. This enables frontend development against realistic data without manual setup.
-    priority: medium
-    tags: [backend, dx]
-    assignee: ""
-    created: 2026-02-16
-    subtasks:
-      - text: "Create scripts/seed.ts with sample boards, columns, cards, labels, comments, and a test user"
-        done: false
-      - text: "Add db:seed task to deno.json"
-        done: false
-      - text: Verify seed populates database correctly
-        done: false
-    links:
-      - specs/tech-database.md
-
   - id: B-15
     title: Create label colors utility and shared constants
     description: |
@@ -190,6 +172,26 @@ backlog:
     links:
       - specs/cards.md
       - specs/frontend-editor-diff.md
+
+  - id: B-28
+    title: Add seed script --reset flag and additional sample data profiles
+    description: |
+      Enhance scripts/seed.ts with: (1) a --reset flag that only truncates without re-seeding, useful for clearing dev data; (2) a --minimal flag that creates just 1 user, 1 board, and 1 column for quick testing; (3) a second sample board (e.g., 'Bug Tracker') so the boards list page shows multiple boards. Currently the seed only creates a single board, which doesn't exercise the multi-board UI.
+    priority: low
+    tags: [backend, dx]
+    assignee: ""
+    created: 2026-02-17
+    subtasks:
+      - text: Add --reset flag to truncate-only
+        done: false
+      - text: Add --minimal flag for lightweight seed
+        done: false
+      - text: Add a second sample board with different column layout
+        done: false
+    links:
+      - specs/tech-database.md
+      - scripts/seed.ts
+
 
 
 
@@ -1001,6 +1003,26 @@ done:
         done: false
     links:
       - specs/cards.md
+
+  - id: D-44
+    completed: 2026-02-17
+    title: Create database seed script with sample data
+    description: |
+      Create a seed script (scripts/seed.ts) that populates the database with sample data for local development: a demo board with columns, sample cards with labels and comments, and a test user. Run via 'deno task db:seed'. This enables frontend development against realistic data without manual setup.
+    priority: medium
+    tags: [backend, dx]
+    assignee: ""
+    created: 2026-02-16
+    subtasks:
+      - text: "Create scripts/seed.ts with sample boards, columns, cards, labels, comments, and a test user"
+        done: false
+      - text: "Add db:seed task to deno.json"
+        done: false
+      - text: Verify seed populates database correctly
+        done: false
+    links:
+      - specs/tech-database.md
+
 
 
 
