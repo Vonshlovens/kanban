@@ -179,24 +179,25 @@ backlog:
       - scripts/kanban-cli.ts
 
   - id: B-37
-    title: Add board-level label loading and LabelFilterBar component
+    title: "Add SearchFilterBar with text search, assignee, and due date filtering"
     description: |
-      The board page load function needs to include `labels: true` in the board query so labels are available for filtering. Then create LabelFilterBar.svelte as specified in specs/labels.md — a row of label toggle pills above the board columns with OR-logic filtering. Requires updating BoardWithColumns type to include labels.
+      The board page currently has standalone label filtering via LabelFilterBar. The search-and-filter spec (specs/search-and-filter.md) describes a unified SearchFilterBar with text search, assignee filtering, due date filtering, and label filtering all in one component using a shared filter store. Build the createBoardFilters store, filterCards utility, and SearchFilterBar component — then migrate the existing label filtering into the unified system.
     priority: medium
     tags: [frontend]
     assignee: ""
     created: 2026-02-17
     subtasks:
-      - text: "Add labels: true to board page load query and update BoardWithColumns type"
+      - text: Create createBoardFilters rune-based store in src/lib/stores/board-filters.ts
         done: false
-      - text: Create LabelFilterBar.svelte with toggle pills and clear button
+      - text: Create filterCards utility in src/lib/utils/filter-cards.ts
         done: false
-      - text: Integrate LabelFilterBar into board page with client-side card filtering
+      - text: "Build SearchFilterBar component with search input, label toggles, assignee filter, due date filter"
+        done: false
+      - text: Replace standalone LabelFilterBar in board page with unified SearchFilterBar
         done: false
     links:
+      - specs/search-and-filter.md
       - specs/labels.md
-
-
 
 
 todo:
@@ -1219,6 +1220,26 @@ done:
         done: false
     links:
       - specs/labels.md
+
+  - id: D-55
+    completed: 2026-02-17
+    title: Add board-level label loading and LabelFilterBar component
+    description: |
+      The board page load function needs to include `labels: true` in the board query so labels are available for filtering. Then create LabelFilterBar.svelte as specified in specs/labels.md — a row of label toggle pills above the board columns with OR-logic filtering. Requires updating BoardWithColumns type to include labels.
+    priority: medium
+    tags: [frontend]
+    assignee: ""
+    created: 2026-02-17
+    subtasks:
+      - text: "Add labels: true to board page load query and update BoardWithColumns type"
+        done: false
+      - text: Create LabelFilterBar.svelte with toggle pills and clear button
+        done: false
+      - text: Integrate LabelFilterBar into board page with client-side card filtering
+        done: false
+    links:
+      - specs/labels.md
+
 
 
 

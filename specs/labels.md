@@ -146,7 +146,7 @@ export const toggleCardLabelSchema = z.object({
 
 ## Server Load Functions
 
-### Board Page (Labels Included) — Planned
+### Board Page (Labels Included) — Implemented
 
 The board page load function includes all board labels so they're available for filtering and display:
 
@@ -167,6 +167,7 @@ export const load: PageServerLoad = async ({ params }) => {
             orderBy: (cards, { asc }) => [asc(cards.position)],
             with: {
               cardLabels: { with: { label: true } },
+              comments: { columns: { id: true } },
             },
           },
         },
@@ -576,12 +577,12 @@ Add `LabelPicker` to the card detail sidebar:
 <LabelPicker cardId={card.id} {boardLabels} {assignedLabelIds} />
 ```
 
-## Board-Level Filtering (Planned)
+## Board-Level Filtering (Implemented)
 
-Label filtering is client-side derived state. The board page maintains a set of selected label IDs and filters the card lists:
+Label filtering is client-side derived state in the board page (`src/routes/(app)/boards/[boardId]/+page.svelte`). The page maintains a `selectedLabelIds` set and derives `filteredColumns` with OR logic — cards matching *any* selected label are shown. When no labels are selected, all cards are shown. The `LabelFilterBar` component renders above the board columns.
 
 ```svelte
-<!-- In the board page or a FilterBar component -->
+<!-- In src/routes/(app)/boards/[boardId]/+page.svelte -->
 <script lang="ts">
   let selectedLabelIds = $state<Set<string>>(new Set());
 
@@ -594,59 +595,48 @@ Label filtering is client-side derived state. The board page maintains a set of 
     selectedLabelIds = new Set(selectedLabelIds); // trigger reactivity
   }
 
-  // OR logic: show cards matching any selected label
-  function filterCards(cards: Card[]) {
-    if (selectedLabelIds.size === 0) return cards;
-    return cards.filter((card) =>
-      card.cardLabels.some((cl) => selectedLabelIds.has(cl.labelId)),
-    );
+  function clearLabelFilter() {
+    selectedLabelIds = new Set();
   }
+
+  // OR logic: show cards matching any selected label, applied per column
+  let filteredColumns = $derived<BoardColumn[]>(
+    selectedLabelIds.size === 0
+      ? columnItems
+      : columnItems.map((col) => ({
+          ...col,
+          cards: col.cards.filter((card) =>
+            card.cardLabels?.some((cl) => selectedLabelIds.has(cl.label.id)),
+          ),
+        })),
+  );
 </script>
 ```
 
-### Filter Bar Component (Planned)
+### Filter Bar Component (Implemented)
 
-A row of label toggles displayed above the board columns:
+A row of label toggle pills displayed above the board columns. Props: `labels`, `selectedIds`, `onToggle`, `onClear`.
+
+- Active labels show with ring highlight and slight scale
+- Inactive labels show at reduced opacity
+- "Clear" button with X icon appears when any labels are selected
+- Hidden entirely when the board has no labels
 
 ```svelte
 <!-- src/lib/components/label/LabelFilterBar.svelte -->
 <script lang="ts">
   import { cn } from "$lib/utils";
+  import { X } from "@lucide/svelte";
 
-  let { labels, selectedIds, onToggle }: {
+  let { labels, selectedIds, onToggle, onClear }: {
     labels: Array<{ id: string; name: string; color: string }>;
     selectedIds: Set<string>;
     onToggle: (id: string) => void;
+    onClear: () => void;
   } = $props();
-</script>
 
-{#if labels.length > 0}
-  <div class="flex flex-wrap items-center gap-2 px-4 py-2">
-    <span class="text-xs font-medium text-neutral-500">Filter:</span>
-    {#each labels as label}
-      <button
-        class={cn(
-          "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium transition-colors",
-          selectedIds.has(label.id)
-            ? "ring-2 ring-offset-1 ring-neutral-400 dark:ring-neutral-500"
-            : "opacity-60 hover:opacity-100",
-        )}
-        style="background-color: {label.color}; color: white"
-        onclick={() => onToggle(label.id)}
-      >
-        {label.name}
-      </button>
-    {/each}
-    {#if selectedIds.size > 0}
-      <button
-        class="text-xs text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300"
-        onclick={() => { selectedIds.clear(); selectedIds = new Set(); }}
-      >
-        Clear
-      </button>
-    {/if}
-  </div>
-{/if}
+  let hasSelection = $derived(selectedIds.size > 0);
+</script>
 ```
 
 ## File Locations
@@ -659,11 +649,11 @@ A row of label toggles displayed above the board columns:
 | `src/lib/utils/label-colors.ts` | Predefined color palette constant | Implemented |
 | `src/routes/(app)/boards/[boardId]/settings/+page.server.ts` | Label CRUD form actions; settings load includes labels | Implemented |
 | `src/routes/(app)/boards/[boardId]/settings/+page.svelte` | Board settings page with LabelManager integration | Implemented |
-| `src/routes/(app)/boards/[boardId]/+page.server.ts` | Board page load includes labels for filtering (Planned) | Planned |
+| `src/routes/(app)/boards/[boardId]/+page.server.ts` | Board page load includes labels for filtering | Implemented |
 | `src/routes/(app)/boards/[boardId]/cards/[cardId]/+page.server.ts` | `toggleLabel` action; loads board labels for picker | Implemented |
 | `src/lib/components/label/LabelBadge.svelte` | Colored badge for displaying a label | Implemented |
 | `src/lib/components/label/LabelPicker.svelte` | Popover multi-select to assign labels to a card | Implemented |
 | `src/lib/components/label/LabelManager.svelte` | Board-level label CRUD panel in settings | Implemented |
-| `src/lib/components/label/LabelFilterBar.svelte` | Board-level filter bar with label toggles | Planned |
+| `src/lib/components/label/LabelFilterBar.svelte` | Board-level filter bar with label toggles | Implemented |
 | `src/lib/components/card/CardItem.svelte` | Displays label badges on board cards | Implemented |
 | `src/lib/components/card/CardDetail.svelte` | Includes LabelPicker in sidebar | Implemented |

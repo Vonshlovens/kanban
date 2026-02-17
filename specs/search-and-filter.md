@@ -18,9 +18,10 @@ Users can locate and narrow down visible cards using search and filtering contro
 - "Unassigned" is a valid filter option
 - Single-select: only one assignee filter active at a time
 
-### Filter by Label
+### Filter by Label — Implemented (standalone)
 - User can filter cards by one or more labels
 - Multiple label filters use OR logic (show cards matching **any** selected label)
+- Currently implemented as a standalone `LabelFilterBar` component in the board page (see `specs/labels.md`). When the full `SearchFilterBar` is built, label filtering should be migrated into the unified filter store.
 
 ### Filter by Due Date
 - User can filter cards by due date status: overdue, due today, due this week, no due date

@@ -4,6 +4,8 @@
   import { untrack } from "svelte";
   import Column from "$lib/components/column/Column.svelte";
   import AddColumn from "$lib/components/column/AddColumn.svelte";
+  import LabelFilterBar from "$lib/components/label/LabelFilterBar.svelte";
+  import type { BoardColumn } from "$lib/types";
 
   let { data } = $props();
 
@@ -15,6 +17,33 @@
   $effect(() => {
     columnItems = data.board.columns;
   });
+
+  // --- Label filtering (client-side, OR logic) ---
+  let selectedLabelIds = $state<Set<string>>(new Set());
+
+  function toggleLabelFilter(labelId: string) {
+    if (selectedLabelIds.has(labelId)) {
+      selectedLabelIds.delete(labelId);
+    } else {
+      selectedLabelIds.add(labelId);
+    }
+    selectedLabelIds = new Set(selectedLabelIds);
+  }
+
+  function clearLabelFilter() {
+    selectedLabelIds = new Set();
+  }
+
+  let filteredColumns = $derived<BoardColumn[]>(
+    selectedLabelIds.size === 0
+      ? columnItems
+      : columnItems.map((col) => ({
+          ...col,
+          cards: col.cards.filter((card) =>
+            card.cardLabels?.some((cl) => selectedLabelIds.has(cl.label.id)),
+          ),
+        })),
+  );
 
   function handleColumnConsider(e: CustomEvent<DndEvent>) {
     columnItems = e.detail.items as typeof columnItems;
@@ -34,6 +63,13 @@
 </script>
 
 <div class="flex h-full flex-col">
+  <LabelFilterBar
+    labels={data.board.labels}
+    selectedIds={selectedLabelIds}
+    onToggle={toggleLabelFilter}
+    onClear={clearLabelFilter}
+  />
+
   <div class="flex-1 overflow-x-auto overflow-y-hidden p-4">
     <div class="flex h-full items-start gap-4">
       <div
@@ -46,7 +82,7 @@
         onconsider={handleColumnConsider}
         onfinalize={handleColumnFinalize}
       >
-        {#each columnItems as column (column.id)}
+        {#each filteredColumns as column (column.id)}
           <Column
             {column}
             boardId={data.board.id}
