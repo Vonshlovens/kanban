@@ -2,7 +2,15 @@
 
 ## Overview
 
-Rich text editing, diff rendering, log streaming, preview panels, and terminal surfaces for the kanban app. The WYSIWYG editor uses TipTap (a ProseMirror wrapper with first-class Svelte support) for card descriptions and comments. Diff rendering uses `diff2html` for unified/split diff views. Logs are virtualized with `@tanstack/svelte-virtual`. Preview panels embed dev server output via iframes. Terminal surfaces use `@xterm/xterm` with a Svelte wrapper.
+Rich text editing, diff rendering, log streaming, preview panels, and terminal surfaces for the kanban app.
+
+### Current Implementation (Markdown)
+
+Card descriptions currently use a lightweight **Markdown** approach: descriptions are stored as plain Markdown text, rendered with `marked` (GFM), and sanitized with `DOMPurify`. The `MarkdownRenderer` component (`src/lib/components/markdown/MarkdownRenderer.svelte`) handles rendering with `@tailwindcss/typography` prose styling. The card detail view uses a read/edit toggle with Write/Preview tabs.
+
+### Planned (TipTap WYSIWYG)
+
+The WYSIWYG editor uses TipTap (a ProseMirror wrapper with first-class Svelte support) for card descriptions and comments. This is a planned upgrade from the current Markdown approach that would add toolbar-based formatting, slash commands, and image embedding. Diff rendering uses `diff2html` for unified/split diff views. Logs are virtualized with `@tanstack/svelte-virtual`. Preview panels embed dev server output via iframes. Terminal surfaces use `@xterm/xterm` with a Svelte wrapper.
 
 ## Requirements
 
@@ -605,10 +613,14 @@ Multi-tab terminal manager:
 
 ### Card Description Editor
 
-Replace the plain textarea in the card detail view with `RichTextEditor`:
+> **Current implementation:** Card descriptions use Markdown rendering via `MarkdownRenderer` component with a read/edit toggle and Write/Preview tabs in `CardDetail.svelte`. See `specs/cards.md` for details.
+
+#### Planned: TipTap Upgrade
+
+Replace the Markdown textarea with `RichTextEditor` for full WYSIWYG editing:
 
 ```svelte
-<!-- In src/lib/components/card/CardDetail.svelte -->
+<!-- In src/lib/components/card/CardDetail.svelte (Planned) -->
 <script lang="ts">
   import RichTextEditor from "$lib/components/editor/RichTextEditor.svelte";
   import RichTextContent from "$lib/components/editor/RichTextContent.svelte";
@@ -635,7 +647,7 @@ Replace the plain textarea in the card detail view with `RichTextEditor`:
 {/if}
 ```
 
-### Comment Rich Text
+### Comment Rich Text (Planned)
 
 The `CommentList` component (see `specs/comments.md`) can use `RichTextEditor` for composing comments and `RichTextContent` for rendering them, replacing the plain `<textarea>` and `{comment.content}` text display.
 
@@ -643,12 +655,13 @@ The `CommentList` component (see `specs/comments.md`) can use `RichTextEditor` f
 
 | File/Directory | Purpose |
 | --- | --- |
-| `src/lib/components/editor/RichTextEditor.svelte` | TipTap WYSIWYG editor with toolbar |
-| `src/lib/components/editor/RichTextContent.svelte` | Read-only rich text HTML renderer |
+| `src/lib/components/markdown/MarkdownRenderer.svelte` | Markdown renderer (marked + DOMPurify) — **Implemented** |
+| `src/lib/components/editor/RichTextEditor.svelte` | TipTap WYSIWYG editor with toolbar — **(Planned)** |
+| `src/lib/components/editor/RichTextContent.svelte` | Read-only rich text HTML renderer — **(Planned)** |
 | `src/lib/components/diff/DiffViewer.svelte` | Unified/split diff rendering with diff2html |
 | `src/lib/components/diff/DiffViewToggle.svelte` | Segmented control for diff view mode |
 | `src/lib/components/logs/LogViewer.svelte` | Virtualized log viewer with ANSI support |
 | `src/lib/components/preview/PreviewPanel.svelte` | Iframe preview panel for dev server output |
 | `src/lib/components/terminal/TerminalSurface.svelte` | Xterm.js terminal emulator wrapper |
 | `src/lib/components/terminal/TerminalTabs.svelte` | Multi-tab terminal manager |
-| `src/lib/components/card/CardDetail.svelte` | Uses RichTextEditor for card descriptions |
+| `src/lib/components/card/CardDetail.svelte` | Uses MarkdownRenderer for card descriptions (Planned: upgrade to RichTextEditor) |

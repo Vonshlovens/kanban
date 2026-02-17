@@ -9,9 +9,12 @@
     "npm:@sveltejs/adapter-auto@6": "6.1.1_@sveltejs+kit@2.52.0__@sveltejs+vite-plugin-svelte@6.2.4___svelte@5.51.2____acorn@8.15.0___vite@7.3.1____picomatch@4.0.3__svelte@5.51.2___acorn@8.15.0__typescript@5.9.3__vite@7.3.1___picomatch@4.0.3__acorn@8.15.0_@sveltejs+vite-plugin-svelte@6.2.4__svelte@5.51.2___acorn@8.15.0__vite@7.3.1___picomatch@4.0.3_svelte@5.51.2__acorn@8.15.0_typescript@5.9.3_vite@7.3.1__picomatch@4.0.3",
     "npm:@sveltejs/kit@^2.22.0": "2.52.0_@sveltejs+vite-plugin-svelte@6.2.4__svelte@5.51.2___acorn@8.15.0__vite@7.3.1___picomatch@4.0.3_svelte@5.51.2__acorn@8.15.0_typescript@5.9.3_vite@7.3.1__picomatch@4.0.3_acorn@8.15.0",
     "npm:@sveltejs/vite-plugin-svelte@6": "6.2.4_svelte@5.51.2__acorn@8.15.0_vite@7.3.1__picomatch@4.0.3",
+    "npm:@tailwindcss/typography@~0.5.19": "0.5.19_tailwindcss@4.1.18",
     "npm:@tailwindcss/vite@4": "4.1.18_vite@7.3.1__picomatch@4.0.3",
+    "npm:@types/dompurify@^3.2.0": "3.2.0",
     "npm:bits-ui@^2.15.5": "2.15.5_@internationalized+date@3.11.0_svelte@5.51.2__acorn@8.15.0_@sveltejs+kit@2.52.0__@sveltejs+vite-plugin-svelte@6.2.4___svelte@5.51.2____acorn@8.15.0___vite@7.3.1____picomatch@4.0.3__svelte@5.51.2___acorn@8.15.0__typescript@5.9.3__vite@7.3.1___picomatch@4.0.3__acorn@8.15.0_@sveltejs+vite-plugin-svelte@6.2.4__svelte@5.51.2___acorn@8.15.0__vite@7.3.1___picomatch@4.0.3_typescript@5.9.3_vite@7.3.1__picomatch@4.0.3",
     "npm:clsx@^2.1.1": "2.1.1",
+    "npm:dompurify@^3.3.1": "3.3.1",
     "npm:drizzle-kit@*": "0.31.9_esbuild@0.25.12",
     "npm:drizzle-kit@~0.31.9": "0.31.9_esbuild@0.25.12",
     "npm:drizzle-orm@~0.45.1": "0.45.1_postgres@3.4.8",
@@ -19,6 +22,7 @@
     "npm:eslint@9": "9.39.2",
     "npm:formsnap@^2.0.1": "2.0.1_svelte@5.51.2__acorn@8.15.0_sveltekit-superforms@2.29.1__@sveltejs+kit@2.52.0___@sveltejs+vite-plugin-svelte@6.2.4____svelte@5.51.2_____acorn@8.15.0____vite@7.3.1_____picomatch@4.0.3___svelte@5.51.2____acorn@8.15.0___typescript@5.9.3___vite@7.3.1____picomatch@4.0.3___acorn@8.15.0__svelte@5.51.2___acorn@8.15.0__zod@4.3.6__@sveltejs+vite-plugin-svelte@6.2.4___svelte@5.51.2____acorn@8.15.0___vite@7.3.1____picomatch@4.0.3__typescript@5.9.3__vite@7.3.1___picomatch@4.0.3_@sveltejs+kit@2.52.0__@sveltejs+vite-plugin-svelte@6.2.4___svelte@5.51.2____acorn@8.15.0___vite@7.3.1____picomatch@4.0.3__svelte@5.51.2___acorn@8.15.0__typescript@5.9.3__vite@7.3.1___picomatch@4.0.3__acorn@8.15.0_zod@4.3.6_@sveltejs+vite-plugin-svelte@6.2.4__svelte@5.51.2___acorn@8.15.0__vite@7.3.1___picomatch@4.0.3_typescript@5.9.3_vite@7.3.1__picomatch@4.0.3",
     "npm:globals@16": "16.5.0",
+    "npm:marked@^17.0.2": "17.0.2",
     "npm:mode-watcher@^1.1.0": "1.1.0_svelte@5.51.2__acorn@8.15.0",
     "npm:postgres@^3.4.8": "3.4.8",
     "npm:prettier-plugin-svelte@^3.4.0": "3.4.1_prettier@3.8.1_svelte@5.51.2__acorn@8.15.0",
@@ -864,6 +868,13 @@
         "@tailwindcss/oxide-win32-x64-msvc"
       ]
     },
+    "@tailwindcss/typography@0.5.19_tailwindcss@4.1.18": {
+      "integrity": "sha512-w31dd8HOx3k9vPtcQh5QHP9GwKcgbMp87j58qi6xgiBnFFtKEAgCWnDw4qUT8aHwkCp8bKvb/KGKWWHedP0AAg==",
+      "dependencies": [
+        "postcss-selector-parser@6.0.10",
+        "tailwindcss"
+      ]
+    },
     "@tailwindcss/vite@4.1.18_vite@7.3.1__picomatch@4.0.3": {
       "integrity": "sha512-jVA+/UpKL1vRLg6Hkao5jldawNmRo7mQYrZtNHMIVpLfLhDml5nMRUo/8MwoX2vNXvnaXNNMedrMfMugAVX1nA==",
       "dependencies": [
@@ -875,6 +886,13 @@
     },
     "@types/cookie@0.6.0": {
       "integrity": "sha512-4Kh9a6B2bQciAhf7FSuMRRkUWecJgJu9nPnx3yzpsfXX/c50REIqpHY4C82bXP90qrLtXtkDxTZosYO3UpOwlA=="
+    },
+    "@types/dompurify@3.2.0": {
+      "integrity": "sha512-Fgg31wv9QbLDA0SpTOXO3MaxySc4DKGLi8sna4/Utjo4r3ZRPdCt4UQee8BWr+Q5z21yifghREPJGYaEOEIACg==",
+      "dependencies": [
+        "dompurify"
+      ],
+      "deprecated": true
     },
     "@types/estree@1.0.8": {
       "integrity": "sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w=="
@@ -1124,6 +1142,12 @@
     },
     "devalue@5.6.2": {
       "integrity": "sha512-nPRkjWzzDQlsejL1WVifk5rvcFi/y1onBRxjaFMjZeR9mFpqu2gmAZ9xUB9/IEanEP/vBtGeGganC/GO1fmufg=="
+    },
+    "dompurify@3.3.1": {
+      "integrity": "sha512-qkdCKzLNtrgPFP1Vo+98FRzJnBRGe4ffyCea9IwHB1fyxPOeNTHpLKYGd4Uk9xvNoH0ZoOjwZxNptyMwqrId1Q==",
+      "optionalDependencies": [
+        "@types/trusted-types"
+      ]
     },
     "drizzle-kit@0.31.9_esbuild@0.25.12": {
       "integrity": "sha512-GViD3IgsXn7trFyBUUHyTFBpH/FsHTxYJ66qdbVggxef4UBPHRYxQaRzYLTuekYnk9i5FIEL9pbBIwMqX/Uwrg==",
@@ -1639,6 +1663,10 @@
         "@jridgewell/sourcemap-codec"
       ]
     },
+    "marked@17.0.2": {
+      "integrity": "sha512-s5HZGFQea7Huv5zZcAGhJLT3qLpAfnY7v7GWkICUr0+Wd5TFEtdlRR2XUL5Gg+RH7u2Df595ifrxR03mBaw7gA==",
+      "bin": true
+    },
     "memoize-weak@1.0.2": {
       "integrity": "sha512-gj39xkrjEw7nCn4nJ1M5ms6+MyMlyiGmttzsqAUsAKn6bYKwuTHh/AO3cKPF8IBrTIYTxb0wWXFs3E//Y8VoWQ=="
     },
@@ -1746,6 +1774,13 @@
       "integrity": "sha512-AjKOeiwAitL/MXxQW2DliT28EKukvvbEWx3LBmJIRN8KfBGZbRTxNYW0kSqi1COiTZ57nZ9NW06S6ux//N1c9A==",
       "dependencies": [
         "postcss"
+      ]
+    },
+    "postcss-selector-parser@6.0.10": {
+      "integrity": "sha512-IQ7TZdoaqbT+LCpShg46jnZVlhWD2w6iQYAcYXfHARZ7X1t/UGhhceQDs5X0cGqKvYlHNOuv7Oa1xmb0oQuA3w==",
+      "dependencies": [
+        "cssesc",
+        "util-deprecate"
       ]
     },
     "postcss-selector-parser@7.1.1": {
@@ -1969,7 +2004,7 @@
         "espree@10.4.0_acorn@8.15.0",
         "postcss",
         "postcss-scss",
-        "postcss-selector-parser",
+        "postcss-selector-parser@7.1.1",
         "svelte"
       ],
       "optionalPeers": [
@@ -2204,15 +2239,19 @@
         "npm:@sveltejs/adapter-auto@6",
         "npm:@sveltejs/kit@^2.22.0",
         "npm:@sveltejs/vite-plugin-svelte@6",
+        "npm:@tailwindcss/typography@~0.5.19",
         "npm:@tailwindcss/vite@4",
+        "npm:@types/dompurify@^3.2.0",
         "npm:bits-ui@^2.15.5",
         "npm:clsx@^2.1.1",
+        "npm:dompurify@^3.3.1",
         "npm:drizzle-kit@~0.31.9",
         "npm:drizzle-orm@~0.45.1",
         "npm:eslint-plugin-svelte@3",
         "npm:eslint@9",
         "npm:formsnap@^2.0.1",
         "npm:globals@16",
+        "npm:marked@^17.0.2",
         "npm:mode-watcher@^1.1.0",
         "npm:postgres@^3.4.8",
         "npm:prettier-plugin-svelte@^3.4.0",

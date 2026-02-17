@@ -15,7 +15,10 @@ Cards are the core unit of work. Each card represents a task, story, or work ite
 ### Edit Card
 - User can edit any field on a card
 - Card opens in a detail view for editing
-- Description supports rich text (bold, italic, lists, links)
+- Description supports Markdown (bold, italic, lists, links, code blocks, headings)
+- Description uses a Write/Preview tab interface: "Write" tab for editing raw Markdown, "Preview" tab for rendered output
+- Rendered Markdown is sanitized with DOMPurify to prevent XSS
+- Descriptions are stored as plain Markdown text (no schema change needed)
 
 ### Delete Card
 - User can delete a card
@@ -299,6 +302,57 @@ Key implementation details:
 - Uses `DropdownMenu` from shadcn-svelte for the actions menu
 - Actions menu stays visible when the dropdown is open (`menuOpen` state)
 
+```svelte
+<!-- src/lib/components/card/CardItem.svelte -->
+<script lang="ts">
+  import CalendarIcon from "@lucide/svelte/icons/calendar";
+  import MessageSquareIcon from "@lucide/svelte/icons/message-square";
+  import AlignLeftIcon from "@lucide/svelte/icons/align-left";
+  import { cn } from "$lib/utils";
+
+  let { card, boardId }: { card: any; boardId: string } = $props();
+
+  let hasDescription = $derived(!!card.description);
+  let labelCount = $derived(card.cardLabels?.length ?? 0);
+  let commentCount = $derived(card.comments?.length ?? 0);
+</script>
+
+<a
+  href="/boards/{boardId}/cards/{card.id}"
+  class="block rounded-lg border bg-white p-3 shadow-sm transition-shadow hover:shadow-md dark:border-neutral-800 dark:bg-neutral-950"
+>
+  {#if labelCount > 0}
+    <div class="mb-2 flex flex-wrap gap-1">
+      {#each card.cardLabels as cl}
+        <span
+          class="inline-block h-2 w-8 rounded-full"
+          style="background-color: {cl.label.color}"
+        ></span>
+      {/each}
+    </div>
+  {/if}
+
+  <p class="text-sm font-medium">{card.title}</p>
+
+  {#if hasDescription || commentCount > 0 || card.dueDate}
+    <div class="mt-2 flex items-center gap-3 text-xs text-neutral-500">
+      {#if card.dueDate}
+        <span class="flex items-center gap-1">
+          <CalendarIcon class="h-3 w-3" />
+          {new Date(card.dueDate).toLocaleDateString()}
+        </span>
+      {/if}
+      {#if commentCount > 0}
+        <span class="flex items-center gap-1">
+          <MessageSquareIcon class="h-3 w-3" />
+          {commentCount}
+        </span>
+      {/if}
+    </div>
+  {/if}
+</a>
+```
+
 ### Card Detail
 
 > **Status:** Implemented.
@@ -308,12 +362,43 @@ Full card view with editable title, description, labels, comments, metadata, and
 Key implementation details:
 - Title is inline-editable: click the title to enter edit mode, press Enter or blur to save, Escape to cancel
 - Uses a `titleSubmitting` guard flag to prevent double-submit when Enter triggers both `requestSubmit()` and a subsequent blur event (same pattern as `ColumnHeader` rename)
-- Description is saved via a separate form with an explicit "Save" button
+- Description uses a read/edit toggle: click rendered Markdown to enter edit mode
+- Edit mode shows a Write/Preview tabbed interface (shadcn Tabs) with a monospace textarea and a Cancel/Save button pair
+- The `MarkdownRenderer` component (`src/lib/components/markdown/MarkdownRenderer.svelte`) renders descriptions using `marked` (GFM + line breaks) and sanitizes with `DOMPurify`; styled with `@tailwindcss/typography` prose classes
 - Labels, metadata, and interactive comments (via `CommentList` component) are displayed in Card sections
 - The Details card section includes a "Column" row showing the current column name and a "Move" button that opens `MoveCardDialog` (when other columns exist)
 - Delete uses `DeleteCardDialog` in a danger zone section at the bottom
 - `superForm`'s `onResult` resets the `titleSubmitting` flag and exits edit mode on success
 - The card detail page server load function fetches the board's columns (ordered by position) alongside the card data, so `MoveCardDialog` has the column list it needs
+
+```svelte
+<!-- src/lib/components/card/CardDetail.svelte -->
+<!-- NOTE: Requires textarea shadcn-svelte component to be installed -->
+<script lang="ts">
+  import { Button } from "$lib/components/ui/button/index.js";
+  import { Input } from "$lib/components/ui/input/index.js";
+  import { Textarea } from "$lib/components/ui/textarea";
+  import XIcon from "@lucide/svelte/icons/x";
+  import { superForm } from "sveltekit-superforms";
+  import type { SuperValidated } from "sveltekit-superforms";
+  import type { UpdateCardSchema } from "$lib/schemas/card";
+  import DeleteCardDialog from "$lib/components/card/DeleteCardDialog.svelte";
+  import MarkdownRenderer from "$lib/components/markdown/MarkdownRenderer.svelte";
+  import * as Tabs from "$lib/components/ui/tabs/index.js";
+
+  let { card, boardId, columns, updateForm, currentUserId }: { ... } = $props();
+
+  const { form: formData, enhance: updateEnhance, errors: formErrors, submitting: updateSubmitting } = superForm(updateForm, { ... });
+
+  let editingTitle = $state(false);
+  let editingDescription = $state(false);
+  let showDelete = $state(false);
+</script>
+
+<!-- Title: inline-editable with click-to-edit, Enter/blur to save, Escape to cancel -->
+<!-- Description: read/edit toggle with Write/Preview tabs -->
+<!-- See actual implementation in src/lib/components/card/CardDetail.svelte -->
+```
 
 ### Move Card Dialog
 
@@ -343,11 +428,89 @@ Key implementation details:
 - Tracks `deleting` state to disable the button and show a spinner during submission
 - Triggered from `CardItem`'s dropdown menu and the card detail view
 
+```svelte
+<!-- src/lib/components/card/DeleteCardDialog.svelte -->
+<script lang="ts">
+  import type { Card } from "$lib/types";
+  import * as AlertDialog from "$lib/components/ui/alert-dialog";
+  import { Button } from "$lib/components/ui/button";
+
+  let { card, boardId, open = $bindable(false) }: {
+    card: Card;
+    boardId: string;
+    open: boolean;
+  } = $props();
+</script>
+
+<AlertDialog.Root bind:open>
+  <AlertDialog.Content>
+    <AlertDialog.Header>
+      <AlertDialog.Title>Delete "{card.title}"?</AlertDialog.Title>
+      <AlertDialog.Description>
+        This action cannot be undone. The card and all its comments will be permanently removed.
+      </AlertDialog.Description>
+    </AlertDialog.Header>
+    <AlertDialog.Footer>
+      <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+      <form method="POST" action="/boards/{boardId}?/deleteCard">
+        <input type="hidden" name="cardId" value={card.id} />
+        <Button type="submit" variant="destructive">Delete</Button>
+      </form>
+    </AlertDialog.Footer>
+  </AlertDialog.Content>
+</AlertDialog.Root>
+```
+
 ### Add Card (Column Footer)
 
 > **Status:** Implemented.
 
 Inline form that expands in the column footer to create a new card. Uses `superForm` with `resetForm: true` to clear the input after submission. Destructures `submitting` to disable the submit button and show a spinner during submission.
+
+```svelte
+<!-- src/lib/components/card/AddCard.svelte -->
+<script lang="ts">
+  import { Button } from "$lib/components/ui/button/index.js";
+  import { Input } from "$lib/components/ui/input/index.js";
+  import PlusIcon from "@lucide/svelte/icons/plus";
+  import XIcon from "@lucide/svelte/icons/x";
+  import { superForm } from "sveltekit-superforms";
+  import type { SuperValidated, Infer } from "sveltekit-superforms";
+  import type { createCardSchema } from "$lib/schemas/card";
+
+  let { columnId, form: formData }: {
+    columnId: string;
+    form: SuperValidated<CreateCardSchema>;
+  } = $props();
+
+  const { form, enhance } = superForm(formData, {
+    resetForm: true,
+    onResult: () => { adding = false; },
+  });
+
+  let adding = $state(false);
+</script>
+
+{#if adding}
+  <form method="POST" action="?/createCard" use:enhance class="space-y-2 p-2">
+    <input type="hidden" name="columnId" value={columnId} />
+    <Input name="title" bind:value={$form.title} placeholder="Card title" autofocus />
+    <div class="flex gap-2">
+      <Button type="submit" size="sm">Add Card</Button>
+      <Button variant="ghost" size="sm" onclick={() => adding = false}>
+        <XIcon class="h-4 w-4" />
+      </Button>
+    </div>
+  </form>
+{:else}
+  <div class="p-2">
+    <Button variant="ghost" class="w-full justify-start text-neutral-500" size="sm" onclick={() => adding = true}>
+      <PlusIcon class="mr-2 h-4 w-4" />
+      Add Card
+    </Button>
+  </div>
+{/if}
+```
 
 ## Toast Notifications
 
@@ -376,3 +539,4 @@ Card CRUD actions show toast notifications for user feedback:
 | `src/lib/components/card/MoveCardDialog.svelte` | Move card to another column dialog |
 | `src/lib/components/card/DeleteCardDialog.svelte` | Delete confirmation dialog |
 | `src/lib/components/card/AddCard.svelte` | Inline form to create a new card |
+| `src/lib/components/markdown/MarkdownRenderer.svelte` | Markdown-to-HTML renderer (marked + DOMPurify) |

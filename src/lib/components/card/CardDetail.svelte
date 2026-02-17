@@ -18,6 +18,8 @@
   import DeleteCardDialog from "./DeleteCardDialog.svelte";
   import MoveCardDialog from "./MoveCardDialog.svelte";
   import CommentList from "$lib/components/comment/CommentList.svelte";
+  import MarkdownRenderer from "$lib/components/markdown/MarkdownRenderer.svelte";
+  import * as Tabs from "$lib/components/ui/tabs/index.js";
   import type { SuperValidated } from "sveltekit-superforms";
 
   let {
@@ -61,6 +63,7 @@
       titleSubmitting = false;
       if (result.type === "success") {
         editingTitle = false;
+        editingDescription = false;
         toast.success("Card updated");
       } else if (result.type === "error") {
         toast.error("Failed to update card");
@@ -70,6 +73,7 @@
 
   let editingTitle = $state(false);
   let titleSubmitting = $state(false);
+  let editingDescription = $state(false);
   let showDelete = $state(false);
   let showMove = $state(false);
   let hasOtherColumns = $derived(columns.filter((c) => c.id !== card.column.id).length > 0);
@@ -193,7 +197,7 @@
       </button>
     {/if}
     {#if $formErrors.title}
-      <p class="mt-1 text-[0.8rem] text-destructive">{$formErrors.title[0]}</p>
+      <p class="mt-1 text-[0.8rem] text-destructive">{($formErrors.title as unknown as string[])?.[0]}</p>
     {/if}
   </div>
 
@@ -206,38 +210,89 @@
         >
       </Card.Header>
       <Card.Content>
-        <form method="POST" action="?/update" use:updateEnhance class="space-y-3">
-          <textarea
-            id="card-description"
-            name="description"
-            bind:value={$formData.description}
-            placeholder="Add a description..."
-            rows={5}
-            maxlength={10000}
-            class={cn(
-              "border-input bg-background placeholder:text-muted-foreground",
-              "flex w-full min-w-0 resize-none rounded-md border px-3 py-2 text-sm",
-              "shadow-xs transition-[color,box-shadow] outline-none",
-              "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
-              "dark:bg-input/30",
-            )}
-          ></textarea>
-          <div class="flex items-center justify-between">
-            <div>
-              {#if $formErrors.description}
-                <p class="text-[0.8rem] text-destructive">
-                  {$formErrors.description[0]}
-                </p>
-              {/if}
+        {#if editingDescription}
+          <form method="POST" action="?/update" use:updateEnhance class="space-y-3">
+            <Tabs.Root value="write">
+              <Tabs.List>
+                <Tabs.Trigger value="write">Write</Tabs.Trigger>
+                <Tabs.Trigger value="preview">Preview</Tabs.Trigger>
+              </Tabs.List>
+              <Tabs.Content value="write">
+                <textarea
+                  id="card-description"
+                  name="description"
+                  bind:value={$formData.description}
+                  placeholder="Add a description... (Markdown supported)"
+                  rows={8}
+                  maxlength={10000}
+                  class={cn(
+                    "border-input bg-background placeholder:text-muted-foreground",
+                    "flex w-full min-w-0 resize-y rounded-md border px-3 py-2 text-sm font-mono",
+                    "shadow-xs transition-[color,box-shadow] outline-none",
+                    "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
+                    "dark:bg-input/30",
+                  )}
+                ></textarea>
+              </Tabs.Content>
+              <Tabs.Content value="preview">
+                <div class="min-h-[120px] rounded-md border border-input px-3 py-2">
+                  {#if $formData.description}
+                    <MarkdownRenderer content={String($formData.description)} />
+                  {:else}
+                    <p class="text-sm text-muted-foreground">Nothing to preview</p>
+                  {/if}
+                </div>
+              </Tabs.Content>
+            </Tabs.Root>
+            <div class="flex items-center justify-between">
+              <div>
+                {#if $formErrors.description}
+                  <p class="text-[0.8rem] text-destructive">
+                    {($formErrors.description as unknown as string[])?.[0]}
+                  </p>
+                {/if}
+              </div>
+              <div class="flex items-center gap-2">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onclick={() => {
+                    $formData.description = card.description ?? "";
+                    editingDescription = false;
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" variant="secondary" size="sm" disabled={$updateSubmitting}>
+                  {#if $updateSubmitting}
+                    <LoaderCircleIcon class="size-3.5 animate-spin" />
+                  {/if}
+                  Save
+                </Button>
+              </div>
             </div>
-            <Button type="submit" variant="secondary" size="sm" disabled={$updateSubmitting}>
-              {#if $updateSubmitting}
-                <LoaderCircleIcon class="size-3.5 animate-spin" />
-              {/if}
-              Save
-            </Button>
-          </div>
-        </form>
+          </form>
+        {:else}
+          <button
+            type="button"
+            class="group/desc w-full text-left"
+            onclick={() => (editingDescription = true)}
+          >
+            {#if $formData.description}
+              <div class="relative">
+                <MarkdownRenderer content={String($formData.description)} />
+                <PencilIcon
+                  class="absolute top-0 right-0 size-3.5 text-muted-foreground/0 transition-colors group-hover/desc:text-muted-foreground"
+                />
+              </div>
+            {:else}
+              <p class="rounded-md border border-dashed border-input px-3 py-4 text-sm text-muted-foreground transition-colors hover:border-muted-foreground/50">
+                Add a description...
+              </p>
+            {/if}
+          </button>
+        {/if}
       </Card.Content>
     </Card.Root>
 
