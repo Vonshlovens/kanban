@@ -137,14 +137,14 @@ export const toggleCardLabelSchema = z.object({
 });
 ```
 
-## Routes
+## Routes (Planned)
 
 | Route | Purpose |
 | --- | --- |
 | `src/routes/(app)/boards/[boardId]/+page.server.ts` | Label CRUD form actions (createLabel, updateLabel, deleteLabel) |
 | `src/routes/(app)/boards/[boardId]/cards/[cardId]/+page.server.ts` | `toggleLabel` action to assign/remove a label from a card |
 
-## Server Load Functions
+## Server Load Functions (Planned)
 
 ### Board Page (Labels Included)
 
@@ -210,9 +210,9 @@ export const load: PageServerLoad = async ({ params }) => {
 };
 ```
 
-## Form Actions
+## Form Actions (Planned)
 
-### Label CRUD (Board Page)
+### Label CRUD (Planned)
 
 Create, update, and delete labels at the board level:
 
@@ -262,7 +262,7 @@ export const actions: Actions = {
 };
 ```
 
-### Toggle Label Assignment (Card Detail Page)
+### Toggle Label Assignment (Planned)
 
 Assign or remove a label from a card. If the card–label pair exists, remove it; otherwise, insert it:
 
@@ -305,41 +305,50 @@ export const actions: Actions = {
 
 ## Component Patterns
 
-### Label Badge
+### Label Badge (Implemented)
 
-A small colored badge used to display a label on cards and in the label manager:
+A small colored badge used to display a label on cards and in the label manager.
+
+Props: `name` (string), `color` (string), `size` ("sm" | "md", default "sm"), `class` (optional string for extra classes via `cn`).
+
+- **sm** — compact color swatch (`h-1.5 w-6 rounded-full`) with `title` tooltip. Used on board cards.
+- **md** — pill with label name (`rounded px-2 py-0.5 text-xs font-medium text-white`). Used in label manager and card detail.
 
 ```svelte
 <!-- src/lib/components/label/LabelBadge.svelte -->
 <script lang="ts">
-  let { name, color, size = "sm" }: {
+  import { cn } from "$lib/utils";
+
+  let {
+    name,
+    color,
+    size = "sm",
+    class: className,
+  }: {
     name: string;
     color: string;
     size?: "sm" | "md";
+    class?: string;
   } = $props();
-
-  let sizeClasses = $derived(
-    size === "sm" ? "h-2 w-8 rounded-full" : "px-2 py-0.5 rounded text-xs font-medium",
-  );
 </script>
 
 {#if size === "sm"}
   <span
-    class={sizeClasses}
+    class={cn("inline-block h-1.5 w-6 rounded-full", className)}
     style="background-color: {color}"
     title={name}
   ></span>
 {:else}
   <span
-    class={sizeClasses}
-    style="background-color: {color}; color: white"
+    class={cn("inline-block rounded px-2 py-0.5 text-xs font-medium text-white", className)}
+    style="background-color: {color}"
   >
     {name}
   </span>
 {/if}
 ```
 
-### Label Picker (Card Detail View)
+### Label Picker (Planned)
 
 A popover with checkboxes to assign/remove labels from a card. Each toggle submits a form action:
 
@@ -407,7 +416,7 @@ A popover with checkboxes to assign/remove labels from a card. Each toggle submi
 </div>
 ```
 
-### Label Manager (Board Settings)
+### Label Manager (Planned)
 
 A panel or dialog for creating, editing, and deleting labels at the board level:
 
@@ -507,22 +516,22 @@ A panel or dialog for creating, editing, and deleting labels at the board level:
 </div>
 ```
 
-### CardItem Integration
+### CardItem Integration (Implemented)
 
-The existing `CardItem.svelte` (see `specs/cards.md`) already displays label color swatches via the `cardLabels` relation:
+`CardItem.svelte` imports `LabelBadge` and renders label swatches via the `cardLabels` relation:
 
 ```svelte
 <!-- In src/lib/components/card/CardItem.svelte -->
 {#if labelCount > 0}
-  <div class="mb-2 flex flex-wrap gap-1">
-    {#each card.cardLabels as cl}
+  <div class="mb-2 flex flex-wrap gap-1.5">
+    {#each card.cardLabels! as cl (cl.label.id)}
       <LabelBadge name={cl.label.name} color={cl.label.color} size="sm" />
     {/each}
   </div>
 {/if}
 ```
 
-### Card Detail Integration
+### Card Detail Integration (Planned)
 
 Add `LabelPicker` to the card detail sidebar:
 
@@ -546,7 +555,7 @@ Add `LabelPicker` to the card detail sidebar:
 <LabelPicker cardId={card.id} {boardLabels} {assignedLabelIds} />
 ```
 
-## Board-Level Filtering
+## Board-Level Filtering (Planned)
 
 Label filtering is client-side derived state. The board page maintains a set of selected label IDs and filters the card lists:
 
@@ -574,7 +583,7 @@ Label filtering is client-side derived state. The board page maintains a set of 
 </script>
 ```
 
-### Filter Bar Component
+### Filter Bar Component (Planned)
 
 A row of label toggles displayed above the board columns:
 
@@ -621,17 +630,17 @@ A row of label toggles displayed above the board columns:
 
 ## File Locations
 
-| File/Directory | Purpose |
-| --- | --- |
-| `src/lib/db/schema/labels.ts` | Labels table schema and relations |
-| `src/lib/db/schema/card-labels.ts` | Card–label join table schema and relations |
-| `src/lib/schemas/label.ts` | Zod validation schemas for label forms |
-| `src/lib/utils/label-colors.ts` | Predefined color palette constant |
-| `src/routes/(app)/boards/[boardId]/+page.server.ts` | Label CRUD form actions; board load includes labels |
-| `src/routes/(app)/boards/[boardId]/cards/[cardId]/+page.server.ts` | `toggleLabel` action; loads board labels for picker |
-| `src/lib/components/label/LabelBadge.svelte` | Colored badge for displaying a label |
-| `src/lib/components/label/LabelPicker.svelte` | Popover multi-select to assign labels to a card |
-| `src/lib/components/label/LabelManager.svelte` | Board-level label CRUD panel |
-| `src/lib/components/label/LabelFilterBar.svelte` | Board-level filter bar with label toggles |
-| `src/lib/components/card/CardItem.svelte` | Displays label badges on board cards |
-| `src/lib/components/card/CardDetail.svelte` | Includes LabelPicker in sidebar |
+| File/Directory | Purpose | Status |
+| --- | --- | --- |
+| `src/lib/db/schema/labels.ts` | Labels table schema and relations | Implemented |
+| `src/lib/db/schema/card-labels.ts` | Card–label join table schema and relations | Implemented |
+| `src/lib/schemas/label.ts` | Zod validation schemas for label forms | Implemented |
+| `src/lib/utils/label-colors.ts` | Predefined color palette constant | Implemented |
+| `src/routes/(app)/boards/[boardId]/+page.server.ts` | Label CRUD form actions; board load includes labels | Planned |
+| `src/routes/(app)/boards/[boardId]/cards/[cardId]/+page.server.ts` | `toggleLabel` action; loads board labels for picker | Planned |
+| `src/lib/components/label/LabelBadge.svelte` | Colored badge for displaying a label | Implemented |
+| `src/lib/components/label/LabelPicker.svelte` | Popover multi-select to assign labels to a card | Planned |
+| `src/lib/components/label/LabelManager.svelte` | Board-level label CRUD panel | Planned |
+| `src/lib/components/label/LabelFilterBar.svelte` | Board-level filter bar with label toggles | Planned |
+| `src/lib/components/card/CardItem.svelte` | Displays label badges on board cards | Implemented |
+| `src/lib/components/card/CardDetail.svelte` | Includes LabelPicker in sidebar | Planned |

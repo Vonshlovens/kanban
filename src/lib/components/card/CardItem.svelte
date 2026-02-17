@@ -8,6 +8,7 @@
   import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
   import DeleteCardDialog from "./DeleteCardDialog.svelte";
   import MoveCardDialog from "./MoveCardDialog.svelte";
+  import LabelBadge from "$lib/components/label/LabelBadge.svelte";
   import { cn } from "$lib/utils";
   import type { BoardCard, ColumnRef } from "$lib/types";
 
@@ -48,11 +49,7 @@
     {#if labelCount > 0}
       <div class="mb-2 flex flex-wrap gap-1.5">
         {#each card.cardLabels! as cl (cl.label.id)}
-          <span
-            class="inline-block h-1.5 w-6 rounded-full"
-            style="background-color: {cl.label.color}"
-            title={cl.label.name}
-          ></span>
+          <LabelBadge name={cl.label.name} color={cl.label.color} size="sm" />
         {/each}
       </div>
     {/if}

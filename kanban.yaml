@@ -160,22 +160,6 @@ backlog:
     assignee: ""
     created: 2026-02-17
 
-  - id: B-33
-    title: Create LabelBadge component for displaying colored label tags
-    description: |
-      Create src/lib/components/label/LabelBadge.svelte as specified in specs/labels.md. The component takes name, color, and optional size (sm | md) props. Small size renders a minimal color swatch; medium size renders a pill with the label name. This component is used by CardItem (board view) and LabelManager.
-    priority: medium
-    tags: [frontend]
-    assignee: ""
-    created: 2026-02-17
-    subtasks:
-      - text: Create src/lib/components/label/LabelBadge.svelte with sm/md size variants
-        done: false
-      - text: Verify the component matches the spec pattern
-        done: false
-    links:
-      - specs/labels.md
-
   - id: B-34
     title: Fix kanban-cli add command to normalize subtasks from JSON input
     description: |
@@ -189,6 +173,25 @@ backlog:
         done: false
       - text: "Handle both string[] and {text,done}[] formats"
         done: false
+
+  - id: B-35
+    title: Create LabelPicker component for card label assignment
+    description: |
+      Create src/lib/components/label/LabelPicker.svelte as specified in specs/labels.md. The component renders a popover with checkboxes to assign/remove labels from a card. Each toggle submits a toggleLabel form action. Props: cardId, boardLabels, assignedLabelIds. Depends on LabelBadge (now implemented) and the toggleLabel server action (planned).
+    priority: medium
+    tags: [frontend]
+    assignee: ""
+    created: 2026-02-17
+    subtasks:
+      - text: Create LabelPicker.svelte with popover multi-select UI
+        done: false
+      - text: Integrate LabelPicker into CardDetail.svelte sidebar
+        done: false
+      - text: Add toggleLabel form action to card detail page.server.ts
+        done: false
+    links:
+      - specs/labels.md
+
 
 
 
@@ -1141,6 +1144,25 @@ done:
         done: false
     links:
       - specs/labels.md
+
+  - id: D-51
+    completed: 2026-02-17
+    started: 2026-02-17
+    title: Create LabelBadge component for displaying colored label tags
+    description: |
+      Create src/lib/components/label/LabelBadge.svelte as specified in specs/labels.md. The component takes name, color, and optional size (sm | md) props. Small size renders a minimal color swatch; medium size renders a pill with the label name. This component is used by CardItem (board view) and LabelManager.
+    priority: medium
+    tags: [frontend]
+    assignee: ""
+    created: 2026-02-17
+    subtasks:
+      - text: Create src/lib/components/label/LabelBadge.svelte with sm/md size variants
+        done: false
+      - text: Verify the component matches the spec pattern
+        done: false
+    links:
+      - specs/labels.md
+
 
 
 
