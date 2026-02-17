@@ -16,6 +16,7 @@
   import { enhance } from "$app/forms";
   import { toast } from "svelte-sonner";
   import { cn } from "$lib/utils";
+  import type { Column, ColumnRef } from "$lib/types";
 
   let {
     column,
@@ -23,13 +24,9 @@
     otherColumns,
     boardId,
   }: {
-    column: {
-      id: string;
-      name: string;
-      wipLimit?: number | null;
-    };
+    column: Pick<Column, "id" | "name" | "wipLimit">;
     cardCount: number;
-    otherColumns: { id: string; name: string }[];
+    otherColumns: ColumnRef[];
     boardId: string;
   } = $props();
 

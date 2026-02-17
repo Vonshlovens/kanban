@@ -8,6 +8,7 @@
   import { cn } from "$lib/utils";
   import type { SuperValidated, Infer } from "sveltekit-superforms";
   import type { createCardSchema } from "$lib/schemas/card";
+  import type { BoardColumn, ColumnRef } from "$lib/types";
 
   let {
     column,
@@ -16,26 +17,10 @@
     allColumns = [],
     createCardForm,
   }: {
-    column: {
-      id: string;
-      boardId: string;
-      name: string;
-      position: number;
-      wipLimit?: number | null;
-      cards: {
-        id: string;
-        columnId: string;
-        title: string;
-        description?: string | null;
-        dueDate?: string | Date | null;
-        position: number;
-        cardLabels?: { label: { id: string; name: string; color: string } }[];
-        comments?: unknown[];
-      }[];
-    };
+    column: BoardColumn;
     boardId: string;
-    otherColumns: { id: string; name: string }[];
-    allColumns?: { id: string; name: string }[];
+    otherColumns: ColumnRef[];
+    allColumns?: ColumnRef[];
     createCardForm: SuperValidated<Infer<typeof createCardSchema>>;
   } = $props();
 

@@ -4,32 +4,33 @@
   import AlignLeftIcon from "@lucide/svelte/icons/align-left";
   import EllipsisIcon from "@lucide/svelte/icons/ellipsis";
   import Trash2Icon from "@lucide/svelte/icons/trash-2";
+  import ArrowRightIcon from "@lucide/svelte/icons/arrow-right";
   import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
   import DeleteCardDialog from "./DeleteCardDialog.svelte";
+  import MoveCardDialog from "./MoveCardDialog.svelte";
   import { cn } from "$lib/utils";
+  import type { BoardCard, ColumnRef } from "$lib/types";
 
   let {
     card,
     boardId,
+    columns = [],
+    currentColumnId = "",
   }: {
-    card: {
-      id: string;
-      title: string;
-      description?: string | null;
-      dueDate?: string | Date | null;
-      position: number;
-      cardLabels?: { label: { id: string; name: string; color: string } }[];
-      comments?: unknown[];
-    };
+    card: BoardCard;
     boardId: string;
+    columns?: ColumnRef[];
+    currentColumnId?: string;
   } = $props();
 
   let labelCount = $derived(card.cardLabels?.length ?? 0);
   let commentCount = $derived(card.comments?.length ?? 0);
   let hasDescription = $derived(!!card.description);
   let hasMeta = $derived(hasDescription || commentCount > 0 || !!card.dueDate);
+  let hasOtherColumns = $derived(columns.filter((c) => c.id !== currentColumnId).length > 0);
 
   let showDelete = $state(false);
+  let showMove = $state(false);
   let menuOpen = $state(false);
 </script>
 
@@ -104,6 +105,13 @@
         {/snippet}
       </DropdownMenu.Trigger>
       <DropdownMenu.Content align="end" class="w-40">
+        {#if hasOtherColumns}
+          <DropdownMenu.Item onclick={() => (showMove = true)}>
+            <ArrowRightIcon class="mr-2 size-3.5" />
+            Move to
+          </DropdownMenu.Item>
+          <DropdownMenu.Separator />
+        {/if}
         <DropdownMenu.Item
           class="text-destructive focus:text-destructive"
           onclick={() => (showDelete = true)}
@@ -117,3 +125,4 @@
 </div>
 
 <DeleteCardDialog bind:open={showDelete} {card} {boardId} />
+<MoveCardDialog bind:open={showMove} {card} {boardId} {columns} {currentColumnId} />

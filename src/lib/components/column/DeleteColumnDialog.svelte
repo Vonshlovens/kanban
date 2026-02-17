@@ -5,6 +5,7 @@
   import LoaderCircleIcon from "@lucide/svelte/icons/loader-circle";
   import { enhance } from "$app/forms";
   import { toast } from "svelte-sonner";
+  import type { ColumnRef } from "$lib/types";
 
   let {
     column,
@@ -13,9 +14,9 @@
     boardId,
     open = $bindable(false),
   }: {
-    column: { id: string; name: string };
+    column: ColumnRef;
     cardCount: number;
-    otherColumns: { id: string; name: string }[];
+    otherColumns: ColumnRef[];
     boardId: string;
     open: boolean;
   } = $props();

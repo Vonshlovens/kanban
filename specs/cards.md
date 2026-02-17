@@ -44,12 +44,15 @@ The `cards` table in `src/lib/db/schema/cards.ts`:
 ```typescript
 import { pgTable, text, timestamp, integer, uuid } from "drizzle-orm/pg-core";
 import { columns } from "./columns";
+import { users } from "./users";
 
 export const cards = pgTable("cards", {
   id: uuid("id").defaultRandom().primaryKey(),
   columnId: uuid("column_id").notNull().references(() => columns.id, { onDelete: "cascade" }),
   title: text("title").notNull(),
   description: text("description"),
+  dueDate: timestamp("due_date"),
+  assigneeId: uuid("assignee_id").references(() => users.id, { onDelete: "set null" }),
   position: integer("position").notNull().default(0),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
@@ -62,13 +65,17 @@ export const cards = pgTable("cards", {
 import { relations } from "drizzle-orm";
 import { cards } from "./cards";
 import { columns } from "./columns";
+import { users } from "./users";
 import { cardLabels } from "./card-labels";
 import { comments } from "./comments";
+import { activityLog } from "./activity-log";
 
 export const cardsRelations = relations(cards, ({ one, many }) => ({
   column: one(columns, { fields: [cards.columnId], references: [columns.id] }),
+  assignee: one(users, { fields: [cards.assigneeId], references: [users.id] }),
   cardLabels: many(cardLabels),
   comments: many(comments),
+  activityLog: many(activityLog),
 }));
 ```
 
@@ -309,8 +316,9 @@ Key implementation details:
   import MessageSquareIcon from "@lucide/svelte/icons/message-square";
   import AlignLeftIcon from "@lucide/svelte/icons/align-left";
   import { cn } from "$lib/utils";
+  import type { BoardCard, ColumnRef } from "$lib/types";
 
-  let { card, boardId }: { card: any; boardId: string } = $props();
+  let { card, boardId }: { card: BoardCard; boardId: string } = $props();
 
   let hasDescription = $derived(!!card.description);
   let labelCount = $derived(card.cardLabels?.length ?? 0);
@@ -427,7 +435,7 @@ Key implementation details:
 
 > **Status:** Implemented.
 
-AlertDialog confirmation for card deletion. Uses the hidden form + `requestSubmit()` pattern (same as board delete in settings page). Props take inline types `{ id: string; title: string }` rather than a `Card` type since `$lib/types` doesn't exist yet.
+AlertDialog confirmation for card deletion. Uses the hidden form + `requestSubmit()` pattern (same as board delete in settings page). Props use `Pick<Card, "id" | "title">` from `$lib/types`.
 
 Key implementation details:
 - Uses `AlertDialog.Action` with `onclick` to submit a hidden form (not a `<form>` inside the footer)

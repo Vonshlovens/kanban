@@ -119,23 +119,6 @@ backlog:
     links:
       - specs/frontend-pages.md
 
-  - id: B-23
-    title: Create shared TypeScript types for domain models
-    description: |
-      The codebase has no $lib/types directory or shared type exports. Multiple components use inline type annotations for Card, Column, Board, etc. Create $lib/types/index.ts with exported types inferred from Drizzle schema (using typeof db.query.X.findFirst return types or manual interfaces). This will reduce duplication and make component props cleaner. Several specs reference 'import type { Card } from $lib/types' which doesn't exist yet.
-    priority: medium
-    tags: [frontend, dx]
-    assignee: ""
-    created: 2026-02-16
-    subtasks:
-      - text: "Create $lib/types/index.ts with Card, Column, Board types"
-        done: false
-      - text: Update components to use shared types instead of inline annotations
-        done: false
-    links:
-      - specs/frontend-components.md
-      - specs/cards.md
-
   - id: B-27
     title: Add Markdown rendering to card comments
     description: |
@@ -182,6 +165,24 @@ backlog:
     tags: [frontend, dx]
     assignee: ""
     created: 2026-02-17
+
+  - id: B-30
+    title: Add board list page types and typed server load returns
+    description: |
+      The board list page (src/routes/+page.server.ts) and board settings page return data without typed helpers. Add BoardSummary type to $lib/types for the boards list view (id, name, description, isFavorite, column count, card count). Consider adding satisfies or explicit return types to server load functions so PageData is fully typed end-to-end. This follows up on B-23 (shared types).
+    priority: low
+    tags: [frontend, dx]
+    assignee: ""
+    created: 2026-02-17
+    subtasks:
+      - text: Add BoardSummary type for board list page data
+        done: false
+      - text: Add explicit return types or satisfies to key server load functions
+        done: false
+    links:
+      - src/lib/types/index.ts
+      - specs/frontend-components.md
+
 
 
 todo:
@@ -1059,6 +1060,25 @@ done:
     links:
       - specs/cards.md
       - specs/columns.md
+
+  - id: D-47
+    completed: 2026-02-17
+    title: Create shared TypeScript types for domain models
+    description: |
+      The codebase has no $lib/types directory or shared type exports. Multiple components use inline type annotations for Card, Column, Board, etc. Create $lib/types/index.ts with exported types inferred from Drizzle schema (using typeof db.query.X.findFirst return types or manual interfaces). This will reduce duplication and make component props cleaner. Several specs reference 'import type { Card } from $lib/types' which doesn't exist yet.
+    priority: medium
+    tags: [frontend, dx]
+    assignee: ""
+    created: 2026-02-16
+    subtasks:
+      - text: "Create $lib/types/index.ts with Card, Column, Board types"
+        done: false
+      - text: Update components to use shared types instead of inline annotations
+        done: false
+    links:
+      - specs/frontend-components.md
+      - specs/cards.md
+
 
 
 

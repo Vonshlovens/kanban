@@ -24,6 +24,7 @@
   import type { SuperValidated } from "sveltekit-superforms";
   import type { updateCardSchema } from "$lib/schemas/card";
   import type { z } from "zod/v4";
+  import type { CardDetail as CardDetailType, ColumnRef } from "$lib/types";
 
   type UpdateCardForm = z.infer<typeof updateCardSchema>;
 
@@ -34,26 +35,9 @@
     updateForm,
     currentUserId,
   }: {
-    card: {
-      id: string;
-      title: string;
-      description: string | null;
-      dueDate: Date | null;
-      position: number;
-      createdAt: Date;
-      updatedAt: Date;
-      column: { id: string; name: string };
-      cardLabels: { label: { id: string; name: string; color: string } }[];
-      comments: {
-        id: string;
-        content: string;
-        createdAt: Date;
-        updatedAt: Date;
-        author: { id: string; name: string; avatarUrl: string | null };
-      }[];
-    };
+    card: CardDetailType;
     boardId: string;
-    columns: { id: string; name: string }[];
+    columns: ColumnRef[];
     updateForm: SuperValidated<UpdateCardForm>;
     currentUserId: string;
   } = $props();

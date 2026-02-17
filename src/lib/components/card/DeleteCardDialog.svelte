@@ -3,13 +3,14 @@
   import LoaderCircleIcon from "@lucide/svelte/icons/loader-circle";
   import { enhance } from "$app/forms";
   import { toast } from "svelte-sonner";
+  import type { Card } from "$lib/types";
 
   let {
     card,
     boardId,
     open = $bindable(false),
   }: {
-    card: { id: string; title: string };
+    card: Pick<Card, "id" | "title">;
     boardId: string;
     open: boolean;
   } = $props();
