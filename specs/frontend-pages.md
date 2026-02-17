@@ -8,15 +8,14 @@ Pages are SvelteKit route modules — each page is a directory under `src/routes
 
 Every page maps to a SvelteKit route directory. Route groups (`(app)`) provide shared layouts without affecting the URL.
 
-| Page | Route Directory | Purpose |
-| --- | --- | --- |
-| Landing | `src/routes/` | Board list or redirect when only one board exists |
-| Board List | `src/routes/(app)/boards/` | All boards overview with create action |
-| Create Board | `src/routes/(app)/boards/new/` | New board form |
-| Kanban Board | `src/routes/(app)/boards/[boardId]/` | Board view with columns and cards |
-| Board Settings | `src/routes/(app)/boards/[boardId]/settings/` | Rename, delete, configure board |
-| Card Detail | `src/routes/(app)/boards/[boardId]/cards/[cardId]/` | Full card view (labels, comments, due date, assignees) |
-| Settings | `src/routes/(app)/settings/` | Application-level settings |
+| Page | Route Directory | Purpose | Status |
+| --- | --- | --- | --- |
+| Landing | `src/routes/` | Board list or redirect when only one board exists | Implemented |
+| Create Board | `src/routes/(app)/boards/new/` | New board form | Implemented |
+| Kanban Board | `src/routes/(app)/boards/[boardId]/` | Board view with columns and cards | Implemented |
+| Board Settings | `src/routes/(app)/boards/[boardId]/settings/` | Rename, delete, favorite, configure board | Implemented |
+| Card Detail | `src/routes/(app)/boards/[boardId]/cards/[cardId]/` | Full card view (labels, comments, due date, assignees) | Implemented |
+| Settings | `src/routes/(app)/settings/` | Application-level settings | Planned |
 
 ## Page Structure
 
@@ -31,55 +30,11 @@ src/routes/(app)/boards/[boardId]/
 
 ## Landing Page
 
-The root page loads all boards and either renders a board list or redirects to the single board.
+> **Status:** Implemented.
 
-```svelte
-<!-- src/routes/+page.svelte -->
-<script lang="ts">
-  import type { PageData } from "./$types";
-  import BoardCard from "$lib/components/board/BoardCard.svelte";
-  import { Button } from "$lib/components/ui/button";
-  import { Plus } from "@lucide/svelte";
+The root page loads all boards as `BoardSummary` (from `$lib/types`) sorted by updatedAt desc and either renders a board list or redirects if only one board exists. Board cards are rendered inline using the shadcn Card component — no separate `BoardCard` component. The page lives outside the `(app)` layout group (no sidebar).
 
-  let { data }: { data: PageData } = $props();
-</script>
-
-<div class="container mx-auto max-w-4xl py-10">
-  <div class="mb-8 flex items-center justify-between">
-    <h1 class="text-3xl font-bold">Boards</h1>
-    <Button href="/boards/new">
-      <Plus class="mr-2 h-4 w-4" />
-      New Board
-    </Button>
-  </div>
-
-  <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-    {#each data.boards as board}
-      <BoardCard {board} />
-    {/each}
-  </div>
-</div>
-```
-
-```typescript
-// src/routes/+page.server.ts
-import type { PageServerLoad } from "./$types";
-import { redirect } from "@sveltejs/kit";
-import { db } from "$lib/db";
-
-export const load: PageServerLoad = async () => {
-  const boards = await db.query.boards.findMany({
-    orderBy: (boards, { desc }) => [desc(boards.updatedAt)],
-  });
-
-  // Single board — skip the listing page
-  if (boards.length === 1) {
-    throw redirect(303, `/boards/${boards[0].id}`);
-  }
-
-  return { boards };
-};
-```
+See `specs/board-management.md` for the full server load function and implementation details.
 
 ## Kanban Board Page
 
@@ -127,128 +82,93 @@ export const load: PageServerLoad = async ({ params }) => {
 
 ## Card Detail Page
 
-Card detail can render as a standalone page or as a dialog overlay on top of the board. The load function fetches the full card with comments and activity.
+> **Status:** Implemented.
+
+Card detail renders as a standalone page. The load function fetches the full card with column, labels, and comments (with authors).
 
 ```svelte
 <!-- src/routes/(app)/boards/[boardId]/cards/[cardId]/+page.svelte -->
 <script lang="ts">
-  import type { PageData } from "./$types";
   import CardDetail from "$lib/components/card/CardDetail.svelte";
 
-  let { data }: { data: PageData } = $props();
+  let { data } = $props();
 </script>
 
-<CardDetail card={data.card} boardId={data.boardId} />
+<CardDetail card={data.card} boardId={data.boardId} columns={data.columns} boardLabels={data.boardLabels} updateForm={data.updateForm} currentUserId={data.currentUserId} />
 ```
 
 ```typescript
 // src/routes/(app)/boards/[boardId]/cards/[cardId]/+page.server.ts
 import type { PageServerLoad, Actions } from "./$types";
-import { error, fail } from "@sveltejs/kit";
+import { error, fail, redirect } from "@sveltejs/kit";
 import { superValidate } from "sveltekit-superforms";
 import { zod4 } from "sveltekit-superforms/adapters";
-import { updateCardSchema } from "$lib/schemas/card";
+import { updateCardSchema, deleteCardSchema } from "$lib/schemas/card";
 import { db } from "$lib/db";
+import { cards } from "$lib/db/schema/cards";
+import { eq } from "drizzle-orm";
 
 export const load: PageServerLoad = async ({ params }) => {
   const card = await db.query.cards.findFirst({
     where: (cards, { eq }) => eq(cards.id, params.cardId),
-    with: { labels: true, comments: true, assignees: true },
+    with: {
+      column: true,
+      cardLabels: { with: { label: true } },
+      comments: {
+        orderBy: (comments, { asc }) => [asc(comments.createdAt)],
+        with: { author: true },
+      },
+    },
   });
 
   if (!card) throw error(404, "Card not found");
 
-  return { card, boardId: params.boardId };
+  const updateForm = await superValidate(
+    { title: card.title, description: card.description ?? "" },
+    zod4(updateCardSchema),
+  );
+
+  return { card, boardId: params.boardId, updateForm };
 };
 
 export const actions: Actions = {
   update: async ({ request, params }) => {
     const form = await superValidate(request, zod4(updateCardSchema));
-    if (!form.valid) return fail(400, { form });
+    if (!form.valid) return fail(400, { updateForm: form });
 
-    await db
-      .update(cards)
-      .set(form.data)
+    await db.update(cards)
+      .set({ ...form.data, updatedAt: new Date() })
       .where(eq(cards.id, params.cardId));
 
-    return { form };
+    return { updateForm: form };
+  },
+
+  deleteCard: async ({ request, params }) => {
+    const form = await superValidate(request, zod4(deleteCardSchema));
+    if (!form.valid) return fail(400, { form });
+
+    await db.delete(cards).where(eq(cards.id, form.data.cardId));
+
+    throw redirect(303, `/boards/${params.boardId}`);
   },
 };
 ```
 
 ## Board Settings Page
 
-Board configuration — rename, manage columns, danger zone (delete).
+> **Status:** Implemented.
 
-```svelte
-<!-- src/routes/(app)/boards/[boardId]/settings/+page.svelte -->
-<script lang="ts">
-  import type { PageData } from "./$types";
-  import * as Card from "$lib/components/ui/card";
-  import { Button } from "$lib/components/ui/button";
-  import { Input } from "$lib/components/ui/input";
+Board configuration — rename, update description, toggle favorite, and delete (with AlertDialog confirmation). Uses superForm for rename and description forms, a hidden form + `requestSubmit()` pattern for delete.
 
-  let { data }: { data: PageData } = $props();
-</script>
-
-<div class="container mx-auto max-w-2xl py-10 space-y-8">
-  <h1 class="text-2xl font-bold">Board Settings</h1>
-
-  <Card.Root>
-    <Card.Header>
-      <Card.Title>General</Card.Title>
-    </Card.Header>
-    <Card.Content>
-      <form method="POST" action="?/rename" class="flex gap-3">
-        <Input name="name" value={data.board.name} class="flex-1" />
-        <Button type="submit">Save</Button>
-      </form>
-    </Card.Content>
-  </Card.Root>
-
-  <Card.Root class="border-destructive">
-    <Card.Header>
-      <Card.Title class="text-destructive">Danger Zone</Card.Title>
-    </Card.Header>
-    <Card.Content>
-      <form method="POST" action="?/delete">
-        <Button variant="destructive" type="submit">Delete Board</Button>
-      </form>
-    </Card.Content>
-  </Card.Root>
-</div>
-```
+See `specs/board-management.md` for the full implementation details and patterns.
 
 ## Create Board Page
 
-Simple form with a single action.
+> **Status:** Implemented.
 
-```svelte
-<!-- src/routes/(app)/boards/new/+page.svelte -->
-<script lang="ts">
-  import type { PageData } from "./$types";
-  import { Button } from "$lib/components/ui/button";
-  import { Input } from "$lib/components/ui/input";
-  import * as Card from "$lib/components/ui/card";
+Centered card form (max-w-md) with name input (required) and optional description textarea with character count. Uses superForm with a default action that creates the board + 3 default columns in a transaction, then redirects to the new board.
 
-  let { data }: { data: PageData } = $props();
-</script>
-
-<div class="container mx-auto flex max-w-md items-center justify-center py-20">
-  <Card.Root class="w-full">
-    <Card.Header>
-      <Card.Title>Create Board</Card.Title>
-      <Card.Description>Give your board a name to get started.</Card.Description>
-    </Card.Header>
-    <Card.Content>
-      <form method="POST" class="space-y-4">
-        <Input name="name" placeholder="Board name" required />
-        <Button type="submit" class="w-full">Create</Button>
-      </form>
-    </Card.Content>
-  </Card.Root>
-</div>
-```
+See `specs/board-management.md` for the full implementation details.
 
 ## App Settings Page
 

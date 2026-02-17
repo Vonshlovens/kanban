@@ -175,28 +175,25 @@ backlog:
         done: false
 
   - id: B-35
-    title: Create LabelPicker component for card label assignment
-    description: |
-      Create src/lib/components/label/LabelPicker.svelte as specified in specs/labels.md. The component renders a popover with checkboxes to assign/remove labels from a card. Each toggle submits a toggleLabel form action. Props: cardId, boardLabels, assignedLabelIds. Depends on LabelBadge (now implemented) and the toggleLabel server action (planned).
+    title: Create LabelManager component for board-level label CRUD
+    description: >-
+      Create src/lib/components/label/LabelManager.svelte as specified in specs/labels.md.
+      The component renders a panel for creating, editing, and deleting labels at the board level.
+      Requires adding createLabel, updateLabel, and deleteLabel form actions to the board page server.
+      Depends on LabelPicker (now implemented) and the label Zod schemas (implemented).
     priority: medium
     tags: [frontend]
     assignee: ""
     created: 2026-02-17
     subtasks:
-      - text: Create LabelPicker.svelte with popover multi-select UI
+      - text: Create LabelManager.svelte with create/edit/delete UI
         done: false
-      - text: Integrate LabelPicker into CardDetail.svelte sidebar
+      - text: Add createLabel, updateLabel, deleteLabel form actions to board page.server.ts
         done: false
-      - text: Add toggleLabel form action to card detail page.server.ts
+      - text: Integrate LabelManager into board settings page
         done: false
     links:
       - specs/labels.md
-
-
-
-
-
-
 
 
 todo:
@@ -1162,6 +1159,26 @@ done:
         done: false
     links:
       - specs/labels.md
+
+  - id: D-52
+    completed: 2026-02-17
+    title: Create LabelPicker component for card label assignment
+    description: |
+      Create src/lib/components/label/LabelPicker.svelte as specified in specs/labels.md. The component renders a popover with checkboxes to assign/remove labels from a card. Each toggle submits a toggleLabel form action. Props: cardId, boardLabels, assignedLabelIds. Depends on LabelBadge (now implemented) and the toggleLabel server action (planned).
+    priority: medium
+    tags: [frontend]
+    assignee: ""
+    created: 2026-02-17
+    subtasks:
+      - text: Create LabelPicker.svelte with popover multi-select UI
+        done: false
+      - text: Integrate LabelPicker into CardDetail.svelte sidebar
+        done: false
+      - text: Add toggleLabel form action to card detail page.server.ts
+        done: false
+    links:
+      - specs/labels.md
+
 
 
 

@@ -19,12 +19,13 @@
   import DeleteCardDialog from "./DeleteCardDialog.svelte";
   import MoveCardDialog from "./MoveCardDialog.svelte";
   import CommentList from "$lib/components/comment/CommentList.svelte";
+  import LabelPicker from "$lib/components/label/LabelPicker.svelte";
   import MarkdownRenderer from "$lib/components/markdown/MarkdownRenderer.svelte";
   import * as Tabs from "$lib/components/ui/tabs/index.js";
   import type { SuperValidated } from "sveltekit-superforms";
   import type { updateCardSchema } from "$lib/schemas/card";
   import type { z } from "zod/v4";
-  import type { CardDetail as CardDetailType, ColumnRef } from "$lib/types";
+  import type { CardDetail as CardDetailType, ColumnRef, LabelRef } from "$lib/types";
 
   type UpdateCardForm = z.infer<typeof updateCardSchema>;
 
@@ -32,15 +33,19 @@
     card,
     boardId,
     columns,
+    boardLabels,
     updateForm,
     currentUserId,
   }: {
     card: CardDetailType;
     boardId: string;
     columns: ColumnRef[];
+    boardLabels: LabelRef[];
     updateForm: SuperValidated<UpdateCardForm>;
     currentUserId: string;
   } = $props();
+
+  let assignedLabelIds = $derived(card.cardLabels.map((cl) => cl.label.id));
 
   const {
     form: formData,
@@ -286,16 +291,16 @@
     </Card.Root>
 
     <!-- Labels -->
-    {#if labelCount > 0}
-      <Card.Root>
-        <Card.Header class="pb-3">
-          <Card.Title class="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-            <TagIcon class="size-3.5" />
-            Labels
-          </Card.Title>
-        </Card.Header>
-        <Card.Content>
-          <div class="flex flex-wrap gap-2">
+    <Card.Root>
+      <Card.Header class="pb-3">
+        <Card.Title class="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+          <TagIcon class="size-3.5" />
+          Labels
+        </Card.Title>
+      </Card.Header>
+      <Card.Content>
+        {#if labelCount > 0}
+          <div class="mb-3 flex flex-wrap gap-2">
             {#each card.cardLabels as cl (cl.label.id)}
               <span
                 class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium"
@@ -309,9 +314,10 @@
               </span>
             {/each}
           </div>
-        </Card.Content>
-      </Card.Root>
-    {/if}
+        {/if}
+        <LabelPicker cardId={card.id} {boardLabels} {assignedLabelIds} />
+      </Card.Content>
+    </Card.Root>
 
     <!-- Metadata -->
     <Card.Root>

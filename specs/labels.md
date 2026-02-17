@@ -137,16 +137,16 @@ export const toggleCardLabelSchema = z.object({
 });
 ```
 
-## Routes (Planned)
+## Routes
 
 | Route | Purpose |
 | --- | --- |
-| `src/routes/(app)/boards/[boardId]/+page.server.ts` | Label CRUD form actions (createLabel, updateLabel, deleteLabel) |
-| `src/routes/(app)/boards/[boardId]/cards/[cardId]/+page.server.ts` | `toggleLabel` action to assign/remove a label from a card |
+| `src/routes/(app)/boards/[boardId]/+page.server.ts` | Label CRUD form actions (createLabel, updateLabel, deleteLabel) — Planned |
+| `src/routes/(app)/boards/[boardId]/cards/[cardId]/+page.server.ts` | `toggleLabel` action to assign/remove a label from a card — Implemented |
 
-## Server Load Functions (Planned)
+## Server Load Functions
 
-### Board Page (Labels Included)
+### Board Page (Labels Included) — Planned
 
 The board page load function includes all board labels so they're available for filtering and display:
 
@@ -181,7 +181,7 @@ export const load: PageServerLoad = async ({ params }) => {
 };
 ```
 
-### Card Detail Page (Labels Included)
+### Card Detail Page (Labels Included) — Implemented
 
 The card detail load includes the card's assigned labels and the full board label list for the assignment popover:
 
@@ -210,9 +210,9 @@ export const load: PageServerLoad = async ({ params }) => {
 };
 ```
 
-## Form Actions (Planned)
+## Form Actions
 
-### Label CRUD (Planned)
+### Label CRUD — Planned
 
 Create, update, and delete labels at the board level:
 
@@ -262,7 +262,7 @@ export const actions: Actions = {
 };
 ```
 
-### Toggle Label Assignment (Planned)
+### Toggle Label Assignment — Implemented
 
 Assign or remove a label from a card. If the card–label pair exists, remove it; otherwise, insert it:
 
@@ -348,7 +348,7 @@ Props: `name` (string), `color` (string), `size` ("sm" | "md", default "sm"), `c
 {/if}
 ```
 
-### Label Picker (Planned)
+### Label Picker (Implemented)
 
 A popover with checkboxes to assign/remove labels from a card. Each toggle submits a form action:
 
@@ -531,7 +531,7 @@ A panel or dialog for creating, editing, and deleting labels at the board level:
 {/if}
 ```
 
-### Card Detail Integration (Planned)
+### Card Detail Integration (Implemented)
 
 Add `LabelPicker` to the card detail sidebar:
 
@@ -637,10 +637,10 @@ A row of label toggles displayed above the board columns:
 | `src/lib/schemas/label.ts` | Zod validation schemas for label forms | Implemented |
 | `src/lib/utils/label-colors.ts` | Predefined color palette constant | Implemented |
 | `src/routes/(app)/boards/[boardId]/+page.server.ts` | Label CRUD form actions; board load includes labels | Planned |
-| `src/routes/(app)/boards/[boardId]/cards/[cardId]/+page.server.ts` | `toggleLabel` action; loads board labels for picker | Planned |
+| `src/routes/(app)/boards/[boardId]/cards/[cardId]/+page.server.ts` | `toggleLabel` action; loads board labels for picker | Implemented |
 | `src/lib/components/label/LabelBadge.svelte` | Colored badge for displaying a label | Implemented |
-| `src/lib/components/label/LabelPicker.svelte` | Popover multi-select to assign labels to a card | Planned |
+| `src/lib/components/label/LabelPicker.svelte` | Popover multi-select to assign labels to a card | Implemented |
 | `src/lib/components/label/LabelManager.svelte` | Board-level label CRUD panel | Planned |
 | `src/lib/components/label/LabelFilterBar.svelte` | Board-level filter bar with label toggles | Planned |
 | `src/lib/components/card/CardItem.svelte` | Displays label badges on board cards | Implemented |
-| `src/lib/components/card/CardDetail.svelte` | Includes LabelPicker in sidebar | Planned |
+| `src/lib/components/card/CardDetail.svelte` | Includes LabelPicker in sidebar | Implemented |
