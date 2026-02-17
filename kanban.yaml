@@ -160,20 +160,6 @@ backlog:
     assignee: ""
     created: 2026-02-17
 
-  - id: B-34
-    title: Fix kanban-cli add command to normalize subtasks from JSON input
-    description: |
-      When piping JSON to kanban-cli add, subtasks provided as plain strings (e.g. ["Step 1", "Step 2"]) crash with TypeError because escapeYamlString receives undefined. The cmdAdd function should normalize string subtasks to {text, done} objects before passing to taskToYaml. The flag-based path already does this correctly (line 464).
-    priority: medium
-    tags: [dx]
-    assignee: ""
-    created: 2026-02-17
-    subtasks:
-      - text: Add subtask normalization in cmdAdd after JSON.parse
-        done: false
-      - text: "Handle both string[] and {text,done}[] formats"
-        done: false
-
   - id: B-35
     title: Create LabelManager component for board-level label CRUD
     description: >-
@@ -194,6 +180,25 @@ backlog:
         done: false
     links:
       - specs/labels.md
+
+  - id: B-36
+    title: Add metadata command to kanban-cli for agent handoff notes
+    description: |
+      The /tackle skill references `bun scripts/kanban-cli.ts metadata get/set` for agent handoff, but no metadata command exists. Add a metadata subcommand that reads/writes a top-level `metadata` key in kanban.yaml so agents can pass context between sessions.
+    priority: medium
+    tags: [dx]
+    assignee: ""
+    created: 2026-02-17
+    subtasks:
+      - text: Add metadata get command to read metadata keys
+        done: false
+      - text: "Add metadata set <key> <value> command to write metadata keys"
+        done: false
+      - text: Add metadata key to kanban.yaml if not present
+        done: false
+    links:
+      - scripts/kanban-cli.ts
+
 
 
 todo:
@@ -1178,6 +1183,23 @@ done:
         done: false
     links:
       - specs/labels.md
+
+  - id: D-53
+    completed: 2026-02-17
+    started: 2026-02-17
+    title: Fix kanban-cli add command to normalize subtasks from JSON input
+    description: |
+      When piping JSON to kanban-cli add, subtasks provided as plain strings (e.g. ["Step 1", "Step 2"]) crash with TypeError because escapeYamlString receives undefined. The cmdAdd function should normalize string subtasks to {text, done} objects before passing to taskToYaml. The flag-based path already does this correctly (line 464).
+    priority: medium
+    tags: [dx]
+    assignee: ""
+    created: 2026-02-17
+    subtasks:
+      - text: Add subtask normalization in cmdAdd after JSON.parse
+        done: false
+      - text: "Handle both string[] and {text,done}[] formats"
+        done: false
+
 
 
 
