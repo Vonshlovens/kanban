@@ -136,22 +136,6 @@ backlog:
       - specs/frontend-components.md
       - specs/cards.md
 
-  - id: B-26
-    title: Fix CardDetail form error display type errors
-    description: |
-      CardDetail.svelte has two svelte-check type errors where `$formErrors.title[0]` and `$formErrors.description[0]` index into a potentially undefined array. The `{#if $formErrors.title}` conditional should narrow the type, but svelte-check doesn't recognize it. Fix by using optional chaining (`$formErrors.title?.[0]`) or a different pattern that satisfies TypeScript's type narrowing within Svelte templates.
-    priority: low
-    tags: [frontend, dx]
-    assignee: ""
-    created: 2026-02-17
-    subtasks:
-      - text: "Fix $formErrors.title[0] type error around line 196"
-        done: false
-      - text: "Fix $formErrors.description[0] type error around line 229"
-        done: false
-    links:
-      - specs/cards.md
-
   - id: B-27
     title: Add Markdown rendering to card comments
     description: |
@@ -191,6 +175,36 @@ backlog:
     links:
       - specs/tech-database.md
       - scripts/seed.ts
+
+  - id: B-29
+    title: Fix state_referenced_locally warnings in form components
+    description: |
+      10 Svelte 5 warnings for `state_referenced_locally` across AddCard, CardDetail, AddColumn, ColumnHeader, Column, board page, settings page, and new board page. These occur when $props() values are passed to superForm() or used in derived expressions at the top level of the script. Fix by wrapping in closures or using $derived where Svelte suggests.
+    priority: low
+    tags: [frontend, dx]
+    assignee: ""
+    created: 2026-02-17
+    subtasks:
+      - text: Fix AddCard.svelte formData warning
+        done: false
+      - text: Fix CardDetail.svelte updateForm warning
+        done: false
+      - text: Fix AddColumn.svelte formData warning
+        done: false
+      - text: Fix ColumnHeader.svelte column warning
+        done: false
+      - text: Fix Column.svelte column warnings (2)
+        done: false
+      - text: "Fix boards/[boardId]/+page.svelte data warning"
+        done: false
+      - text: "Fix boards/[boardId]/settings/+page.svelte data warnings (2)"
+        done: false
+      - text: Fix boards/new/+page.svelte data warning
+        done: false
+    links:
+      - specs/cards.md
+      - specs/columns.md
+
 
 
 
@@ -1022,6 +1036,24 @@ done:
         done: false
     links:
       - specs/tech-database.md
+
+  - id: D-45
+    completed: 2026-02-17
+    title: Fix CardDetail form error display type errors
+    description: |
+      CardDetail.svelte has two svelte-check type errors where `$formErrors.title[0]` and `$formErrors.description[0]` index into a potentially undefined array. The `{#if $formErrors.title}` conditional should narrow the type, but svelte-check doesn't recognize it. Fix by using optional chaining (`$formErrors.title?.[0]`) or a different pattern that satisfies TypeScript's type narrowing within Svelte templates.
+    priority: low
+    tags: [frontend, dx]
+    assignee: ""
+    created: 2026-02-17
+    subtasks:
+      - text: "Fix $formErrors.title[0] type error around line 196"
+        done: false
+      - text: "Fix $formErrors.description[0] type error around line 229"
+        done: false
+    links:
+      - specs/cards.md
+
 
 
 

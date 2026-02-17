@@ -381,12 +381,19 @@ Key implementation details:
   import XIcon from "@lucide/svelte/icons/x";
   import { superForm } from "sveltekit-superforms";
   import type { SuperValidated } from "sveltekit-superforms";
-  import type { UpdateCardSchema } from "$lib/schemas/card";
+  import type { updateCardSchema } from "$lib/schemas/card";
+  import type { z } from "zod/v4";
   import DeleteCardDialog from "$lib/components/card/DeleteCardDialog.svelte";
   import MarkdownRenderer from "$lib/components/markdown/MarkdownRenderer.svelte";
   import * as Tabs from "$lib/components/ui/tabs/index.js";
 
-  let { card, boardId, columns, updateForm, currentUserId }: { ... } = $props();
+  type UpdateCardForm = z.infer<typeof updateCardSchema>;
+
+  let { card, boardId, columns, updateForm, currentUserId }: {
+    ...
+    updateForm: SuperValidated<UpdateCardForm>;
+    ...
+  } = $props();
 
   const { form: formData, enhance: updateEnhance, errors: formErrors, submitting: updateSubmitting } = superForm(updateForm, { ... });
 

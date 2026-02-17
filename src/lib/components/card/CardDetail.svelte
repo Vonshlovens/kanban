@@ -21,6 +21,10 @@
   import MarkdownRenderer from "$lib/components/markdown/MarkdownRenderer.svelte";
   import * as Tabs from "$lib/components/ui/tabs/index.js";
   import type { SuperValidated } from "sveltekit-superforms";
+  import type { updateCardSchema } from "$lib/schemas/card";
+  import type { z } from "zod/v4";
+
+  type UpdateCardForm = z.infer<typeof updateCardSchema>;
 
   let {
     card,
@@ -49,7 +53,7 @@
     };
     boardId: string;
     columns: { id: string; name: string }[];
-    updateForm: SuperValidated<Record<string, unknown>>;
+    updateForm: SuperValidated<UpdateCardForm>;
     currentUserId: string;
   } = $props();
 
@@ -197,7 +201,7 @@
       </button>
     {/if}
     {#if $formErrors.title}
-      <p class="mt-1 text-[0.8rem] text-destructive">{($formErrors.title as unknown as string[])?.[0]}</p>
+      <p class="mt-1 text-[0.8rem] text-destructive">{$formErrors.title?.[0]}</p>
     {/if}
   </div>
 
@@ -248,7 +252,7 @@
               <div>
                 {#if $formErrors.description}
                   <p class="text-[0.8rem] text-destructive">
-                    {($formErrors.description as unknown as string[])?.[0]}
+                    {$formErrors.description?.[0]}
                   </p>
                 {/if}
               </div>
