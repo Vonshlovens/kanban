@@ -4,6 +4,7 @@ import { superValidate } from "sveltekit-superforms";
 import { zod4 } from "sveltekit-superforms/adapters";
 import { createColumnSchema, renameColumnSchema, updateWipLimitSchema, deleteColumnSchema } from "$lib/schemas/column";
 import { createCardSchema, moveCardSchema, deleteCardSchema } from "$lib/schemas/card";
+import type { BoardWithColumns } from "$lib/types";
 import { db } from "$lib/db";
 import { columns } from "$lib/db/schema/columns";
 import { cards } from "$lib/db/schema/cards";
@@ -33,7 +34,7 @@ export const load: PageServerLoad = async ({ params }) => {
   const createColumnForm = await superValidate(zod4(createColumnSchema));
   const createCardForm = await superValidate(zod4(createCardSchema));
 
-  return { board, createColumnForm, createCardForm };
+  return { board: board as BoardWithColumns, createColumnForm, createCardForm };
 };
 
 export const actions: Actions = {

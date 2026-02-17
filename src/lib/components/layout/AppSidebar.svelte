@@ -2,6 +2,7 @@
   import * as Sidebar from "$lib/components/ui/sidebar/index.js";
   import { Separator } from "$lib/components/ui/separator/index.js";
   import { toggleMode, mode } from "mode-watcher";
+  import type { SidebarBoard } from "$lib/types";
   import KanbanIcon from "@lucide/svelte/icons/kanban";
   import StarIcon from "@lucide/svelte/icons/star";
   import PlusIcon from "@lucide/svelte/icons/plus";
@@ -13,7 +14,7 @@
     boards = [],
     activeBoardId,
   }: {
-    boards?: { id: string; name: string; isFavorite: boolean }[];
+    boards?: SidebarBoard[];
     activeBoardId?: string;
   } = $props();
 

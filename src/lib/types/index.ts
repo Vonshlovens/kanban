@@ -21,6 +21,19 @@ export type User = typeof users.$inferSelect;
 export type ActivityLogEntry = typeof activityLog.$inferSelect;
 
 // ---------------------------------------------------------------------------
+// Page-level view types (used by server load functions & page components)
+// ---------------------------------------------------------------------------
+
+/** Board summary for the boards list page — no nested relations. */
+export type BoardSummary = Pick<
+  Board,
+  "id" | "name" | "description" | "isFavorite" | "updatedAt"
+>;
+
+/** Minimal board reference used by the sidebar navigation. */
+export type SidebarBoard = Pick<Board, "id" | "name" | "isFavorite">;
+
+// ---------------------------------------------------------------------------
 // Lightweight "pick" types used across many components
 // ---------------------------------------------------------------------------
 

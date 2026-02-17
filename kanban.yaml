@@ -148,23 +148,6 @@ backlog:
     assignee: ""
     created: 2026-02-17
 
-  - id: B-30
-    title: Add board list page types and typed server load returns
-    description: |
-      The board list page (src/routes/+page.server.ts) and board settings page return data without typed helpers. Add BoardSummary type to $lib/types for the boards list view (id, name, description, isFavorite, column count, card count). Consider adding satisfies or explicit return types to server load functions so PageData is fully typed end-to-end. This follows up on B-23 (shared types).
-    priority: low
-    tags: [frontend, dx]
-    assignee: ""
-    created: 2026-02-17
-    subtasks:
-      - text: Add BoardSummary type for board list page data
-        done: false
-      - text: Add explicit return types or satisfies to key server load functions
-        done: false
-    links:
-      - src/lib/types/index.ts
-      - specs/frontend-components.md
-
   - id: B-31
     title: Add .env file generation or svelte-check env stub for zero-error CI
     description: |
@@ -183,6 +166,14 @@ backlog:
     links:
       - specs/frontend-build-tooling.md
       - src/lib/db/index.ts
+
+  - id: B-32
+    title: Update frontend-pages spec card detail code snippet to match implementation
+    priority: low
+    tags: [spec, dx]
+    assignee: ""
+    created: 2026-02-17
+
 
 
 
@@ -1099,6 +1090,25 @@ done:
         done: false
     links:
       - specs/frontend-build-tooling.md
+
+  - id: D-49
+    completed: 2026-02-17
+    title: Add board list page types and typed server load returns
+    description: |
+      The board list page (src/routes/+page.server.ts) and board settings page return data without typed helpers. Add BoardSummary type to $lib/types for the boards list view (id, name, description, isFavorite, column count, card count). Consider adding satisfies or explicit return types to server load functions so PageData is fully typed end-to-end. This follows up on B-23 (shared types).
+    priority: low
+    tags: [frontend, dx]
+    assignee: ""
+    created: 2026-02-17
+    subtasks:
+      - text: Add BoardSummary type for board list page data
+        done: false
+      - text: Add explicit return types or satisfies to key server load functions
+        done: false
+    links:
+      - src/lib/types/index.ts
+      - specs/frontend-components.md
+
 
 
 
