@@ -87,9 +87,17 @@ export const updateBoardDescriptionSchema = z.object({
 
 ```typescript
 // src/routes/+page.server.ts
+import type { BoardSummary } from "$lib/types";
+
 export const load: PageServerLoad = async () => {
-  const allBoards = await db
-    .select()
+  const allBoards: BoardSummary[] = await db
+    .select({
+      id: boards.id,
+      name: boards.name,
+      description: boards.description,
+      isFavorite: boards.isFavorite,
+      updatedAt: boards.updatedAt,
+    })
     .from(boards)
     .orderBy(desc(boards.updatedAt));
 
@@ -161,13 +169,192 @@ export const actions: Actions = {
 ### Settings Actions
 
 ```typescript
-// src/routes/(app)/boards/[boardId]/settings/+page.server.ts
+// src/routes/(app)/boards/[boardId]/settings/+page.server.ts (actions)
+import type { Actions } from "./$types";
+import { fail } from "@sveltejs/kit";
+import { superValidate } from "sveltekit-superforms";
+import { zod4 } from "sveltekit-superforms/adapters";
+import { renameBoardSchema, updateBoardDescriptionSchema } from "$lib/schemas/board";
+import { db } from "$lib/db";
+import { boards } from "$lib/db/schema/boards";
+import { eq } from "drizzle-orm";
+
 export const actions: Actions = {
-  rename: async ({ request, params }) => { /* validates & updates name */ },
-  updateDescription: async ({ request, params }) => { /* validates & updates description */ },
-  delete: async ({ params }) => { /* deletes board, redirects to / */ },
-  toggleFavorite: async ({ params }) => { /* toggles isFavorite flag */ },
+  rename: async ({ request, params }) => {
+    const form = await superValidate(request, zod4(renameBoardSchema));
+    if (!form.valid) return fail(400, { form });
+
+    await db.update(boards)
+      .set({ name: form.data.name, updatedAt: new Date() })
+      .where(eq(boards.id, params.boardId));
+
+    return { form };
+  },
+
+  updateDescription: async ({ request, params }) => {
+    const form = await superValidate(request, zod4(updateBoardDescriptionSchema));
+    if (!form.valid) return fail(400, { form });
+
+    await db.update(boards)
+      .set({ description: form.data.description, updatedAt: new Date() })
+      .where(eq(boards.id, params.boardId));
+
+    return { form };
+  },
+
+  delete: async ({ params }) => {
+    await db.delete(boards).where(eq(boards.id, params.boardId));
+    throw redirect(303, "/");
+  },
+
+  toggleFavorite: async ({ params }) => {
+    const board = await db.query.boards.findFirst({
+      where: (boards, { eq }) => eq(boards.id, params.boardId),
+      columns: { isFavorite: true },
+    });
+
+    if (!board) throw error(404, "Board not found");
+
+    await db.update(boards)
+      .set({ isFavorite: !board.isFavorite, updatedAt: new Date() })
+      .where(eq(boards.id, params.boardId));
+  },
 };
+```
+
+## Component Patterns
+
+### Board Listing Page
+
+```svelte
+<!-- src/routes/+page.svelte -->
+<script lang="ts">
+  import type { PageData } from "./$types";
+  import BoardCard from "$lib/components/board/BoardCard.svelte";
+  import { Button } from "$lib/components/ui/button";
+  import { Plus } from "@lucide/svelte";
+
+  let { data }: { data: PageData } = $props();
+</script>
+
+<div class="container mx-auto max-w-4xl py-10">
+  <div class="mb-8 flex items-center justify-between">
+    <h1 class="text-3xl font-bold">Boards</h1>
+    <Button href="/boards/new">
+      <Plus class="mr-2 h-4 w-4" />
+      New Board
+    </Button>
+  </div>
+
+  <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    {#each data.boards as board}
+      <BoardCard {board} />
+    {/each}
+  </div>
+</div>
+```
+
+> **Implementation note:** Board cards in the listing are rendered inline (no separate BoardCard component). Empty state provides CTA to create first board.
+
+### Board Settings Page
+
+```svelte
+<!-- src/routes/(app)/boards/[boardId]/settings/+page.svelte -->
+<script lang="ts">
+  import type { PageData } from "./$types";
+  import * as Card from "$lib/components/ui/card";
+  import * as AlertDialog from "$lib/components/ui/alert-dialog";
+  import { Button } from "$lib/components/ui/button";
+  import { Input } from "$lib/components/ui/input";
+  import { superForm } from "sveltekit-superforms";
+
+  let { data }: { data: PageData } = $props();
+
+  const { form: renameForm, enhance: renameEnhance } = superForm(data.renameForm);
+  let deleteConfirmOpen = $state(false);
+</script>
+
+<div class="container mx-auto max-w-2xl py-10 space-y-8">
+  <h1 class="text-2xl font-bold">Board Settings</h1>
+
+  <Card.Root>
+    <Card.Header>
+      <Card.Title>General</Card.Title>
+    </Card.Header>
+    <Card.Content>
+      <form method="POST" action="?/rename" use:renameEnhance class="flex gap-3">
+        <Input name="name" bind:value={$renameForm.name} class="flex-1" />
+        <Button type="submit">Save</Button>
+      </form>
+    </Card.Content>
+  </Card.Root>
+
+  <Card.Root class="border-destructive">
+    <Card.Header>
+      <Card.Title class="text-destructive">Danger Zone</Card.Title>
+    </Card.Header>
+    <Card.Content>
+      <AlertDialog.Root bind:open={deleteConfirmOpen}>
+        <AlertDialog.Trigger asChild let:builder>
+          <Button variant="destructive" builders={[builder]}>Delete Board</Button>
+        </AlertDialog.Trigger>
+        <AlertDialog.Content>
+          <AlertDialog.Header>
+            <AlertDialog.Title>Delete "{data.board.name}"?</AlertDialog.Title>
+            <AlertDialog.Description>
+              This will permanently delete the board and all its columns, cards, and data. This action cannot be undone.
+            </AlertDialog.Description>
+          </AlertDialog.Header>
+          <AlertDialog.Footer>
+            <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+            <form method="POST" action="?/delete">
+              <AlertDialog.Action type="submit" class="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                Delete
+              </AlertDialog.Action>
+            </form>
+          </AlertDialog.Footer>
+        </AlertDialog.Content>
+      </AlertDialog.Root>
+    </Card.Content>
+  </Card.Root>
+</div>
+```
+
+### Create Board Page
+
+```svelte
+<!-- src/routes/(app)/boards/new/+page.svelte -->
+<script lang="ts">
+  import type { PageData } from "./$types";
+  import { Button } from "$lib/components/ui/button";
+  import { Input } from "$lib/components/ui/input";
+  import * as Card from "$lib/components/ui/card";
+  import * as Form from "$lib/components/ui/form";
+  import { superForm } from "sveltekit-superforms";
+
+  let { data }: { data: PageData } = $props();
+  const { form, enhance } = superForm(data.form);
+</script>
+
+<div class="container mx-auto flex max-w-md items-center justify-center py-20">
+  <Card.Root class="w-full">
+    <Card.Header>
+      <Card.Title>Create Board</Card.Title>
+      <Card.Description>Give your board a name to get started.</Card.Description>
+    </Card.Header>
+    <Card.Content>
+      <form method="POST" use:enhance class="space-y-4">
+        <Form.Field {form} name="name">
+          <Form.Control let:attrs>
+            <Input {...attrs} bind:value={$form.name} placeholder="Board name" />
+          </Form.Control>
+          <Form.FieldErrors />
+        </Form.Field>
+        <Button type="submit" class="w-full">Create</Button>
+      </form>
+    </Card.Content>
+  </Card.Root>
+</div>
 ```
 
 ## UI Patterns

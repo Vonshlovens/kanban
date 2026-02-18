@@ -8,11 +8,11 @@
     "lint:fix": "deno run -A npm:eslint . --fix",
     "format": "deno run -A npm:prettier --write .",
     "format:check": "deno run -A npm:prettier --check .",
-    "db:generate": "deno run -A npm:drizzle-kit generate",
-    "db:migrate": "deno run -A npm:drizzle-kit migrate",
-    "db:push": "deno run -A npm:drizzle-kit push",
-    "db:studio": "deno run -A npm:drizzle-kit studio",
-    "db:seed": "deno run -A scripts/seed.ts"
+    "db:generate": "deno run --env -A npm:drizzle-kit generate",
+    "db:migrate": "deno run --env -A npm:drizzle-kit migrate",
+    "db:push": "deno run --env -A npm:drizzle-kit push",
+    "db:studio": "deno run --env -A npm:drizzle-kit studio",
+    "db:seed": "deno run --env -A scripts/seed.ts"
   },
   "compilerOptions": {
     "strict": true,

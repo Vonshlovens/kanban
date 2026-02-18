@@ -100,4 +100,5 @@ export type BoardWithColumns = Pick<
   "id" | "name" | "description" | "isFavorite" | "createdAt" | "updatedAt"
 > & {
   columns: BoardColumn[];
+  labels: LabelRef[];
 };

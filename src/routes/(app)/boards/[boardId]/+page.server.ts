@@ -26,6 +26,7 @@ export const load: PageServerLoad = async ({ params }) => {
           },
         },
       },
+      labels: true,
     },
   });
 

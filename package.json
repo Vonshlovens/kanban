@@ -20,6 +20,7 @@
     "clsx": "^2.1.1",
     "dompurify": "^3.3.1",
     "drizzle-orm": "^0.45.1",
+    "effect": "^3.19.18",
     "formsnap": "^2.0.1",
     "marked": "^17.0.2",
     "mode-watcher": "^1.1.0",
@@ -30,6 +31,7 @@
     "sveltekit-superforms": "^2.29.1",
     "tailwind-merge": "^3.4.1",
     "tailwind-variants": "^3.2.2",
+    "typebox": "^1.0.81",
     "zod": "^4.3.6"
   },
   "devDependencies": {
